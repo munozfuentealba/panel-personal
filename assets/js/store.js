@@ -173,26 +173,30 @@ const SEED = {
 
 /* ─── Persistencia ────────────────────────────────────────────────── */
 
-function cargar() {
+/**
+ * Mezcla superficial por sección sobre el ejemplo: si agrego campos nuevos al
+ * SEED, los datos ya guardados siguen funcionando sin migración manual.
+ */
+function fusionar(obj) {
+  const base = structuredClone(SEED);
+  for (const k of Object.keys(obj)) {
+    base[k] = (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k]))
+      ? { ...base[k], ...obj[k] }
+      : obj[k];
+  }
+  return base;
+}
+
+function leerLocal() {
   try {
     const raw = localStorage.getItem(KEY);
-    if (!raw) return structuredClone(SEED);
-    // Mezcla superficial por sección: si agrego campos nuevos al SEED,
-    // los datos guardados siguen funcionando sin migración manual.
-    const guardado = JSON.parse(raw);
-    const base = structuredClone(SEED);
-    for (const k of Object.keys(guardado)) {
-      base[k] = (typeof guardado[k] === 'object' && !Array.isArray(guardado[k]))
-        ? { ...base[k], ...guardado[k] }
-        : guardado[k];
-    }
-    return base;
+    return raw ? fusionar(JSON.parse(raw)) : null;
   } catch {
-    return structuredClone(SEED);
+    return null;
   }
 }
 
-export const datos = cargar();
+export const datos = leerLocal() ?? structuredClone(SEED);
 
 /* Suscriptores que replican cada cambio fuera del navegador (respaldo). */
 const oyentes = new Set();
@@ -200,6 +204,7 @@ export const alGuardar = (fn) => { oyentes.add(fn); return () => oyentes.delete(
 
 export function guardar() {
   datos.esEjemplo = false;
+  datos.actualizado = new Date().toISOString(); // decide quién gana al sincronizar
   try {
     localStorage.setItem(KEY, JSON.stringify(datos));
   } catch (e) {
@@ -208,6 +213,69 @@ export function guardar() {
   for (const fn of oyentes) {
     try { fn(datos); } catch (e) { console.warn('Fallo un oyente de guardado', e); }
   }
+}
+
+/* ─── Datos publicados en el repositorio ──────────────────────────── */
+
+/**
+ * El panel puede LEER `datos.json` del repositorio (Pages sirve archivos),
+ * pero no puede escribirlo: eso exigiría un token con permiso de escritura
+ * dentro de una página pública. Publicar es un paso manual — ver Ajustes.
+ *
+ * Sirve para lo que importa: al borrar el historial o cambiar de equipo, los
+ * datos vuelven solos desde el repositorio.
+ */
+export const origen = { de: 'ejemplo', fecha: null, hayRepo: false, error: null };
+
+/** Nunca pisar datos reales con el ejemplo; si no, gana el más reciente. */
+function elegir(local, remoto) {
+  if (!local) return { datos: remoto ?? structuredClone(SEED), de: remoto ? 'repo' : 'ejemplo' };
+  if (!remoto) return { datos: local, de: 'local' };
+  if (remoto.esEjemplo && !local.esEjemplo) return { datos: local, de: 'local' };
+  const a = local.actualizado ?? '';
+  const b = remoto.actualizado ?? '';
+  return b > a ? { datos: remoto, de: 'repo' } : { datos: local, de: 'local' };
+}
+
+/**
+ * Se llama una vez al arrancar, antes de pintar. Muta `datos` en lugar de
+ * reasignarlo: las secciones ya importaron esa referencia.
+ */
+export async function inicializar() {
+  const local = leerLocal();
+  let remoto = null;
+  try {
+    // no-store: si no, el navegador sirve el JSON viejo tras publicar uno nuevo.
+    const r = await fetch(`datos.json?t=${Date.now()}`, { cache: 'no-store' });
+    if (r.ok) {
+      remoto = fusionar(await r.json());
+      origen.hayRepo = true;
+    }
+  } catch (e) {
+    origen.error = e.message; // sin conexión, o aún no se ha publicado datos.json
+  }
+
+  const { datos: elegido, de } = elegir(local, remoto);
+  origen.de = de;
+  origen.fecha = elegido.actualizado ?? null;
+
+  for (const k of Object.keys(datos)) delete datos[k];
+  Object.assign(datos, elegido);
+
+  // Si lo del repositorio es más nuevo, que también quede en este navegador.
+  if (de === 'repo') {
+    try { localStorage.setItem(KEY, JSON.stringify(datos)); } catch {}
+  }
+}
+
+/** Descarga el archivo con el nombre exacto que espera el repositorio. */
+export function exportarParaRepo() {
+  const copia = { ...datos, actualizado: datos.actualizado ?? new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(copia, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = Object.assign(document.createElement('a'), { href: url, download: 'datos.json' });
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 /**
@@ -222,12 +290,7 @@ export function importar(obj) {
   if (!esperadas.some((k) => k in obj)) {
     throw new Error('El archivo no parece un respaldo del panel.');
   }
-  const base = structuredClone(SEED);
-  for (const k of Object.keys(obj)) {
-    base[k] = (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k]))
-      ? { ...base[k], ...obj[k] }
-      : obj[k];
-  }
+  const base = fusionar(obj);
   base.esEjemplo = false;
   localStorage.setItem(KEY, JSON.stringify(base));
   return base;

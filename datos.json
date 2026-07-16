@@ -1,0 +1,578 @@
+{
+  "esEjemplo": true,
+  "finanzas": {
+    "monedaNota": "Montos en pesos chilenos",
+    "movimientos": [
+      {
+        "id": "m1",
+        "fecha": "2026-07-05",
+        "desc": "Sueldo",
+        "cat": "Ingreso",
+        "monto": 1850000
+      },
+      {
+        "id": "m2",
+        "fecha": "2026-07-05",
+        "desc": "Arriendo",
+        "cat": "Vivienda",
+        "monto": -520000
+      },
+      {
+        "id": "m3",
+        "fecha": "2026-07-08",
+        "desc": "Supermercado",
+        "cat": "Alimentación",
+        "monto": -186000
+      },
+      {
+        "id": "m4",
+        "fecha": "2026-07-10",
+        "desc": "Producción musical (freelance)",
+        "cat": "Ingreso",
+        "monto": 340000
+      },
+      {
+        "id": "m5",
+        "fecha": "2026-07-11",
+        "desc": "Bencina",
+        "cat": "Transporte",
+        "monto": -62000
+      },
+      {
+        "id": "m6",
+        "fecha": "2026-07-12",
+        "desc": "Plan móvil e internet",
+        "cat": "Servicios",
+        "monto": -48000
+      },
+      {
+        "id": "m7",
+        "fecha": "2026-07-14",
+        "desc": "Suscripciones (software)",
+        "cat": "Herramientas",
+        "monto": -39000
+      }
+    ],
+    "presupuestos": [
+      {
+        "cat": "Vivienda",
+        "tope": 550000
+      },
+      {
+        "cat": "Alimentación",
+        "tope": 320000
+      },
+      {
+        "cat": "Transporte",
+        "tope": 120000
+      },
+      {
+        "cat": "Servicios",
+        "tope": 90000
+      },
+      {
+        "cat": "Herramientas",
+        "tope": 60000
+      }
+    ],
+    "ahorro": {
+      "actual": 4200000,
+      "meta": 8000000,
+      "nombre": "Fondo de emergencia"
+    },
+    "historial": [
+      {
+        "mes": "Feb",
+        "ingresos": 1980000,
+        "gastos": 1420000
+      },
+      {
+        "mes": "Mar",
+        "ingresos": 2100000,
+        "gastos": 1560000
+      },
+      {
+        "mes": "Abr",
+        "ingresos": 1900000,
+        "gastos": 1380000
+      },
+      {
+        "mes": "May",
+        "ingresos": 2340000,
+        "gastos": 1610000
+      },
+      {
+        "mes": "Jun",
+        "ingresos": 2190000,
+        "gastos": 1490000
+      },
+      {
+        "mes": "Jul",
+        "ingresos": 2190000,
+        "gastos": 855000
+      }
+    ]
+  },
+  "marca": {
+    "posicionamiento": "Productor musical y creador de contenido en el sur de Chile.",
+    "objetivos": [
+      {
+        "id": "o1",
+        "texto": "Publicar 3 piezas de contenido por semana",
+        "avance": 62
+      },
+      {
+        "id": "o2",
+        "texto": "Llegar a 5.000 seguidores en Instagram",
+        "avance": 48
+      },
+      {
+        "id": "o3",
+        "texto": "Lanzar sitio web personal con portafolio",
+        "avance": 25
+      },
+      {
+        "id": "o4",
+        "texto": "Grabar 6 episodios de formato largo",
+        "avance": 33
+      }
+    ],
+    "pilares": [
+      {
+        "nombre": "Producción musical",
+        "peso": 40
+      },
+      {
+        "nombre": "Fe y comunidad",
+        "peso": 25
+      },
+      {
+        "nombre": "Emprendimiento",
+        "peso": 20
+      },
+      {
+        "nombre": "Vida en el sur",
+        "peso": 15
+      }
+    ],
+    "hitos": [
+      {
+        "id": "h1",
+        "fecha": "2026-08-02",
+        "texto": "Sesión de fotos para renovar perfil"
+      },
+      {
+        "id": "h2",
+        "fecha": "2026-08-20",
+        "texto": "Colaboración con artista local"
+      },
+      {
+        "id": "h3",
+        "fecha": "2026-09-15",
+        "texto": "Lanzamiento del portafolio"
+      }
+    ]
+  },
+  "empresa": {
+    "nombre": "Mi empresa",
+    "kpis": {
+      "facturacionMes": 3850000,
+      "facturacionPrev": 3210000,
+      "clientesActivos": 7,
+      "margen": 38.5
+    },
+    "proyectos": [
+      {
+        "id": "p1",
+        "nombre": "Identidad de marca — Cliente A",
+        "estado": "En curso",
+        "avance": 70,
+        "valor": 1200000
+      },
+      {
+        "id": "p2",
+        "nombre": "Jingle radial — Cliente B",
+        "estado": "En curso",
+        "avance": 40,
+        "valor": 850000
+      },
+      {
+        "id": "p3",
+        "nombre": "Producción EP — Cliente C",
+        "estado": "Propuesta",
+        "avance": 10,
+        "valor": 2400000
+      },
+      {
+        "id": "p4",
+        "nombre": "Post producción audio — Cliente D",
+        "estado": "Cerrado",
+        "avance": 100,
+        "valor": 620000
+      }
+    ],
+    "ventas": [
+      {
+        "mes": "Feb",
+        "v": 2450000
+      },
+      {
+        "mes": "Mar",
+        "v": 2980000
+      },
+      {
+        "mes": "Abr",
+        "v": 2610000
+      },
+      {
+        "mes": "May",
+        "v": 3400000
+      },
+      {
+        "mes": "Jun",
+        "v": 3210000
+      },
+      {
+        "mes": "Jul",
+        "v": 3850000
+      }
+    ]
+  },
+  "instagram": {
+    "usuario": "munozfuentealba",
+    "seguidores": 2400,
+    "siguiendo": 890,
+    "publicaciones": 148,
+    "alcanceMes": 18500,
+    "historial": [
+      {
+        "fecha": "2026-02-01",
+        "seguidores": 1960
+      },
+      {
+        "fecha": "2026-03-01",
+        "seguidores": 2050
+      },
+      {
+        "fecha": "2026-04-01",
+        "seguidores": 2140
+      },
+      {
+        "fecha": "2026-05-01",
+        "seguidores": 2225
+      },
+      {
+        "fecha": "2026-06-01",
+        "seguidores": 2310
+      },
+      {
+        "fecha": "2026-07-01",
+        "seguidores": 2400
+      }
+    ],
+    "publicacionesRecientes": [
+      {
+        "id": "ig1",
+        "fecha": "2026-07-12",
+        "tipo": "Reel",
+        "tema": "Detrás de la mezcla",
+        "likes": 312,
+        "comentarios": 24,
+        "guardados": 41
+      },
+      {
+        "id": "ig2",
+        "fecha": "2026-07-08",
+        "tipo": "Carrusel",
+        "tema": "5 tips de home studio",
+        "likes": 268,
+        "comentarios": 31,
+        "guardados": 87
+      },
+      {
+        "id": "ig3",
+        "fecha": "2026-07-04",
+        "tipo": "Reel",
+        "tema": "Sesión en vivo",
+        "likes": 195,
+        "comentarios": 12,
+        "guardados": 18
+      },
+      {
+        "id": "ig4",
+        "fecha": "2026-06-29",
+        "tipo": "Foto",
+        "tema": "Paisaje Osorno",
+        "likes": 143,
+        "comentarios": 9,
+        "guardados": 6
+      }
+    ]
+  },
+  "musica": {
+    "proyectos": [
+      {
+        "id": "mu1",
+        "nombre": "EP — \"Sur\"",
+        "etapa": "Mezcla",
+        "avance": 72,
+        "tracks": 5
+      },
+      {
+        "id": "mu2",
+        "nombre": "Single — \"Lluvia\"",
+        "etapa": "Grabación",
+        "avance": 45,
+        "tracks": 1
+      },
+      {
+        "id": "mu3",
+        "nombre": "Beat pack vol. 2",
+        "etapa": "Composición",
+        "avance": 20,
+        "tracks": 12
+      },
+      {
+        "id": "mu4",
+        "nombre": "Cover acústico",
+        "etapa": "Masterizado",
+        "avance": 100,
+        "tracks": 1
+      }
+    ],
+    "horasSemana": [
+      {
+        "d": "Lun",
+        "h": 2
+      },
+      {
+        "d": "Mar",
+        "h": 3.5
+      },
+      {
+        "d": "Mié",
+        "h": 1
+      },
+      {
+        "d": "Jue",
+        "h": 4
+      },
+      {
+        "d": "Vie",
+        "h": 2.5
+      },
+      {
+        "d": "Sáb",
+        "h": 6
+      },
+      {
+        "d": "Dom",
+        "h": 1.5
+      }
+    ],
+    "metaHoras": 20,
+    "ideas": [
+      {
+        "id": "id1",
+        "texto": "Loop de guitarra en 6/8 para el puente de \"Sur\""
+      },
+      {
+        "id": "id2",
+        "texto": "Grabar ambiente de lluvia real como capa de textura"
+      },
+      {
+        "id": "id3",
+        "texto": "Probar cadena vocal: SM7B → pre → compresión suave"
+      }
+    ]
+  },
+  "iglesia": {
+    "congregacion": "Mi congregación",
+    "agenda": [
+      {
+        "id": "ig-a1",
+        "fecha": "2026-07-19",
+        "titulo": "Servicio dominical",
+        "rol": "Dirección de alabanza",
+        "hora": "11:00"
+      },
+      {
+        "id": "ig-a2",
+        "fecha": "2026-07-17",
+        "titulo": "Ensayo de banda",
+        "rol": "Teclados",
+        "hora": "20:00"
+      },
+      {
+        "id": "ig-a3",
+        "fecha": "2026-07-22",
+        "titulo": "Reunión de jóvenes",
+        "rol": "Apoyo técnico",
+        "hora": "19:30"
+      },
+      {
+        "id": "ig-a4",
+        "fecha": "2026-08-02",
+        "titulo": "Servicio dominical",
+        "rol": "Dirección de alabanza",
+        "hora": "11:00"
+      }
+    ],
+    "repertorio": [
+      {
+        "id": "r1",
+        "titulo": "Cuán grande es Él",
+        "tono": "G"
+      },
+      {
+        "id": "r2",
+        "titulo": "Océanos",
+        "tono": "D"
+      },
+      {
+        "id": "r3",
+        "titulo": "Digno es el Cordero",
+        "tono": "A"
+      },
+      {
+        "id": "r4",
+        "titulo": "Al que está sentado",
+        "tono": "E"
+      }
+    ],
+    "servidos": 14
+  },
+  "familia": {
+    "eventos": [
+      {
+        "id": "f1",
+        "fecha": "2026-07-18",
+        "titulo": "Cena familiar",
+        "quien": "Todos"
+      },
+      {
+        "id": "f2",
+        "fecha": "2026-07-26",
+        "titulo": "Paseo a Puerto Varas",
+        "quien": "Todos"
+      },
+      {
+        "id": "f3",
+        "fecha": "2026-08-09",
+        "titulo": "Almuerzo con los abuelos",
+        "quien": "Abuelos"
+      }
+    ],
+    "fechas": [
+      {
+        "id": "c1",
+        "fecha": "2026-08-14",
+        "nombre": "Cumpleaños — Mamá"
+      },
+      {
+        "id": "c2",
+        "fecha": "2026-09-03",
+        "nombre": "Aniversario"
+      },
+      {
+        "id": "c3",
+        "fecha": "2026-10-21",
+        "nombre": "Cumpleaños — Papá"
+      }
+    ],
+    "intenciones": [
+      {
+        "id": "i1",
+        "texto": "Llamar a los abuelos cada domingo",
+        "avance": 75
+      },
+      {
+        "id": "i2",
+        "texto": "Una salida familiar al mes",
+        "avance": 50
+      },
+      {
+        "id": "i3",
+        "texto": "Cenar sin pantallas",
+        "avance": 40
+      }
+    ]
+  },
+  "trabajo": {
+    "tareas": [
+      {
+        "id": "t1",
+        "texto": "Cerrar propuesta del Cliente C",
+        "prio": "alta",
+        "hecha": false,
+        "vence": "2026-07-17"
+      },
+      {
+        "id": "t2",
+        "texto": "Revisar mezcla del jingle radial",
+        "prio": "alta",
+        "hecha": false,
+        "vence": "2026-07-16"
+      },
+      {
+        "id": "t3",
+        "texto": "Enviar factura del mes",
+        "prio": "media",
+        "hecha": false,
+        "vence": "2026-07-20"
+      },
+      {
+        "id": "t4",
+        "texto": "Actualizar portafolio con últimos trabajos",
+        "prio": "baja",
+        "hecha": false,
+        "vence": "2026-07-30"
+      },
+      {
+        "id": "t5",
+        "texto": "Reunión de seguimiento con Cliente A",
+        "prio": "media",
+        "hecha": true,
+        "vence": "2026-07-14"
+      },
+      {
+        "id": "t6",
+        "texto": "Respaldar sesiones del estudio",
+        "prio": "baja",
+        "hecha": true,
+        "vence": "2026-07-13"
+      }
+    ],
+    "foco": [
+      {
+        "d": "Lun",
+        "h": 5
+      },
+      {
+        "d": "Mar",
+        "h": 6.5
+      },
+      {
+        "d": "Mié",
+        "h": 4
+      },
+      {
+        "d": "Jue",
+        "h": 7
+      },
+      {
+        "d": "Vie",
+        "h": 5.5
+      },
+      {
+        "d": "Sáb",
+        "h": 2
+      },
+      {
+        "d": "Dom",
+        "h": 0
+      }
+    ]
+  },
+  "actualizado": "2026-01-01T00:00:00.000Z"
+}

@@ -24,20 +24,29 @@ Cada cambio se guarda solo, al instante, en el **localStorage de tu navegador**.
 No hay servidor, base de datos ni cuenta: nada de lo que escribas se sube a este
 repositorio ni sale de tu equipo.
 
-**Los datos no están en GitHub, y no pueden estarlo**, por dos razones:
+### datos.json — los datos publicados
 
-1. Este repositorio es público. Guardar aquí las finanzas, la facturación o los
-   asuntos de familia los dejaría visibles para cualquiera — y el historial de
-   git no olvida, así que borrarlos después no los borraría.
-2. Un sitio en GitHub Pages solo sirve archivos; no puede escribir en su propio
-   repositorio. Para lograrlo haría falta un token con permiso de escritura
-   dentro del navegador, que en un sitio público queda expuesto a cualquiera.
+Al abrirse, el panel lee `datos.json` de este repositorio. Si no hay nada en el
+navegador (historial borrado, equipo nuevo), **los datos vuelven solos desde
+aquí**. Reglas de precedencia:
 
-GitHub aloja la *aplicación*; tu navegador guarda los *datos*. Son cosas
-distintas: borrar tus datos no borra la app, y la app estando en GitHub no
-respalda tus datos.
+- Sin datos locales → gana `datos.json`.
+- Con datos locales → gana el que tenga `actualizado` más reciente.
+- `datos.json` marcado `esEjemplo: true` **nunca** pisa datos reales locales.
+- Sin conexión → sigue con lo local.
 
-### Para no perder nada
+**Publicar es manual**, y no por descuido: un sitio en GitHub Pages puede leer
+archivos, pero **no puede escribir en su propio repositorio**. Hacerlo exigiría
+un token con permiso sobre la cuenta dentro de una página que cualquiera puede
+abrir — cualquiera podría extraerlo, y GitHub lo revocaría automáticamente.
+
+Para actualizarlo: **Ajustes → Descargar datos.json**, y súbelo al repositorio
+(hay un botón que abre la página de carga). GitHub tarda ~1 minuto en publicarlo.
+
+> Este repositorio es público: lo que pongas en `datos.json` queda visible para
+> cualquiera, y el historial de git lo conserva aunque después lo borres.
+
+### Otras formas de no perder nada
 
 **Ajustes → Respaldo automático**: eliges un archivo una vez (por ejemplo dentro
 de iCloud Drive) y desde ahí cada cambio se escribe también ahí, solo. Como
@@ -47,8 +56,8 @@ Access API: funciona en Chrome y Edge, no en Safari ni Firefox.
 **Ajustes → Copia manual**: Exportar descarga un JSON; Importar lo restaura.
 Funciona en cualquier navegador.
 
-Sin respaldo, si borras los datos de navegación o abres el panel en otro equipo,
-verás los datos de ejemplo.
+Sin respaldo y sin `datos.json` publicado, si borras los datos de navegación o
+abres el panel en otro equipo, verás los datos de ejemplo.
 
 ## Sobre la sección de Instagram
 
@@ -78,6 +87,7 @@ python3 -m http.server 4321
 
 ```
 index.html
+datos.json           Datos publicados; el panel los lee al abrirse
 assets/
   css/styles.css      Sistema de diseño, temas y transiciones
   js/

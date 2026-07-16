@@ -6,7 +6,7 @@
  */
 
 import { el, icon, clp, num, compact, pct, fecha, relativo, hoyISO, toast } from './utils.js';
-import { datos, guardar, uid, exportar, reiniciar, importar } from './store.js';
+import { datos, guardar, uid, exportar, reiniciar, importar, origen, exportarParaRepo } from './store.js';
 import * as R from './backup.js';
 import { wmoIcono, wmoTexto, CIUDADES } from './weather.js';
 import {
@@ -898,6 +898,53 @@ function tarjetaRespaldo(ctx) {
   return card('Respaldo automático', [cuerpo]);
 }
 
+const REPO = 'munozfuentealba/panel-personal';
+
+/** Publicar en el repositorio: leer es automático, subir es manual (y por qué). */
+function tarjetaRepositorio() {
+  const o = origen;
+  const desde = {
+    repo: ['tag--ok', 'Cargado desde el repositorio'],
+    local: ['tag--info', 'Usando lo de este navegador'],
+    ejemplo: ['tag--warn', 'Datos de ejemplo'],
+  }[o.de] ?? ['tag', o.de];
+
+  return card('Datos en el repositorio', [
+    el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' } }, [
+      el('span', { class: `tag ${desde[0]}` }, desde[1]),
+      o.fecha ? el('span', { style: { fontSize: '13px', color: 'var(--text-3)' } },
+        `Actualizado el ${fecha(o.fecha.slice(0, 10), { day: 'numeric', month: 'long' })}`) : null,
+    ]),
+
+    el('p', { style: { fontSize: '13.5px', color: 'var(--text-2)' } },
+      o.hayRepo
+        ? 'El panel lee estos datos del repositorio al abrirse. Por eso, aunque borres el historial o cambies de equipo, vuelven solos.'
+        : 'Aún no has publicado datos.json en el repositorio. Cuando lo hagas, el panel lo cargará solo cada vez que lo abras.'),
+
+    el('p', { style: { fontSize: '13px', color: 'var(--text-3)' } },
+      'Para actualizarlo: descarga el archivo y súbelo al repositorio. Una página web no puede escribir en su propio ' +
+      'repositorio, así que este paso es manual.'),
+
+    el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } }, [
+      el('button', {
+        class: 'btn btn--primary',
+        onclick: () => { exportarParaRepo(); toast('datos.json descargado. Ahora súbelo al repositorio.'); },
+      }, [icon('i-abajo'), 'Descargar datos.json']),
+      el('a', {
+        class: 'btn',
+        href: `https://github.com/${REPO}/upload/main`,
+        target: '_blank',
+        rel: 'noopener',
+        style: { textDecoration: 'none' },
+      }, 'Abrir GitHub para subirlo'),
+    ]),
+
+    el('p', { style: { fontSize: '12.5px', color: 'var(--text-3)' } },
+      'Al subirlo, GitHub tarda alrededor de un minuto en publicarlo. Recuerda que el repositorio es público: ' +
+      'lo que contenga datos.json queda visible para cualquiera, y el historial de git lo conserva aunque después lo borres.'),
+  ]);
+}
+
 export function ajustes(ctx) {
   const entrada = el('input', {
     type: 'file', accept: 'application/json,.json',
@@ -918,6 +965,8 @@ export function ajustes(ctx) {
 
   return [
     encabezado('i-resumen', 'Ajustes', 'Dónde se guardan tus datos y cómo respaldarlos.'),
+
+    tarjetaRepositorio(),
 
     el('div', { class: 'grid grid--2' }, [
       tarjetaRespaldo(ctx),
@@ -944,10 +993,11 @@ export function ajustes(ctx) {
     ]),
 
     aviso([el('div', {}, [
-      el('strong', {}, 'Por qué tus datos no están en GitHub: '),
-      'el repositorio es público, así que cualquiera podría ver tus finanzas, tu facturación y tu familia. ',
-      'Además, un sitio en GitHub Pages solo puede leer archivos, nunca escribir en su propio repositorio. ',
-      'Por eso tus datos viven en este navegador y, si activas el respaldo, en un archivo tuyo.',
+      el('strong', {}, 'Cómo funciona: '),
+      'al abrir el panel se cargan los datos publicados en el repositorio; mientras trabajas, cada cambio se guarda ',
+      'al instante en este navegador. Cuando quieras dejarlos fijos para cualquier equipo, descarga datos.json y súbelo. ',
+      'Un sitio en GitHub Pages puede leer archivos, pero nunca escribir en su propio repositorio: hacerlo exigiría un ',
+      'token con permiso sobre tu cuenta dentro de una página que cualquiera puede abrir.',
     ])]),
   ];
 }

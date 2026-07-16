@@ -3,6 +3,7 @@
 import { el, icon, escalonar } from './utils.js';
 import { obtenerClima, wmoIcono } from './weather.js';
 import { iniciarRespaldo } from './backup.js';
+import { inicializar } from './store.js';
 import * as S from './sections.js';
 
 /* ─── Mapa de secciones ───────────────────────────────────────────── */
@@ -211,6 +212,14 @@ async function navegar() {
 async function init() {
   initTema();
   construirNav();
+
+  // Trae los datos publicados en el repositorio antes de pintar nada: al
+  // borrar el historial o cambiar de equipo, vuelven solos.
+  try {
+    await inicializar();
+  } catch (e) {
+    console.warn('No se pudieron cargar los datos del repositorio:', e);
+  }
 
   // Reanuda el respaldo en archivo si el permiso sigue vigente.
   iniciarRespaldo(await import('./store.js'));
