@@ -80,17 +80,6 @@ export function toast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('is-visible'), 2600);
 }
 
-/**
- * Anima valores que dependen de layout (barras, gráficos) en el frame
- * siguiente, para que la transición se vea en lugar de aplicarse de golpe.
- */
-export function animarEntrada(root) {
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    root.querySelectorAll('[data-w]').forEach((n) => { n.style.width = n.dataset.w; });
-    root.querySelectorAll('[data-h]').forEach((n) => { n.style.height = n.dataset.h; });
-  }));
-}
-
 /** Numera los hijos directos para el escalonado de la animación de entrada. */
 export function escalonar(root) {
   [...root.children].forEach((c, i) => c.style.setProperty('--i', i));

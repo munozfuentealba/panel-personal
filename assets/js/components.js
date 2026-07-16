@@ -44,8 +44,7 @@ export function barra(etiqueta, valor, tope, detalle = null) {
       el('span', {}, detalle ?? `${Math.round((valor / tope) * 100)} %`),
     ]),
     el('div', { class: 'bar' }, [
-      // data-w lo aplica animarEntrada() en el frame siguiente → la barra crece.
-      el('div', { class: `bar__fill${excedido ? ' bar__fill--over' : ''}`, dataset: { w: `${p}%` } }),
+      el('div', { class: `bar__fill${excedido ? ' bar__fill--over' : ''}`, style: { width: `${p}%` } }),
     ]),
   ]);
 }
@@ -70,14 +69,12 @@ export function grafico(series, { formato = compact, alto = 150, escalaAjustada 
       el('div', { class: 'chart__stack' }, [
         el('div', {
           class: 'chart__bar',
-          style: { '--j': j },
-          dataset: { h: altura(s.a) },
+          style: { '--j': j, height: altura(s.a) },
           title: `${s.label}: ${formato(s.a)}`,
         }),
         s.b !== undefined ? el('div', {
           class: 'chart__bar chart__bar--alt',
-          style: { '--j': j },
-          dataset: { h: altura(s.b) },
+          style: { '--j': j, height: altura(s.b) },
           title: `${s.label}: ${formato(s.b)}`,
         }) : null,
       ]),

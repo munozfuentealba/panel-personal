@@ -537,13 +537,17 @@ h1, h2, h3, h4 { font-weight: 600; line-height: 1.25; letter-spacing: -.015em; }
   background: var(--surface-hover);
   overflow: hidden;
 }
+/* El ancho final va inline; la animación la hace crecer desde 0. Así no
+   depende de que un rAF corra después del montaje. */
 .bar__fill {
   height: 100%;
   border-radius: inherit;
   background: var(--sec, var(--accent));
   width: 0;
-  transition: width 900ms var(--ease-out);
+  animation: bar-grow 900ms var(--ease-out) backwards;
+  transition: width 400ms var(--ease-out);
 }
+@keyframes bar-grow { from { width: 0 !important; } }
 .bar__fill--over { background: #f43f5e; }
 
 .bar-row { display: flex; flex-direction: column; gap: 7px; }
@@ -786,12 +790,13 @@ textarea.input { resize: vertical; min-height: 76px; }
   max-width: 24px;
   border-radius: 5px 5px 3px 3px;
   background: var(--sec, var(--accent));
-  height: 0;
-  transition: height 800ms var(--ease-out), opacity var(--t-fast);
-  transition-delay: calc(var(--j, 0) * 45ms);
+  animation: bar-rise 800ms var(--ease-out) backwards;
+  animation-delay: calc(var(--j, 0) * 45ms);
+  transition: opacity var(--t-fast);
   position: relative;
   cursor: default;
 }
+@keyframes bar-rise { from { height: 0 !important; } }
 .chart__bar:hover { opacity: .78; }
 .chart__bar--alt { background: color-mix(in srgb, var(--sec) 32%, transparent); }
 .chart__label {

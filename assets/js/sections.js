@@ -390,7 +390,7 @@ export function empresa(ctx) {
           el('div', { class: 'list__title' }, p.nombre),
           el('div', { class: 'list__meta' }, `${p.avance} % completado`),
           el('div', { class: 'bar', style: { marginTop: '6px', maxWidth: '260px' } }, [
-            el('div', { class: 'bar__fill', dataset: { w: `${p.avance}%` } }),
+            el('div', { class: 'bar__fill', style: { width: `${p.avance}%` } }),
           ]),
         ]),
         el('span', { class: `tag ${tono[p.estado] || ''}` }, p.estado),
@@ -573,7 +573,7 @@ export function musica(ctx) {
             el('div', { class: 'list__title' }, p.nombre),
             el('div', { class: 'list__meta' }, `${p.tracks} ${p.tracks === 1 ? 'track' : 'tracks'} · ${p.avance} %`),
             el('div', { class: 'bar', style: { marginTop: '6px' } }, [
-              el('div', { class: 'bar__fill', dataset: { w: `${p.avance}%` } }),
+              el('div', { class: 'bar__fill', style: { width: `${p.avance}%` } }),
             ]),
           ]),
           el('span', { class: `tag ${tonoEtapa[p.etapa] ?? ''}` }, p.etapa),

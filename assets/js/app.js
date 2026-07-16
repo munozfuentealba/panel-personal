@@ -1,6 +1,6 @@
 /* Arranque: tema, navegación, router y clima. */
 
-import { el, icon, escalonar, animarEntrada } from './utils.js';
+import { el, icon, escalonar } from './utils.js';
 import { obtenerClima, wmoIcono } from './weather.js';
 import * as S from './sections.js';
 
@@ -157,8 +157,6 @@ function pintar(sec, { animar = true } = {}) {
     void dom.view.offsetWidth; // reinicia la animación
     dom.view.classList.add('is-entering');
   }
-  // Barras y gráficos crecen desde 0 una vez montados.
-  animarEntrada(dom.view);
 }
 
 async function navegar() {
