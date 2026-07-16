@@ -194,6 +194,10 @@ function cargar() {
 
 export const datos = cargar();
 
+/* Suscriptores que replican cada cambio fuera del navegador (respaldo). */
+const oyentes = new Set();
+export const alGuardar = (fn) => { oyentes.add(fn); return () => oyentes.delete(fn); };
+
 export function guardar() {
   datos.esEjemplo = false;
   try {
@@ -201,6 +205,32 @@ export function guardar() {
   } catch (e) {
     console.warn('No se pudo guardar en localStorage', e);
   }
+  for (const fn of oyentes) {
+    try { fn(datos); } catch (e) { console.warn('Fallo un oyente de guardado', e); }
+  }
+}
+
+/**
+ * Reemplaza el contenido con el de un respaldo.
+ * Valida por encima: un JSON cualquiera no debe dejar el panel inservible.
+ */
+export function importar(obj) {
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
+    throw new Error('El archivo no tiene el formato del panel.');
+  }
+  const esperadas = ['finanzas', 'marca', 'empresa', 'instagram', 'musica', 'iglesia', 'familia', 'trabajo'];
+  if (!esperadas.some((k) => k in obj)) {
+    throw new Error('El archivo no parece un respaldo del panel.');
+  }
+  const base = structuredClone(SEED);
+  for (const k of Object.keys(obj)) {
+    base[k] = (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k]))
+      ? { ...base[k], ...obj[k] }
+      : obj[k];
+  }
+  base.esEjemplo = false;
+  localStorage.setItem(KEY, JSON.stringify(base));
+  return base;
 }
 
 export function reiniciar() {

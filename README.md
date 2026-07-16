@@ -20,15 +20,35 @@ HTML, CSS y JavaScript con módulos ES nativos.
 
 ## Dónde viven los datos
 
-Todo lo que ingresas se guarda en el **localStorage de tu navegador**. No hay
-servidor, base de datos ni cuenta: nada de lo que escribas se sube a este
+Cada cambio se guarda solo, al instante, en el **localStorage de tu navegador**.
+No hay servidor, base de datos ni cuenta: nada de lo que escribas se sube a este
 repositorio ni sale de tu equipo.
 
-Consecuencias prácticas:
+**Los datos no están en GitHub, y no pueden estarlo**, por dos razones:
 
-- Si abres el panel en otro equipo o navegador, verás los datos de ejemplo.
-- Si borras los datos de navegación, se pierde lo ingresado.
-- Usa **Ajustes → Exportar datos** para descargar un respaldo en JSON.
+1. Este repositorio es público. Guardar aquí las finanzas, la facturación o los
+   asuntos de familia los dejaría visibles para cualquiera — y el historial de
+   git no olvida, así que borrarlos después no los borraría.
+2. Un sitio en GitHub Pages solo sirve archivos; no puede escribir en su propio
+   repositorio. Para lograrlo haría falta un token con permiso de escritura
+   dentro del navegador, que en un sitio público queda expuesto a cualquiera.
+
+GitHub aloja la *aplicación*; tu navegador guarda los *datos*. Son cosas
+distintas: borrar tus datos no borra la app, y la app estando en GitHub no
+respalda tus datos.
+
+### Para no perder nada
+
+**Ajustes → Respaldo automático**: eliges un archivo una vez (por ejemplo dentro
+de iCloud Drive) y desde ahí cada cambio se escribe también ahí, solo. Como
+iCloud sincroniza, los datos quedan en todos tus equipos. Usa la File System
+Access API: funciona en Chrome y Edge, no en Safari ni Firefox.
+
+**Ajustes → Copia manual**: Exportar descarga un JSON; Importar lo restaura.
+Funciona en cualquier navegador.
+
+Sin respaldo, si borras los datos de navegación o abres el panel en otro equipo,
+verás los datos de ejemplo.
 
 ## Sobre la sección de Instagram
 
@@ -65,6 +85,7 @@ assets/
     sections.js       Render de cada sección
     components.js     Tarjetas, métricas, barras y gráficos
     store.js          Estado y persistencia en localStorage
+    backup.js         Respaldo automático en archivo (File System Access)
     weather.js        Open-Meteo
     utils.js          Formato (es-CL) y utilidades de DOM
 ```

@@ -2,6 +2,7 @@
 
 import { el, icon, escalonar } from './utils.js';
 import { obtenerClima, wmoIcono } from './weather.js';
+import { iniciarRespaldo } from './backup.js';
 import * as S from './sections.js';
 
 /* ─── Mapa de secciones ───────────────────────────────────────────── */
@@ -140,13 +141,22 @@ const wmoTextoCorto = (c) => `${c.ahora.temp}° · máx ${c.dias[0].max}° / mí
 
 /* ─── Router ──────────────────────────────────────────────────────── */
 
+/* Limpiezas que deja la sección actual (suscripciones, timers). */
+let limpiezas = [];
+
 const ctx = {
   get clima() { return clima; },
   recargar: () => pintar(actual, { animar: false }),
   irA: (id) => { location.hash = `#/${id}`; },
+  alSalir: (fn) => limpiezas.push(fn),
 };
 
 function pintar(sec, { animar = true } = {}) {
+  for (const fn of limpiezas) {
+    try { fn(); } catch (e) { console.warn('Fallo una limpieza de sección', e); }
+  }
+  limpiezas = [];
+
   const nodos = sec.render(ctx);
   dom.view.replaceChildren(...nodos.filter(Boolean));
   dom.view.style.setProperty('--sec', sec.color);
@@ -201,6 +211,9 @@ async function navegar() {
 async function init() {
   initTema();
   construirNav();
+
+  // Reanuda el respaldo en archivo si el permiso sigue vigente.
+  iniciarRespaldo(await import('./store.js'));
 
   document.getElementById('navOpen').addEventListener('click', abrirMenu);
   document.getElementById('navClose').addEventListener('click', cerrarMenu);

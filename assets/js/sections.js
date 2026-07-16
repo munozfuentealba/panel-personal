@@ -6,7 +6,8 @@
  */
 
 import { el, icon, clp, num, compact, pct, fecha, relativo, hoyISO, toast } from './utils.js';
-import { datos, guardar, uid, exportar, reiniciar } from './store.js';
+import { datos, guardar, uid, exportar, reiniciar, importar } from './store.js';
+import * as R from './backup.js';
 import { wmoIcono, wmoTexto, CIUDADES } from './weather.js';
 import {
   card, metrica, delta, barra, grafico, leyenda, sparkline,
@@ -803,15 +804,135 @@ export function trabajo(ctx) {
    Ajustes
    ══════════════════════════════════════════════════════════════════ */
 
-export function ajustes(ctx) {
-  return [
-    encabezado('i-resumen', 'Ajustes', 'Tus datos viven en este navegador. Exporta si vas a cambiar de equipo.'),
-    el('div', { class: 'grid grid--2' }, [
-      card('Copia de seguridad', [
+/** Tarjeta de respaldo automático: refleja el estado real del archivo vinculado. */
+function tarjetaRespaldo(ctx) {
+  const cuerpo = el('div', { class: 'card__body' });
+
+  const pintar = () => {
+    const e = R.estado;
+    const hijos = [];
+
+    if (!e.soportado) {
+      hijos.push(
         el('p', { style: { fontSize: '13.5px', color: 'var(--text-2)' } },
-          'Descarga un archivo JSON con todo lo que has ingresado. Guárdalo donde quieras; no se sube a ninguna parte.'),
-        el('div', {}, [el('button', { class: 'btn btn--primary', onclick: () => { exportar(); toast('Copia descargada.'); } }, 'Exportar datos')]),
+          'Este navegador no permite escribir en un archivo automáticamente. Funciona en Chrome y Edge; ' +
+          'en Safari y Firefox usa la copia manual de más abajo.'),
+        el('span', { class: 'tag' }, 'No disponible aquí'),
+      );
+    } else if (e.activo) {
+      hijos.push(
+        el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' } }, [
+          el('span', { class: 'tag tag--ok' }, [icon('i-check'), 'Guardando solo']),
+          el('span', { style: { fontSize: '13px', color: 'var(--text-2)' } }, e.nombre),
+        ]),
+        el('p', { style: { fontSize: '13px', color: 'var(--text-3)' } },
+          e.ultimo
+            ? `Última escritura: ${e.ultimo.toLocaleTimeString('es-CL')}. Cada cambio se guarda en el archivo.`
+            : 'Cada cambio que hagas se escribirá en el archivo.'),
+        el('div', {}, [el('button', {
+          class: 'btn btn--sm',
+          onclick: async () => { await R.olvidarHandle(); R.desactivar(); toast('Respaldo desconectado.'); },
+        }, 'Desconectar')]),
+      );
+    } else if (e.pendiente) {
+      hijos.push(
+        el('p', { style: { fontSize: '13.5px', color: 'var(--text-2)' } },
+          e.error
+            ? `Se interrumpió el respaldo: ${e.error}. Vuelve a conectarlo.`
+            : `Hay un archivo vinculado (${e.nombre ?? 'respaldo'}), pero el navegador necesita que confirmes el permiso.`),
+        el('div', {}, [el('button', {
+          class: 'btn btn--primary',
+          onclick: async () => {
+            if (await R.reanudar(datos)) toast('Respaldo reanudado.');
+            else toast('No se otorgó el permiso.');
+          },
+        }, 'Reconectar respaldo')]),
+      );
+    } else {
+      hijos.push(
+        el('p', { style: { fontSize: '13.5px', color: 'var(--text-2)' } },
+          'Elige un archivo (por ejemplo dentro de tu iCloud Drive) y cada cambio se guardará ahí solo, ' +
+          'además del navegador. Como iCloud sincroniza, tus datos quedan en todos tus equipos.'),
+        el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } }, [
+          el('button', {
+            class: 'btn btn--primary',
+            onclick: async () => {
+              try {
+                const h = await R.conectarNuevo();
+                R.activar(h, datos);
+                toast('Respaldo activado.');
+              } catch (err) {
+                if (err.name !== 'AbortError') toast('No se pudo conectar el archivo.');
+              }
+            },
+          }, [icon('i-check'), 'Guardar en un archivo']),
+          el('button', {
+            class: 'btn',
+            onclick: async () => {
+              try {
+                const h = await R.abrirExistente();
+                const previo = await R.leer(h);
+                if (previo && confirm('¿Cargar los datos de ese archivo? Reemplazará lo que tienes en este navegador.')) {
+                  importar(previo);
+                  location.reload();
+                  return;
+                }
+                R.activar(h, datos);
+                toast('Respaldo activado.');
+              } catch (err) {
+                if (err.name !== 'AbortError') toast('No se pudo abrir el archivo.');
+              }
+            },
+          }, 'Usar un respaldo existente'),
+        ]),
+      );
+    }
+    cuerpo.replaceChildren(...hijos);
+  };
+
+  pintar();
+  // La tarjeta se redibuja sola cuando cambia el estado del respaldo.
+  const off = R.alCambiarEstado(pintar);
+  ctx.alSalir?.(off);
+
+  return card('Respaldo automático', [cuerpo]);
+}
+
+export function ajustes(ctx) {
+  const entrada = el('input', {
+    type: 'file', accept: 'application/json,.json',
+    style: { display: 'none' },
+    onchange: async (e) => {
+      const f = e.target.files[0];
+      if (!f) return;
+      try {
+        const obj = JSON.parse(await f.text());
+        if (!confirm('¿Reemplazar los datos de este navegador con los del archivo?')) return;
+        importar(obj);
+        location.reload();
+      } catch (err) {
+        toast(err.message || 'El archivo no se pudo leer.');
+      }
+    },
+  });
+
+  return [
+    encabezado('i-resumen', 'Ajustes', 'Dónde se guardan tus datos y cómo respaldarlos.'),
+
+    el('div', { class: 'grid grid--2' }, [
+      tarjetaRespaldo(ctx),
+      card('Copia manual', [
+        el('p', { style: { fontSize: '13.5px', color: 'var(--text-2)' } },
+          'Descarga un archivo con todo lo que has ingresado, o recupera uno que hayas guardado antes.'),
+        el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } }, [
+          el('button', { class: 'btn btn--primary', onclick: () => { exportar(); toast('Copia descargada.'); } }, 'Exportar'),
+          el('button', { class: 'btn', onclick: () => entrada.click() }, 'Importar'),
+          entrada,
+        ]),
       ]),
+    ]),
+
+    el('div', { class: 'grid grid--2' }, [
       card('Restablecer', [
         el('p', { style: { fontSize: '13.5px', color: 'var(--text-2)' } },
           'Borra todo lo que ingresaste y vuelve a los datos de ejemplo. Esto no se puede deshacer.'),
@@ -821,10 +942,12 @@ export function ajustes(ctx) {
         }, 'Restablecer al ejemplo')]),
       ]),
     ]),
+
     aviso([el('div', {}, [
-      el('strong', {}, 'Dónde se guarda todo: '),
-      'en el localStorage de este navegador. Si borras los datos de navegación o abres el panel en otro equipo, ',
-      'empezarás desde el ejemplo — por eso conviene exportar de vez en cuando.',
+      el('strong', {}, 'Por qué tus datos no están en GitHub: '),
+      'el repositorio es público, así que cualquiera podría ver tus finanzas, tu facturación y tu familia. ',
+      'Además, un sitio en GitHub Pages solo puede leer archivos, nunca escribir en su propio repositorio. ',
+      'Por eso tus datos viven en este navegador y, si activas el respaldo, en un archivo tuyo.',
     ])]),
   ];
 }
