@@ -552,6 +552,17 @@ h1, h2, h3, h4 { font-weight: 600; line-height: 1.25; letter-spacing: -.015em; }
 .bar__fill--over { background: #f43f5e; }
 
 .bar-row { display: flex; flex-direction: column; gap: 7px; }
+
+/* Progreso ajustable */
+.progreso { display: flex; flex-direction: column; gap: 2px; }
+.range {
+  width: 100%;
+  accent-color: var(--sec, var(--accent));
+  height: 18px;
+  cursor: grab;
+  background: transparent;
+}
+.range:active { cursor: grabbing; }
 .bar-row__top {
   display: flex;
   justify-content: space-between;

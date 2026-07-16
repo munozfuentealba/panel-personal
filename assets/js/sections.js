@@ -11,7 +11,7 @@ import * as R from './backup.js';
 import { wmoIcono, wmoTexto, CIUDADES } from './weather.js';
 import {
   card, metrica, delta, barra, grafico, leyenda, sparkline,
-  listaVacia, aviso, encabezado, botonIcono,
+  listaVacia, aviso, encabezado, botonIcono, progresoEditable,
 } from './components.js';
 
 /* ─── Helpers de dominio ──────────────────────────────────────────── */
@@ -26,6 +26,19 @@ function totalesMes(movs, mes = mesActual()) {
 }
 
 const variacion = (act, prev) => (prev ? ((act - prev) / prev) * 100 : 0);
+
+/** Botón de borrar para un elemento de una lista. Guarda y repinta. */
+function borrar(contenedor, campo, id, ctx, etiqueta = 'elemento') {
+  return botonIcono('i-basura', `Eliminar ${etiqueta}`, () => {
+    contenedor[campo] = contenedor[campo].filter((x) => x.id !== id);
+    guardar();
+    toast('Eliminado.');
+    ctx.recargar();
+  });
+}
+
+/** Guarda y avisa, sin repintar: para deslizadores y campos en vivo. */
+const guardarSuave = () => { guardar(); toast('Guardado.'); };
 
 /** Ordena por fecha ascendente y deja solo lo que aún no pasa. */
 const proximos = (arr, n = 5) => arr
@@ -242,10 +255,65 @@ export function finanzas(ctx) {
         leyenda([['Ingresos', false], ['Gastos', true]]),
       ]),
       card('Presupuestos del mes', [
-        el('div', { style: { display: 'flex', flexDirection: 'column', gap: '14px' } },
-          f.presupuestos.map((p) => barra(p.cat, porCat[p.cat] || 0, p.tope,
-            `${clp(porCat[p.cat] || 0)} / ${clp(p.tope)}`))),
+        f.presupuestos.length
+          ? el('div', { style: { display: 'flex', flexDirection: 'column', gap: '14px' } },
+              f.presupuestos.map((p) => el('div', { style: { display: 'flex', alignItems: 'flex-start', gap: '8px' } }, [
+                el('div', { style: { flex: '1', minWidth: '0' } }, [
+                  barra(p.cat, porCat[p.cat] || 0, p.tope, `${clp(porCat[p.cat] || 0)} / ${clp(p.tope)}`),
+                ]),
+                el('input', {
+                  class: 'input', type: 'number', min: '0', step: '1000', value: p.tope,
+                  style: { width: '110px', flex: 'none' },
+                  'aria-label': `Tope de ${p.cat}`,
+                  onchange: (e) => {
+                    p.tope = Math.max(Number(e.target.value) || 0, 0);
+                    guardar(); toast('Presupuesto actualizado.'); ctx.recargar();
+                  },
+                }),
+                botonIcono('i-basura', 'Eliminar presupuesto', () => {
+                  f.presupuestos = f.presupuestos.filter((x) => x !== p);
+                  guardar(); toast('Eliminado.'); ctx.recargar();
+                }),
+              ])))
+          : listaVacia('Sin presupuestos definidos.'),
+        el('details', { style: { marginTop: '4px' } }, [
+          el('summary', { style: { cursor: 'pointer', fontSize: '13px', color: 'var(--text-3)', padding: '4px 0' } },
+            'Agregar categoría'),
+          formSimple(ctx, [
+            { name: 'cat', label: 'Categoría', placeholder: 'Salud', required: true },
+            { name: 'tope', label: 'Tope mensual', type: 'number', value: 100000 },
+          ], (d) => { f.presupuestos.push({ cat: d.cat, tope: Number(d.tope) || 0 }); }),
+        ]),
       ]),
+    ]),
+
+    card('Meta de ahorro', [
+      el('form', { class: 'form-grid', onsubmit: (e) => {
+        e.preventDefault();
+        const d = Object.fromEntries(new FormData(e.target));
+        f.ahorro.nombre = d.nombre.trim() || f.ahorro.nombre;
+        f.ahorro.actual = Number(d.actual) || 0;
+        f.ahorro.meta = Number(d.meta) || 0;
+        guardar(); toast('Meta actualizada.'); ctx.recargar();
+      } }, [
+        el('div', { class: 'field' }, [
+          el('label', { for: 'ah-nombre' }, 'Nombre'),
+          el('input', { class: 'input', id: 'ah-nombre', name: 'nombre', value: f.ahorro.nombre }),
+        ]),
+        el('div', { class: 'field' }, [
+          el('label', { for: 'ah-actual' }, 'Ahorrado'),
+          el('input', { class: 'input', id: 'ah-actual', name: 'actual', type: 'number', min: '0', value: f.ahorro.actual }),
+        ]),
+        el('div', { class: 'field' }, [
+          el('label', { for: 'ah-meta' }, 'Meta'),
+          el('input', { class: 'input', id: 'ah-meta', name: 'meta', type: 'number', min: '0', value: f.ahorro.meta }),
+        ]),
+        el('div', { class: 'field', style: { justifyContent: 'flex-end' } }, [
+          el('button', { class: 'btn btn--primary', type: 'submit' }, [icon('i-check'), 'Guardar meta']),
+        ]),
+      ]),
+      barra(f.ahorro.nombre, f.ahorro.actual, f.ahorro.meta,
+        `${clp(f.ahorro.actual)} / ${clp(f.ahorro.meta)}`),
     ]),
 
     el('div', { class: 'grid grid--wide' }, [
@@ -298,26 +366,43 @@ export function marca(ctx) {
 
     el('div', { class: 'grid grid--wide' }, [
       card('Objetivos', [
-        el('div', { style: { display: 'flex', flexDirection: 'column', gap: '14px' } },
-          m.objetivos.map((o) => el('div', {}, [
-            barra(o.texto, o.avance, 100, `${o.avance} %`),
-            el('input', {
-              type: 'range', min: '0', max: '100', value: o.avance,
-              style: { width: '100%', marginTop: '6px', accentColor: 'var(--sec)' },
-              'aria-label': `Avance de: ${o.texto}`,
-              oninput: (e) => {
-                o.avance = Number(e.target.value);
-                const fill = e.target.previousSibling.querySelector('.bar__fill');
-                fill.style.width = `${o.avance}%`;
-                e.target.previousSibling.querySelector('.bar-row__top span:last-child').textContent = `${o.avance} %`;
-              },
-              onchange: () => { guardar(); toast('Avance guardado.'); },
-            }),
-          ]))),
+        m.objetivos.length
+          ? el('div', { style: { display: 'flex', flexDirection: 'column', gap: '10px' } },
+              m.objetivos.map((o) => el('div', { style: { display: 'flex', alignItems: 'flex-start', gap: '8px' } }, [
+                el('div', { style: { flex: '1', minWidth: '0' } }, [
+                  progresoEditable(o.texto, o, 'avance', { alSoltar: guardarSuave }),
+                ]),
+                borrar(m, 'objetivos', o.id, ctx, 'objetivo'),
+              ])))
+          : listaVacia('Sin objetivos. Agrega el primero abajo.'),
+        el('details', { style: { marginTop: '8px' } }, [
+          el('summary', { style: { cursor: 'pointer', fontSize: '13px', color: 'var(--text-3)', padding: '4px 0' } },
+            'Agregar objetivo'),
+          formSimple(ctx, [
+            { name: 'texto', label: 'Objetivo', placeholder: 'Publicar 3 piezas por semana', required: true },
+            { name: 'avance', label: 'Avance inicial (%)', type: 'number', value: 0 },
+          ], (d) => { m.objetivos.push({ id: uid(), texto: d.texto, avance: Math.min(Number(d.avance) || 0, 100) }); }),
+        ]),
       ]),
       card('Pilares de contenido', [
-        el('div', { style: { display: 'flex', flexDirection: 'column', gap: '14px' } },
-          m.pilares.map((p) => barra(p.nombre, p.peso, 100, `${p.peso} %`))),
+        el('div', { style: { display: 'flex', flexDirection: 'column', gap: '10px' } },
+          m.pilares.map((p) => el('div', { style: { display: 'flex', alignItems: 'flex-start', gap: '8px' } }, [
+            el('div', { style: { flex: '1', minWidth: '0' } }, [
+              progresoEditable(p.nombre, p, 'peso', { alSoltar: guardarSuave }),
+            ]),
+            botonIcono('i-basura', 'Eliminar pilar', () => {
+              m.pilares = m.pilares.filter((x) => x !== p);
+              guardar(); toast('Eliminado.'); ctx.recargar();
+            }),
+          ]))),
+        el('details', { style: { marginTop: '8px' } }, [
+          el('summary', { style: { cursor: 'pointer', fontSize: '13px', color: 'var(--text-3)', padding: '4px 0' } },
+            'Agregar pilar'),
+          formSimple(ctx, [
+            { name: 'nombre', label: 'Pilar', placeholder: 'Producción musical', required: true },
+            { name: 'peso', label: 'Peso (%)', type: 'number', value: 20 },
+          ], (d) => { m.pilares.push({ nombre: d.nombre, peso: Math.min(Number(d.peso) || 0, 100) }); }),
+        ]),
       ]),
     ]),
 
@@ -384,19 +469,61 @@ export function empresa(ctx) {
       ]),
     ]),
 
-    card('Proyectos', [
-      el('div', { class: 'list' }, e.proyectos.map((p) => el('div', { class: 'list__item' }, [
-        el('div', { class: 'avatar' }, p.nombre.slice(0, 2).toUpperCase()),
-        el('div', { class: 'list__main' }, [
-          el('div', { class: 'list__title' }, p.nombre),
-          el('div', { class: 'list__meta' }, `${p.avance} % completado`),
-          el('div', { class: 'bar', style: { marginTop: '6px', maxWidth: '260px' } }, [
-            el('div', { class: 'bar__fill', style: { width: `${p.avance}%` } }),
+    el('div', { class: 'grid grid--wide' }, [
+      card('Proyectos', [
+        e.proyectos.length
+          ? el('div', { class: 'list' }, e.proyectos.map((p) => el('div', { class: 'list__item' }, [
+              el('div', { class: 'avatar' }, p.nombre.slice(0, 2).toUpperCase()),
+              el('div', { class: 'list__main' }, [
+                el('div', { class: 'list__title' }, p.nombre),
+                progresoEditable(`${clp(p.valor)}`, p, 'avance', { alSoltar: guardarSuave }),
+              ]),
+              el('select', {
+                class: 'input',
+                style: { width: 'auto', flex: 'none' },
+                'aria-label': `Estado de ${p.nombre}`,
+                onchange: (ev) => { p.estado = ev.target.value; guardar(); toast('Estado actualizado.'); ctx.recargar(); },
+              }, ['En curso', 'Propuesta', 'Cerrado'].map((o) =>
+                el('option', { value: o, selected: o === p.estado }, o))),
+              borrar(e, 'proyectos', p.id, ctx, 'proyecto'),
+            ])))
+          : listaVacia('Sin proyectos. Agrega el primero al lado.'),
+      ]),
+      el('div', { style: { display: 'flex', flexDirection: 'column', gap: '20px' } }, [
+        card('Nuevo proyecto', [
+          formSimple(ctx, [
+            { name: 'nombre', label: 'Proyecto', placeholder: 'Jingle radial — Cliente B', required: true },
+            { name: 'valor', label: 'Valor', type: 'number', value: 0 },
+            { name: 'estado', label: 'Estado', tipo: 'select', opciones: ['En curso', 'Propuesta', 'Cerrado'], value: 'Propuesta' },
+            { name: 'avance', label: 'Avance (%)', type: 'number', value: 0 },
+          ], (d) => {
+            e.proyectos.push({
+              id: uid(), nombre: d.nombre, estado: d.estado,
+              valor: Number(d.valor) || 0,
+              avance: Math.min(Number(d.avance) || 0, 100),
+            });
+          }),
+        ]),
+        card('Cifras del mes', [
+          el('form', { class: 'form-grid', onsubmit: (ev) => {
+            ev.preventDefault();
+            const d = Object.fromEntries(new FormData(ev.target));
+            e.nombre = d.nombre.trim() || e.nombre;
+            e.kpis.facturacionMes = Number(d.facturacion) || 0;
+            e.kpis.clientesActivos = Number(d.clientes) || 0;
+            e.kpis.margen = Number(d.margen) || 0;
+            guardar(); toast('Cifras actualizadas.'); ctx.recargar();
+          } }, [
+            campo('emp-nombre', 'nombre', 'Nombre de la empresa', e.nombre, 'text'),
+            campo('emp-fact', 'facturacion', 'Facturación del mes', e.kpis.facturacionMes, 'number'),
+            campo('emp-cli', 'clientes', 'Clientes activos', e.kpis.clientesActivos, 'number'),
+            campo('emp-margen', 'margen', 'Margen (%)', e.kpis.margen, 'number'),
+            el('div', { class: 'field', style: { gridColumn: '1 / -1' } }, [
+              el('button', { class: 'btn btn--primary', type: 'submit' }, [icon('i-check'), 'Guardar cifras']),
+            ]),
           ]),
         ]),
-        el('span', { class: `tag ${tono[p.estado] || ''}` }, p.estado),
-        el('span', { class: 'list__value' }, clp(p.valor)),
-      ]))),
+      ]),
     ]),
   ];
 }
@@ -569,16 +696,39 @@ export function musica(ctx) {
         barra('Meta semanal', horas, m.metaHoras, `${horas} / ${m.metaHoras} h`),
       ]),
       card('Proyectos', [
-        el('div', { class: 'list' }, m.proyectos.map((p) => el('div', { class: 'list__item' }, [
-          el('div', { class: 'list__main' }, [
-            el('div', { class: 'list__title' }, p.nombre),
-            el('div', { class: 'list__meta' }, `${p.tracks} ${p.tracks === 1 ? 'track' : 'tracks'} · ${p.avance} %`),
-            el('div', { class: 'bar', style: { marginTop: '6px' } }, [
-              el('div', { class: 'bar__fill', style: { width: `${p.avance}%` } }),
-            ]),
-          ]),
-          el('span', { class: `tag ${tonoEtapa[p.etapa] ?? ''}` }, p.etapa),
-        ]))),
+        m.proyectos.length
+          ? el('div', { class: 'list' }, m.proyectos.map((p) => el('div', { class: 'list__item' }, [
+              el('div', { class: 'list__main' }, [
+                el('div', { class: 'list__title' }, p.nombre),
+                progresoEditable(`${p.tracks} ${p.tracks === 1 ? 'track' : 'tracks'}`, p, 'avance',
+                  { alSoltar: guardarSuave }),
+              ]),
+              el('select', {
+                class: 'input',
+                style: { width: 'auto', flex: 'none' },
+                'aria-label': `Etapa de ${p.nombre}`,
+                onchange: (ev) => { p.etapa = ev.target.value; guardar(); toast('Etapa actualizada.'); ctx.recargar(); },
+              }, ['Composición', 'Grabación', 'Mezcla', 'Masterizado'].map((o) =>
+                el('option', { value: o, selected: o === p.etapa }, o))),
+              borrar(m, 'proyectos', p.id, ctx, 'proyecto'),
+            ])))
+          : listaVacia('Sin proyectos.'),
+        el('details', { style: { marginTop: '8px' } }, [
+          el('summary', { style: { cursor: 'pointer', fontSize: '13px', color: 'var(--text-3)', padding: '4px 0' } },
+            'Agregar proyecto'),
+          formSimple(ctx, [
+            { name: 'nombre', label: 'Proyecto', placeholder: 'EP — "Sur"', required: true },
+            { name: 'etapa', label: 'Etapa', tipo: 'select', opciones: ['Composición', 'Grabación', 'Mezcla', 'Masterizado'], value: 'Composición' },
+            { name: 'tracks', label: 'Tracks', type: 'number', value: 1 },
+            { name: 'avance', label: 'Avance (%)', type: 'number', value: 0 },
+          ], (d) => {
+            m.proyectos.push({
+              id: uid(), nombre: d.nombre, etapa: d.etapa,
+              tracks: Number(d.tracks) || 1,
+              avance: Math.min(Number(d.avance) || 0, 100),
+            });
+          }),
+        ]),
       ]),
     ]),
 
@@ -653,11 +803,22 @@ export function iglesia(ctx) {
           ], (d) => { i.agenda.push({ id: uid(), ...d }); }),
         ]),
         card('Repertorio', [
-          el('div', { class: 'list' }, i.repertorio.map((r) => el('div', { class: 'list__item' }, [
-            el('span', { class: 'dot' }),
-            el('div', { class: 'list__main' }, [el('div', { class: 'list__title' }, r.titulo)]),
-            el('span', { class: 'tag' }, `Tono ${r.tono}`),
-          ]))),
+          i.repertorio.length
+            ? el('div', { class: 'list' }, i.repertorio.map((r) => el('div', { class: 'list__item' }, [
+                el('span', { class: 'dot' }),
+                el('div', { class: 'list__main' }, [el('div', { class: 'list__title' }, r.titulo)]),
+                el('span', { class: 'tag' }, `Tono ${r.tono}`),
+                borrar(i, 'repertorio', r.id, ctx, 'canción'),
+              ])))
+            : listaVacia('Sin canciones.'),
+          el('details', { style: { marginTop: '8px' } }, [
+            el('summary', { style: { cursor: 'pointer', fontSize: '13px', color: 'var(--text-3)', padding: '4px 0' } },
+              'Agregar canción'),
+            formSimple(ctx, [
+              { name: 'titulo', label: 'Canción', placeholder: 'Océanos', required: true },
+              { name: 'tono', label: 'Tono', placeholder: 'D' },
+            ], (d) => { i.repertorio.push({ id: uid(), titulo: d.titulo, tono: d.tono || '—' }); }),
+          ]),
         ]),
       ]),
     ]),
@@ -701,6 +862,9 @@ export function familia(ctx) {
                   `${e.tipo}${e.quien ? ` · ${e.quien}` : ''} · ${fecha(e.fecha, { weekday: 'long', day: 'numeric', month: 'long' })}`),
               ]),
               el('span', { class: 'tag tag--accent' }, relativo(e.fecha)),
+              // El calendario mezcla planes y fechas: hay que borrar del que corresponda.
+              borrar(f, e.tipo === 'Plan' ? 'eventos' : 'fechas', e.id, ctx,
+                e.tipo === 'Plan' ? 'plan' : 'fecha'),
             ])))
           : listaVacia('Sin planes próximos.'),
       ]),
@@ -712,10 +876,32 @@ export function familia(ctx) {
             { name: 'fecha', label: 'Fecha', type: 'date', value: hoyISO() },
           ], (d) => { f.eventos.push({ id: uid(), ...d }); }),
         ]),
-        card('Intenciones', [
-          el('div', { style: { display: 'flex', flexDirection: 'column', gap: '14px' } },
-            f.intenciones.map((i) => barra(i.texto, i.avance, 100, `${i.avance} %`))),
+        card('Fecha importante', [
+          formSimple(ctx, [
+            { name: 'nombre', label: 'Fecha', placeholder: 'Cumpleaños — Mamá', required: true },
+            { name: 'fecha', label: 'Día', type: 'date', value: hoyISO() },
+          ], (d) => { f.fechas.push({ id: uid(), nombre: d.nombre, fecha: d.fecha }); }),
         ]),
+      ]),
+    ]),
+
+    card('Intenciones', [
+      f.intenciones.length
+        ? el('div', { style: { display: 'flex', flexDirection: 'column', gap: '10px' } },
+            f.intenciones.map((i) => el('div', { style: { display: 'flex', alignItems: 'flex-start', gap: '8px' } }, [
+              el('div', { style: { flex: '1', minWidth: '0' } }, [
+                progresoEditable(i.texto, i, 'avance', { alSoltar: guardarSuave }),
+              ]),
+              borrar(f, 'intenciones', i.id, ctx, 'intención'),
+            ])))
+        : listaVacia('Sin intenciones.'),
+      el('details', { style: { marginTop: '8px' } }, [
+        el('summary', { style: { cursor: 'pointer', fontSize: '13px', color: 'var(--text-3)', padding: '4px 0' } },
+          'Agregar intención'),
+        formSimple(ctx, [
+          { name: 'texto', label: 'Intención', placeholder: 'Una salida familiar al mes', required: true },
+          { name: 'avance', label: 'Avance (%)', type: 'number', value: 0 },
+        ], (d) => { f.intenciones.push({ id: uid(), texto: d.texto, avance: Math.min(Number(d.avance) || 0, 100) }); }),
       ]),
     ]),
   ];

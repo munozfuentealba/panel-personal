@@ -118,6 +118,37 @@ export function sparkline(valores) {
   return svg;
 }
 
+/**
+ * Barra de progreso con deslizador. Actualiza la barra mientras arrastras y
+ * guarda al soltar — no en cada píxel.
+ */
+export function progresoEditable(etiqueta, obj, campo, { max = 100, alSoltar, detalle } = {}) {
+  const fmt = (v) => (detalle ? detalle(v) : `${v} %`);
+  const fila = barra(etiqueta, obj[campo], max, fmt(obj[campo]));
+  const relleno = fila.querySelector('.bar__fill');
+  const texto = fila.querySelector('.bar-row__top span:last-child');
+
+  const range = el('input', {
+    type: 'range', min: '0', max: String(max), value: obj[campo],
+    class: 'range',
+    'aria-label': `Ajustar: ${etiqueta}`,
+    oninput: (e) => {
+      const v = Number(e.target.value);
+      obj[campo] = v;
+      relleno.style.width = `${Math.min((v / max) * 100, 100)}%`;
+      texto.textContent = fmt(v);
+    },
+    onchange: () => alSoltar?.(),
+  });
+
+  return el('div', { class: 'progreso' }, [fila, range]);
+}
+
+/** Fila de lista con acciones al costado. */
+export function fila(contenido, acciones = []) {
+  return el('div', { class: 'list__item' }, [...[].concat(contenido), ...acciones]);
+}
+
 export function listaVacia(msg) {
   return el('div', { class: 'empty' }, msg);
 }
