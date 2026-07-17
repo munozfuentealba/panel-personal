@@ -550,6 +550,57 @@ export function instagram(ctx) {
   }
   const mejorTipo = Object.entries(porTipo).sort((a, b) => b[1].inter / b[1].n - a[1].inter / a[1].n)[0];
 
+  // Una medición por día: si ya registré hoy, la reemplazo.
+  const registrarHoy = () => {
+    const hoy = hoyISO();
+    const i = ig.historial.findIndex((h) => h.fecha === hoy);
+    const punto = { fecha: hoy, seguidores: ig.seguidores };
+    if (i >= 0) ig.historial[i] = punto; else ig.historial.push(punto);
+    guardar();
+  };
+
+  // ── Actualización rápida: los dos números que cambian seguido ──────
+  const pista = el('div', { class: 'list__meta' }, `Última medición: ${num(prev)} seguidores`);
+  const inSeg = el('input', {
+    class: 'input', type: 'number', min: '0', inputmode: 'numeric', value: ig.seguidores,
+    'aria-label': 'Seguidores',
+    onfocus: (e) => e.target.select(),
+    oninput: (e) => {
+      const d = (Number(e.target.value) || 0) - prev;
+      pista.textContent = d === 0
+        ? `Sin cambios respecto de la última medición (${num(prev)})`
+        : `${d > 0 ? '+' : '−'}${num(Math.abs(d))} desde la última medición`;
+    },
+  });
+  const inAlc = el('input', {
+    class: 'input', type: 'number', min: '0', inputmode: 'numeric', value: ig.alcanceMes,
+    'aria-label': 'Alcance del mes',
+    onfocus: (e) => e.target.select(),
+  });
+  const rapida = el('form', {
+    style: { display: 'flex', flexDirection: 'column', gap: '12px' },
+    onsubmit: (e) => {
+      e.preventDefault();
+      ig.seguidores = Number(inSeg.value) || 0;
+      ig.alcanceMes = Number(inAlc.value) || 0;
+      registrarHoy();
+      toast('Registrado. El gráfico se actualizó.');
+      ctx.recargar();
+    },
+  }, [
+    el('div', { style: { display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-end' } }, [
+      el('div', { class: 'field', style: { flex: '1', minWidth: '130px' } }, [
+        el('label', {}, 'Seguidores'), inSeg,
+      ]),
+      el('div', { class: 'field', style: { flex: '1', minWidth: '130px' } }, [
+        el('label', {}, 'Alcance del mes'), inAlc,
+      ]),
+      el('button', { class: 'btn btn--primary', type: 'submit', style: { flex: 'none' } },
+        [icon('i-check'), 'Registrar hoy']),
+    ]),
+    pista,
+  ]);
+
   const perfil = el('form', { class: 'card__body', onsubmit: (e) => {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(e.target));
@@ -560,12 +611,7 @@ export function instagram(ctx) {
       publicaciones: Number(d.publicaciones) || 0,
       alcanceMes: Number(d.alcance) || 0,
     });
-    // Una medición por día: si ya registré hoy, la reemplazo.
-    const hoy = hoyISO();
-    const i = ig.historial.findIndex((h) => h.fecha === hoy);
-    const punto = { fecha: hoy, seguidores: ig.seguidores };
-    if (i >= 0) ig.historial[i] = punto; else ig.historial.push(punto);
-    guardar();
+    registrarHoy();
     toast('Métricas actualizadas.');
     ctx.recargar();
   } }, [
@@ -583,10 +629,16 @@ export function instagram(ctx) {
     encabezado('i-instagram', `Instagram — @${ig.usuario}`,
       'Panel de seguimiento manual. Instagram no permite leer estas métricas sin autenticación, así que los números los ingresas tú desde Perfil → Panel profesional en la app.'),
 
+    card('Actualización rápida', [
+      el('p', { class: 'list__meta', style: { marginBottom: '4px' } },
+        'Abre Instagram → Panel profesional, copia estos dos números y presiona Enter. Queda registrada la medición de hoy.'),
+      rapida,
+    ]),
+
     aviso([el('div', {}, [
       el('strong', {}, 'De dónde sacar los datos: '),
-      'en la app de Instagram, Perfil → Panel profesional → Ver todo. Ahí están seguidores, alcance e interacciones. ',
-      'Cada vez que guardes, se registra un punto en el historial y el gráfico de crecimiento se construye solo.',
+      'en la app de Instagram, Perfil → Panel profesional → Ver todo. Para las publicaciones, toca cada una → Ver estadísticas. ',
+      'Los cambios se guardan solos; el gráfico de crecimiento se arma con cada medición.',
     ])]),
 
     el('div', { class: 'grid' }, [
