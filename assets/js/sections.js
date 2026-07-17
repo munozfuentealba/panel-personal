@@ -221,6 +221,32 @@ function tarjetaSueldo(s) {
   ]);
 }
 
+/** Tarjeta con el saldo de la cuenta corriente y su evolución. */
+function tarjetaCuenta(c) {
+  if (!c || !c.saldos?.length) return null;
+  const vals = c.saldos.map((s) => s.saldo);
+  const min = Math.min(...vals);
+  const max = Math.max(...vals);
+  const minP = c.saldos.find((s) => s.saldo === min);
+  const maxP = c.saldos.find((s) => s.saldo === max);
+
+  return card(`Cuenta corriente · ${c.banco}`, [
+    el('div', { style: { display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '10px' } }, [
+      el('div', { class: 'metric__value' }, clp(c.saldoActual)),
+      c.numero ? el('span', { class: 'tag' }, `N° ${c.numero}`) : null,
+    ]),
+    el('div', { class: 'metric__label' }, `Saldo al ${fecha(c.fechaSaldo, { day: 'numeric', month: 'long', year: 'numeric' })}`),
+
+    sparkline(vals),
+
+    el('div', { class: 'legend', style: { marginTop: '6px' } }, [
+      el('span', { class: 'list__meta' }, `Mínimo ${clp(min)}${minP ? ` · ${fecha(minP.fecha)}` : ''}`),
+      el('span', { class: 'list__meta' }, `Máximo ${clp(max)}${maxP ? ` · ${fecha(maxP.fecha)}` : ''}`),
+      el('span', { class: 'list__meta' }, `${c.saldos.length} cierres de cartola`),
+    ]),
+  ]);
+}
+
 export function finanzas(ctx) {
   const f = datos.finanzas;
   const t = totalesMes(f.movimientos);
@@ -290,7 +316,10 @@ export function finanzas(ctx) {
       card('Tasa de ahorro', [metrica(t.ingresos ? pct((t.balance / t.ingresos) * 100, 0) : '—', 'Del ingreso mensual')]),
     ]),
 
-    tarjetaSueldo(f.sueldo),
+    el('div', { class: 'grid grid--2' }, [
+      tarjetaSueldo(f.sueldo),
+      tarjetaCuenta(f.cuenta),
+    ].filter(Boolean)),
 
     el('div', { class: 'grid grid--wide' }, [
       card('Ingresos vs. gastos — últimos 6 meses', [

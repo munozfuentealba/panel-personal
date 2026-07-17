@@ -54,6 +54,18 @@ const SEED = {
         { mes: 'Mar', iso: '2026-03', haberes: 1160000, descuentos: 185000, liquido: 975000 },
       ],
     },
+    // Cuenta corriente: saldo actual y evolución. Números de ejemplo.
+    cuenta: {
+      banco: 'Banco',
+      numero: '000000000',
+      saldoActual: 320000,
+      fechaSaldo: '2026-06-30',
+      saldos: [
+        { fecha: '2026-04-30', saldo: 250000 },
+        { fecha: '2026-05-31', saldo: 410000 },
+        { fecha: '2026-06-30', saldo: 320000 },
+      ],
+    },
   },
 
   marca: {
