@@ -281,8 +281,11 @@ export function finanzas(ctx) {
       `Movimientos del mes en curso. ${f.monedaNota}. Los datos se guardan solo en este navegador.`),
 
     el('div', { class: 'grid' }, [
-      card('Ingresos del mes', [metrica(clp(t.ingresos), 'Este mes', delta(variacion(t.ingresos, prev.ingresos)))]),
-      card('Gastos del mes', [metrica(clp(t.gastos), 'Este mes', delta(variacion(t.gastos, prev.gastos), { invertir: true }))]),
+      // Sin movimientos este mes no hay comparación válida: no mostramos delta.
+      card('Ingresos del mes', [metrica(clp(t.ingresos), t.delMes.length ? 'Este mes' : 'Sin registrar aún',
+        t.delMes.length ? delta(variacion(t.ingresos, prev.ingresos)) : null)]),
+      card('Gastos del mes', [metrica(clp(t.gastos), t.delMes.length ? 'Este mes' : 'Sin registrar aún',
+        t.delMes.length ? delta(variacion(t.gastos, prev.gastos), { invertir: true }) : null)]),
       card('Balance', [metrica(clp(t.balance), t.balance >= 0 ? 'A favor' : 'En rojo')]),
       card('Tasa de ahorro', [metrica(t.ingresos ? pct((t.balance / t.ingresos) * 100, 0) : '—', 'Del ingreso mensual')]),
     ]),
