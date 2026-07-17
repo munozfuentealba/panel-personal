@@ -183,6 +183,44 @@ export function resumen(ctx) {
    Finanzas
    ══════════════════════════════════════════════════════════════════ */
 
+/** Tarjeta con el resumen de liquidaciones de sueldo. */
+function tarjetaSueldo(s) {
+  if (!s || !s.liquidaciones?.length) return null;
+  const liq = s.liquidaciones;
+  const promedio = liq.reduce((a, l) => a + l.liquido, 0) / liq.length;
+  const total = liq.reduce((a, l) => a + l.liquido, 0);
+  const anio = (liq[0].iso || '').slice(0, 4);
+
+  return card(`Mi sueldo${anio ? ` — ${anio}` : ''}`, [
+    el('div', { style: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px' } }, [
+      el('div', { class: 'metric__value', style: { fontSize: '17px' } }, s.empleador),
+      el('span', { class: 'tag' }, s.cargo),
+    ]),
+    el('div', { class: 'legend', style: { marginTop: '2px' } }, [
+      el('span', { class: 'list__meta' }, `Sueldo base ${clp(s.sueldoBase)}`),
+      el('span', { class: 'list__meta' }, `Previsión ${s.prevision}`),
+      el('span', { class: 'list__meta' }, `Salud ${s.salud}`),
+    ]),
+
+    el('div', { class: 'grid', style: { margin: '4px 0' } }, [
+      metrica(clp(promedio), 'Líquido promedio mensual'),
+      metrica(clp(total), `Total percibido · ${liq.length} meses`),
+    ]),
+
+    // Líquido mensual — barra por mes.
+    grafico(liq.map((l) => ({ label: l.mes, a: l.liquido })), { formato: clp, escalaAjustada: true }),
+
+    el('div', { class: 'list' }, liq.map((l) => el('div', { class: 'list__item' }, [
+      el('div', { class: 'avatar' }, l.mes.slice(0, 3)),
+      el('div', { class: 'list__main' }, [
+        el('div', { class: 'list__title' }, `${l.mes}${(l.iso || '').slice(0, 4) ? ` ${l.iso.slice(0, 4)}` : ''}`),
+        el('div', { class: 'list__meta' }, `Haberes ${clp(l.haberes)} · Descuentos ${clp(l.descuentos)}`),
+      ]),
+      el('span', { class: 'list__value' }, clp(l.liquido)),
+    ]))),
+  ]);
+}
+
 export function finanzas(ctx) {
   const f = datos.finanzas;
   const t = totalesMes(f.movimientos);
@@ -248,6 +286,8 @@ export function finanzas(ctx) {
       card('Balance', [metrica(clp(t.balance), t.balance >= 0 ? 'A favor' : 'En rojo')]),
       card('Tasa de ahorro', [metrica(t.ingresos ? pct((t.balance / t.ingresos) * 100, 0) : '—', 'Del ingreso mensual')]),
     ]),
+
+    tarjetaSueldo(f.sueldo),
 
     el('div', { class: 'grid grid--wide' }, [
       card('Ingresos vs. gastos — últimos 6 meses', [

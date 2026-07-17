@@ -40,6 +40,20 @@ const SEED = {
       { mes: 'Jun', ingresos: 2190000, gastos: 1490000 },
       { mes: 'Jul', ingresos: 2190000, gastos: 855000 },
     ],
+    // Resumen de liquidaciones de sueldo. Números de ejemplo: los reales se
+    // cargan desde un respaldo, nunca se escriben en este archivo público.
+    sueldo: {
+      empleador: 'Mi empleador',
+      cargo: 'Cargo',
+      sueldoBase: 900000,
+      prevision: 'AFP (10,58%)',
+      salud: 'Fonasa',
+      liquidaciones: [
+        { mes: 'Ene', iso: '2026-01', haberes: 1120000, descuentos: 180000, liquido: 940000 },
+        { mes: 'Feb', iso: '2026-02', haberes: 1120000, descuentos: 180000, liquido: 940000 },
+        { mes: 'Mar', iso: '2026-03', haberes: 1160000, descuentos: 185000, liquido: 975000 },
+      ],
+    },
   },
 
   marca: {
@@ -279,8 +293,12 @@ export function exportarParaRepo() {
 }
 
 /**
- * Reemplaza el contenido con el de un respaldo.
- * Valida por encima: un JSON cualquiera no debe dejar el panel inservible.
+ * Aplica el contenido de un respaldo sobre lo que ya hay.
+ *
+ * Fusiona por sección sobre los datos actuales, no sobre el ejemplo: así un
+ * archivo parcial (p. ej. solo "finanzas" con las liquidaciones) actualiza esa
+ * sección y conserva el resto. Un respaldo completo, al traer todas las
+ * secciones, las reemplaza igual.
  */
 export function importar(obj) {
   if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
@@ -290,10 +308,15 @@ export function importar(obj) {
   if (!esperadas.some((k) => k in obj)) {
     throw new Error('El archivo no parece un respaldo del panel.');
   }
-  const base = fusionar(obj);
-  base.esEjemplo = false;
-  localStorage.setItem(KEY, JSON.stringify(base));
-  return base;
+  for (const k of Object.keys(obj)) {
+    datos[k] = (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k]))
+      ? { ...datos[k], ...obj[k] }
+      : obj[k];
+  }
+  datos.esEjemplo = false;
+  datos.actualizado = new Date().toISOString();
+  localStorage.setItem(KEY, JSON.stringify(datos));
+  return datos;
 }
 
 export function reiniciar() {
