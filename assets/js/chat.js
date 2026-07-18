@@ -107,10 +107,19 @@ function respGastos(t) {
 function respInstagram() {
   const ig = datos.instagram;
   if (!ig?.usuario) return 'No tienes datos de Instagram en el panel.';
+  const periodo = ig.periodo || 'el período';
   let r = `@${ig.usuario}: ${ig.seguidores} seguidores, ${ig.siguiendo} siguiendo y ${ig.publicaciones} publicaciones.`;
-  if (ig.insights) {
-    r += `\nEn ${ig.insights.periodo}: alcance ${ig.insights.alcance} (${ig.insights.alcanceDelta}%), ${ig.insights.impresiones} impresiones y ${ig.insights.visitas} visitas al perfil.`;
+  if (ig.visualizaciones) r += `\nEn ${periodo}: ${ig.visualizaciones.total} visualizaciones y ${ig.visualizaciones.cuentasAlcanzadas} cuentas alcanzadas.`;
+  if (ig.interacciones) r += `\n${ig.interacciones.total} interacciones de ${ig.interacciones.cuentas} cuentas.`;
+  if (ig.visitasPerfil != null) r += `\n${ig.visitasPerfil} visitas al perfil.`;
+  // Mejor franja horaria de la semana (seguidores activos).
+  const horas = [0, 3, 6, 9, 12, 15, 18, 21];
+  const dias = { L: 'lunes', M: 'martes', X: 'miércoles', J: 'jueves', V: 'viernes', S: 'sábado', D: 'domingo' };
+  let mejor = null;
+  for (const k of Object.keys(ig.actividad || {})) {
+    (ig.actividad[k] || []).forEach((v, i) => { if (!mejor || v > mejor.v) mejor = { dia: dias[k] || k, h: horas[i], v }; });
   }
+  if (mejor) r += `\nMejor momento para publicar: ${mejor.dia} alrededor de las ${mejor.h}:00 h.`;
   return r;
 }
 

@@ -484,7 +484,7 @@ export function marca(ctx) {
     el('div', { class: 'grid' }, [
       card('Avance general', [metrica(pct(avanceProm, 0), 'Promedio de objetivos')]),
       card('Objetivos activos', [metrica(m.objetivos.length, 'En seguimiento')]),
-      card('Alcance mensual', [metrica(compact(datos.instagram.alcanceMes), 'Cuentas alcanzadas')]),
+      card('Alcance mensual', [metrica(compact(datos.instagram.visualizaciones?.cuentasAlcanzadas ?? 0), 'Cuentas alcanzadas')]),
       card('Próximo hito', [
         proximos(m.hitos, 1).length
           ? metrica(relativo(proximos(m.hitos, 1)[0].fecha), proximos(m.hitos, 1)[0].texto)
@@ -660,75 +660,65 @@ export function empresa(ctx) {
    Instagram
    ══════════════════════════════════════════════════════════════════ */
 
+const IG_HORAS = [0, 3, 6, 9, 12, 15, 18, 21];
+const IG_DIAS = [
+  ['L', 'Lunes'], ['M', 'Martes'], ['X', 'Miércoles'], ['J', 'Jueves'],
+  ['V', 'Viernes'], ['S', 'Sábado'], ['D', 'Domingo'],
+];
+
 export function instagram(ctx) {
   const ig = datos.instagram;
-  const prev = ig.historial.at(-2)?.seguidores ?? ig.seguidores;
-  const posts = ig.publicacionesRecientes;
+  const hist = ig.historial ?? [];
+  const prev = hist.at(-2)?.seguidores ?? ig.seguidores;
+  const vis = ig.visualizaciones;
+  const inter = ig.interacciones;
+  const act = ig.actividad ?? {};
+  const nombreDia = (k) => (IG_DIAS.find((d) => d[0] === k) || [])[1] || k;
 
-  // Engagement = interacciones promedio por publicación sobre seguidores.
-  const interacciones = posts.map((p) => p.likes + p.comentarios + p.guardados);
-  const promInter = interacciones.reduce((s, v) => s + v, 0) / (posts.length || 1);
-  const tasa = ig.seguidores ? (promInter / ig.seguidores) * 100 : 0;
-
-  const porTipo = {};
-  for (const p of posts) {
-    porTipo[p.tipo] ??= { n: 0, inter: 0 };
-    porTipo[p.tipo].n++;
-    porTipo[p.tipo].inter += p.likes + p.comentarios + p.guardados;
+  // Mejor momento global: la franja con más seguidores activos en la semana.
+  let mejor = null;
+  for (const [k] of IG_DIAS) {
+    (act[k] || []).forEach((v, i) => { if (!mejor || v > mejor.v) mejor = { dia: k, h: IG_HORAS[i], v }; });
   }
-  const mejorTipo = Object.entries(porTipo).sort((a, b) => b[1].inter / b[1].n - a[1].inter / a[1].n)[0];
 
-  // Una medición por día: si ya registré hoy, la reemplazo.
-  const registrarHoy = () => {
-    const hoy = hoyISO();
-    const i = ig.historial.findIndex((h) => h.fecha === hoy);
-    const punto = { fecha: hoy, seguidores: ig.seguidores };
-    if (i >= 0) ig.historial[i] = punto; else ig.historial.push(punto);
-    guardar();
-  };
-
-  // ── Actualización rápida: los dos números que cambian seguido ──────
-  const pista = el('div', { class: 'list__meta' }, `Última medición: ${num(prev)} seguidores`);
-  const inSeg = el('input', {
-    class: 'input', type: 'number', min: '0', inputmode: 'numeric', value: ig.seguidores,
-    'aria-label': 'Seguidores',
-    onfocus: (e) => e.target.select(),
-    oninput: (e) => {
-      const d = (Number(e.target.value) || 0) - prev;
-      pista.textContent = d === 0
-        ? `Sin cambios respecto de la última medición (${num(prev)})`
-        : `${d > 0 ? '+' : '−'}${num(Math.abs(d))} desde la última medición`;
-    },
-  });
-  const inAlc = el('input', {
-    class: 'input', type: 'number', min: '0', inputmode: 'numeric', value: ig.alcanceMes,
-    'aria-label': 'Alcance del mes',
-    onfocus: (e) => e.target.select(),
-  });
-  const rapida = el('form', {
-    style: { display: 'flex', flexDirection: 'column', gap: '12px' },
-    onsubmit: (e) => {
-      e.preventDefault();
-      ig.seguidores = Number(inSeg.value) || 0;
-      ig.alcanceMes = Number(inAlc.value) || 0;
-      registrarHoy();
-      toast('Registrado. El gráfico se actualizó.');
-      ctx.recargar();
-    },
-  }, [
-    el('div', { style: { display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-end' } }, [
-      el('div', { class: 'field', style: { flex: '1', minWidth: '130px' } }, [
-        el('label', {}, 'Seguidores'), inSeg,
-      ]),
-      el('div', { class: 'field', style: { flex: '1', minWidth: '130px' } }, [
-        el('label', {}, 'Alcance del mes'), inAlc,
-      ]),
-      el('button', { class: 'btn btn--primary', type: 'submit', style: { flex: 'none' } },
-        [icon('i-check'), 'Registrar hoy']),
-    ]),
-    pista,
+  // Barras "De dónde vino" (seguidores vs no) y "Por tipo de contenido".
+  const split = (pctSeg) => el('div', { style: { display: 'flex', flexDirection: 'column', gap: '10px' } }, [
+    barra('Seguidores', pctSeg, 100, pct(pctSeg)),
+    barra('No seguidores', 100 - pctSeg, 100, pct(100 - pctSeg)),
   ]);
+  const porContenido = (arr = []) => {
+    const max = Math.max(...arr.map((x) => x.pct), 1);
+    return el('div', { style: { display: 'flex', flexDirection: 'column', gap: '10px' } },
+      arr.map((x) => barra(x.tipo, x.pct, max, pct(x.pct))));
+  };
+  const subt = (t) => el('div', { class: 'card__title', style: { marginTop: '18px', marginBottom: '2px' } }, t);
 
+  // ── Actividad de seguidores con selector de día ────────────────────
+  let diaSel = act[['D', 'L', 'M', 'X', 'J', 'V', 'S'][new Date().getDay()]] ? ['D', 'L', 'M', 'X', 'J', 'V', 'S'][new Date().getDay()] : (mejor?.dia || 'L');
+  const cajaAct = el('div');
+  function pintarAct() {
+    const arr = act[diaSel] || [];
+    const max = Math.max(...arr, 1);
+    const pico = arr.indexOf(max);
+    cajaAct.replaceChildren(
+      el('div', { class: 'meses' }, IG_DIAS.map(([k, nom]) =>
+        el('button', {
+          class: `mes-btn${k === diaSel ? ' is-active' : ''}`, type: 'button', title: nom,
+          onclick: () => { diaSel = k; pintarAct(); },
+        }, k))),
+      arr.length
+        ? el('div', { style: { display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px' } },
+            arr.map((v, i) => barra(`${IG_HORAS[i]} h`, v, max, i === pico ? `${num(v)} · pico` : num(v))))
+        : listaVacia('Sin datos de actividad para este día.'),
+      arr.length
+        ? el('div', { class: 'list__meta', style: { marginTop: '12px' } },
+            `Mejor franja del ${nombreDia(diaSel).toLowerCase()}: ${IG_HORAS[pico]}:00 h · ${num(max)} seguidores activos`)
+        : null,
+    );
+  }
+  pintarAct();
+
+  // ── Actualizar cifras del perfil + registrar snapshot ──────────────
   const perfil = el('form', { class: 'card__body', onsubmit: (e) => {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(e.target));
@@ -737,10 +727,16 @@ export function instagram(ctx) {
       seguidores: Number(d.seguidores) || 0,
       siguiendo: Number(d.siguiendo) || 0,
       publicaciones: Number(d.publicaciones) || 0,
-      alcanceMes: Number(d.alcance) || 0,
+      visitasPerfil: Number(d.visitas) || 0,
     });
-    registrarHoy();
-    toast('Métricas actualizadas.');
+    // Una medición por día: si ya registré hoy, la reemplazo.
+    const hoy = hoyISO();
+    ig.historial ??= [];
+    const i = ig.historial.findIndex((h) => h.fecha === hoy);
+    const punto = { fecha: hoy, seguidores: ig.seguidores };
+    if (i >= 0) ig.historial[i] = punto; else ig.historial.push(punto);
+    guardar();
+    toast('Cifras actualizadas.');
     ctx.recargar();
   } }, [
     el('div', { class: 'form-grid' }, [
@@ -748,125 +744,60 @@ export function instagram(ctx) {
       campo('ig-seguidores', 'seguidores', 'Seguidores', ig.seguidores, 'number'),
       campo('ig-siguiendo', 'siguiendo', 'Siguiendo', ig.siguiendo, 'number'),
       campo('ig-publicaciones', 'publicaciones', 'Publicaciones', ig.publicaciones, 'number'),
-      campo('ig-alcance', 'alcance', 'Alcance del mes', ig.alcanceMes, 'number'),
+      campo('ig-visitas', 'visitas', 'Visitas al perfil', ig.visitasPerfil ?? 0, 'number'),
     ]),
     el('div', {}, [el('button', { class: 'btn btn--primary', type: 'submit' }, [icon('i-check'), 'Guardar y registrar hoy'])]),
   ]);
-
-  const ins = ig.insights;
 
   return [
     encabezado('i-instagram', `Instagram — @${ig.usuario}`,
       [ig.nombre, ig.bio].filter(Boolean).join(' · ') || 'Seguimiento de tu cuenta.'),
 
-    card('Actualización rápida', [
-      el('p', { class: 'list__meta', style: { marginBottom: '4px' } },
-        'Abre Instagram → Panel profesional, copia estos dos números y presiona Enter. Queda registrada la medición de hoy.'),
-      rapida,
-    ]),
-
     el('div', { class: 'grid' }, [
       card('Seguidores', [metrica(num(ig.seguidores),
-        ig.historial.length > 1 ? `${ig.seguidores >= prev ? '+' : '−'}${num(Math.abs(ig.seguidores - prev))} desde la medición anterior` : 'Medición actual',
-        ig.historial.length > 1 ? delta(variacion(ig.seguidores, prev)) : null)]),
+        hist.length > 1 ? `${ig.seguidores >= prev ? '+' : '−'}${num(Math.abs(ig.seguidores - prev))} desde la medición anterior` : 'Medición actual',
+        hist.length > 1 ? delta(variacion(ig.seguidores, prev)) : null)]),
       card('Siguiendo', [metrica(num(ig.siguiendo),
         ig.siguiendo ? `Ratio ${(ig.seguidores / ig.siguiendo).toFixed(2).replace('.', ',')} seg./sig.` : 'Cuentas que sigues')]),
       card('Publicaciones', [metrica(num(ig.publicaciones), 'En tu perfil')]),
-      card('Alcance reciente', [metrica(compact(ins?.alcance ?? ig.alcanceMes),
-        ins?.periodo || 'Cuentas alcanzadas', ins ? delta(ins.alcanceDelta) : null)]),
+      card('Visitas al perfil', [metrica(num(ig.visitasPerfil ?? 0), ig.periodo || 'Actividad del perfil')]),
     ]),
 
-    // Insights reales del export de Instagram (alcance, impresiones, visitas)
-    ins ? card('Alcance y visibilidad', [
-      el('div', { class: 'metric__label', style: { marginBottom: '14px' } },
-        `Período ${ins.periodo} · desde tu export de Instagram`),
-      el('div', { style: { display: 'flex', gap: 'var(--sp-8)', flexWrap: 'wrap' } }, [
-        metrica(compact(ins.alcance), 'Cuentas alcanzadas', delta(ins.alcanceDelta)),
-        metrica(compact(ins.impresiones), 'Impresiones', delta(ins.impresionesDelta)),
-        metrica(compact(ins.visitas), 'Visitas al perfil', delta(ins.visitasDelta)),
-      ]),
-      el('div', { style: { marginTop: 'var(--sp-5)', display: 'flex', flexDirection: 'column', gap: '10px' } }, [
-        el('div', { class: 'card__title' }, 'De dónde vino el alcance'),
-        barra('Seguidores', ins.pctSeguidores, 100, pct(ins.pctSeguidores)),
-        barra('No seguidores', 100 - ins.pctSeguidores, 100, pct(100 - ins.pctSeguidores)),
-      ]),
+    el('div', { class: 'grid grid--wide' }, [
+      vis ? card('Visualizaciones', [
+        metrica(num(vis.total), `${num(vis.cuentasAlcanzadas)} cuentas alcanzadas${ig.periodo ? ` · ${ig.periodo}` : ''}`),
+        subt('De dónde vinieron'), split(vis.pctSeguidores),
+        subt('Por tipo de contenido'), porContenido(vis.porContenido),
+      ]) : null,
+      inter ? card('Interacciones', [
+        metrica(num(inter.total), `${num(inter.cuentas)} cuentas interactuaron${ig.periodo ? ` · ${ig.periodo}` : ''}`),
+        subt('De dónde vinieron'), split(inter.pctSeguidores),
+        subt('Por tipo de contenido'), porContenido(inter.porContenido),
+      ]) : null,
+    ]),
+
+    Object.keys(act).length ? card('Cuándo están activos tus seguidores', [
+      mejor ? el('div', { style: { marginBottom: '6px' } }, [
+        metrica(`${nombreDia(mejor.dia)} · ${mejor.h}:00 h`, 'El momento con más seguidores activos de la semana'),
+      ]) : null,
+      cajaAct,
+    ]) : null,
+
+    hist.length > 1 ? card('Crecimiento de seguidores', [
+      grafico(hist.map((h) => ({
+        label: fecha(h.fecha, { month: 'short', day: 'numeric' }).replace('.', ''),
+        a: h.seguidores,
+      })), { formato: num, escalaAjustada: true }),
+      el('div', { class: 'list__meta', style: { marginTop: '10px' } },
+        `De ${num(hist[0].seguidores)} a ${num(hist.at(-1).seguidores)} · ${hist.length} mediciones`),
     ]) : null,
 
     aviso([el('div', {}, [
       el('strong', {}, 'De dónde salen estos datos: '),
-      'de tu export oficial de Instagram (Configuración → Tu actividad → Descargar tu información). ',
-      'Para actualizarlos, vuelve a pedir el export y me lo pasas, o registra las mediciones a mano arriba.',
+      'de tu Panel profesional de Instagram (Perfil → Panel profesional). Visualizaciones, interacciones y horarios los actualizo yo cuando me pasas las capturas; el conteo de seguidores lo puedes ajustar abajo.',
     ])]),
 
-    el('div', { class: 'grid grid--wide' }, [
-      card('Crecimiento de seguidores', [
-        ig.historial.length > 1
-          ? el('div', {}, [
-              grafico(ig.historial.map((h) => ({
-                label: fecha(h.fecha, { month: 'short' }).replace('.', ''),
-                a: h.seguidores,
-              })), { formato: num, escalaAjustada: true }),
-              el('div', { class: 'list__meta', style: { marginTop: '10px' } },
-                `De ${num(ig.historial[0].seguidores)} a ${num(ig.historial.at(-1).seguidores)} · ${ig.historial.length} mediciones`),
-            ])
-          : listaVacia('Registra al menos dos mediciones para ver la tendencia.'),
-      ]),
-      card('Qué funciona mejor', [
-        mejorTipo
-          ? el('div', { class: 'card__body' }, [
-              metrica(mejorTipo[0], `${Math.round(mejorTipo[1].inter / mejorTipo[1].n)} interacciones por publicación en promedio`),
-              el('div', { style: { display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '6px' } },
-                Object.entries(porTipo)
-                  .sort((a, b) => b[1].inter / b[1].n - a[1].inter / a[1].n)
-                  .map(([tipo, v]) => barra(tipo, v.inter / v.n, mejorTipo[1].inter / mejorTipo[1].n,
-                    `${Math.round(v.inter / v.n)} · ${v.n} pub.`))),
-            ])
-          : listaVacia('Agrega publicaciones para comparar formatos.'),
-      ]),
-    ]),
-
-    el('div', { class: 'grid grid--wide' }, [
-      card('Publicaciones recientes', [
-        posts.length
-          ? el('div', { class: 'list' }, [...posts].sort((a, b) => b.fecha.localeCompare(a.fecha)).map((p) => {
-              const inter = p.likes + p.comentarios + p.guardados;
-              return el('div', { class: 'list__item' }, [
-                el('div', { class: 'avatar' }, p.tipo.slice(0, 2).toUpperCase()),
-                el('div', { class: 'list__main' }, [
-                  el('div', { class: 'list__title' }, p.tema),
-                  el('div', { class: 'list__meta' },
-                    `${p.tipo} · ${fecha(p.fecha)} · ${num(p.likes)} me gusta · ${num(p.comentarios)} comentarios · ${num(p.guardados)} guardados`),
-                ]),
-                el('span', { class: 'list__value' }, num(inter)),
-                botonIcono('i-basura', 'Eliminar publicación', () => {
-                  ig.publicacionesRecientes = ig.publicacionesRecientes.filter((x) => x.id !== p.id);
-                  guardar(); ctx.recargar();
-                }),
-              ]);
-            }))
-          : listaVacia('Sin publicaciones registradas.'),
-      ]),
-      el('div', { style: { display: 'flex', flexDirection: 'column', gap: '20px' } }, [
-        card('Métricas del perfil', [perfil]),
-        card('Registrar publicación', [
-          formSimple(ctx, [
-            { name: 'tema', label: 'Tema', placeholder: 'Detrás de la mezcla', required: true },
-            { name: 'tipo', label: 'Formato', tipo: 'select', opciones: ['Reel', 'Carrusel', 'Foto', 'Historia'] },
-            { name: 'likes', label: 'Me gusta', type: 'number', value: 0 },
-            { name: 'comentarios', label: 'Comentarios', type: 'number', value: 0 },
-            { name: 'guardados', label: 'Guardados', type: 'number', value: 0 },
-            { name: 'fecha', label: 'Fecha', type: 'date', value: hoyISO() },
-          ], (d) => {
-            ig.publicacionesRecientes.push({
-              id: uid(), fecha: d.fecha, tipo: d.tipo, tema: d.tema,
-              likes: Number(d.likes) || 0,
-              comentarios: Number(d.comentarios) || 0,
-              guardados: Number(d.guardados) || 0,
-            });
-          }),
-        ]),
-      ]),
-    ]),
+    card('Actualizar cifras', [perfil]),
   ];
 }
 

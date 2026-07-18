@@ -130,17 +130,39 @@ const SEED = {
     seguidores: 2400,
     siguiendo: 890,
     publicaciones: 148,
-    alcanceMes: 18500,
-    // Insights del export de Instagram (ejemplo). Alcance/impresiones/visitas
-    // de un período, con su variación vs el período anterior.
-    insights: {
-      periodo: 'ejemplo',
-      alcance: 18500, alcanceDelta: 12.4,
-      impresiones: 42000, impresionesDelta: 8.1,
-      visitas: 1200, visitasDelta: 5.0,
-      pctSeguidores: 60,
+    visitasPerfil: 320,
+    periodo: 'Últimos 30 días',
+    actualizado: '2026-07-01',
+    // Del Panel profesional de Instagram: visualizaciones (antes "impresiones")
+    // e interacciones, con su reparto por origen y por tipo de contenido.
+    visualizaciones: {
+      total: 18500, cuentasAlcanzadas: 9400, pctSeguidores: 62,
+      porContenido: [
+        { tipo: 'Historias', pct: 71.2 },
+        { tipo: 'Reels', pct: 20.4 },
+        { tipo: 'Publicaciones', pct: 7.1 },
+        { tipo: 'Videos', pct: 1.3 },
+      ],
     },
-    // Historial que tú vas completando; el gráfico y el delta salen de aquí.
+    interacciones: {
+      total: 640, cuentas: 380, pctSeguidores: 78,
+      porContenido: [
+        { tipo: 'Reels', pct: 54 },
+        { tipo: 'Historias', pct: 33 },
+        { tipo: 'Publicaciones', pct: 13 },
+      ],
+    },
+    // Seguidores activos por franja de 3 h (0,3,6,9,12,15,18,21) para cada día.
+    actividad: {
+      L: [120, 180, 300, 420, 480, 500, 520, 340],
+      M: [130, 200, 320, 440, 500, 520, 540, 360],
+      X: [125, 190, 310, 430, 490, 510, 530, 350],
+      J: [135, 210, 330, 450, 510, 530, 545, 365],
+      V: [140, 220, 340, 460, 520, 540, 560, 380],
+      S: [160, 150, 260, 380, 440, 470, 540, 420],
+      D: [150, 140, 250, 360, 430, 460, 520, 390],
+    },
+    // Historial que se va completando; el gráfico y el delta salen de aquí.
     historial: [
       { fecha: '2026-02-01', seguidores: 1960 },
       { fecha: '2026-03-01', seguidores: 2050 },
@@ -148,12 +170,6 @@ const SEED = {
       { fecha: '2026-05-01', seguidores: 2225 },
       { fecha: '2026-06-01', seguidores: 2310 },
       { fecha: '2026-07-01', seguidores: 2400 },
-    ],
-    publicacionesRecientes: [
-      { id: 'ig1', fecha: '2026-07-12', tipo: 'Reel', tema: 'Detrás de la mezcla', likes: 312, comentarios: 24, guardados: 41 },
-      { id: 'ig2', fecha: '2026-07-08', tipo: 'Carrusel', tema: '5 tips de home studio', likes: 268, comentarios: 31, guardados: 87 },
-      { id: 'ig3', fecha: '2026-07-04', tipo: 'Reel', tema: 'Sesión en vivo', likes: 195, comentarios: 12, guardados: 18 },
-      { id: 'ig4', fecha: '2026-06-29', tipo: 'Foto', tema: 'Paisaje Osorno', likes: 143, comentarios: 9, guardados: 6 },
     ],
   },
 

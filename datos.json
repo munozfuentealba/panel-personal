@@ -2698,27 +2698,128 @@
     "usuario": "munoz.fuentealba",
     "nombre": "Diego Muñoz",
     "bio": "There is no try",
-    "seguidores": 198,
-    "siguiendo": 1580,
-    "publicaciones": 29,
-    "alcanceMes": 1138,
-    "insights": {
-      "periodo": "18 abr – 16 jul 2026",
-      "alcance": 1138,
-      "alcanceDelta": -73.2,
-      "impresiones": 10025,
-      "impresionesDelta": -74.7,
-      "visitas": 340,
-      "visitasDelta": -74.2,
-      "pctSeguidores": 47.4
+    "seguidores": 1324,
+    "siguiendo": 758,
+    "publicaciones": 73,
+    "visitasPerfil": 110,
+    "periodo": "Últimos 30 días",
+    "actualizado": "2026-07-18",
+    "visualizaciones": {
+      "total": 3280,
+      "cuentasAlcanzadas": 800,
+      "pctSeguidores": 74.3,
+      "porContenido": [
+        {
+          "tipo": "Historias",
+          "pct": 89.1
+        },
+        {
+          "tipo": "Reels",
+          "pct": 6.8
+        },
+        {
+          "tipo": "Publicaciones",
+          "pct": 3.7
+        },
+        {
+          "tipo": "Videos",
+          "pct": 0.4
+        }
+      ]
+    },
+    "interacciones": {
+      "total": 66,
+      "cuentas": 36,
+      "pctSeguidores": 92.4,
+      "porContenido": [
+        {
+          "tipo": "Historias",
+          "pct": 92.4
+        },
+        {
+          "tipo": "Reels",
+          "pct": 7.6
+        }
+      ]
+    },
+    "actividad": {
+      "L": [
+        105,
+        251,
+        481,
+        564,
+        577,
+        579,
+        570,
+        297
+      ],
+      "M": [
+        101,
+        287,
+        500,
+        576,
+        583,
+        585,
+        566,
+        304
+      ],
+      "X": [
+        98,
+        282,
+        492,
+        572,
+        565,
+        569,
+        560,
+        307
+      ],
+      "J": [
+        111,
+        265,
+        480,
+        570,
+        565,
+        560,
+        562,
+        317
+      ],
+      "V": [
+        103,
+        291,
+        500,
+        564,
+        564,
+        548,
+        554,
+        353
+      ],
+      "S": [
+        118,
+        185,
+        472,
+        547,
+        544,
+        549,
+        561,
+        372
+      ],
+      "D": [
+        125,
+        164,
+        418,
+        523,
+        547,
+        552,
+        575,
+        313
+      ]
     },
     "historial": [
       {
-        "fecha": "2026-07-17",
-        "seguidores": 198
+        "fecha": "2026-07-18",
+        "seguidores": 1324
       }
-    ],
-    "publicacionesRecientes": []
+    ]
   },
   "musica": {
     "proyectos": [],
@@ -2799,5 +2900,5 @@
       }
     ]
   },
-  "actualizado": "2026-07-18T03:59:22.444Z"
+  "actualizado": "2026-07-18T12:00:00.000Z"
 }
