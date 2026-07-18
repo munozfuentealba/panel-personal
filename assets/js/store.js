@@ -46,6 +46,7 @@ const SEED = {
       empleador: 'Mi empleador',
       cargo: 'Cargo',
       sueldoBase: 900000,
+      liquidoHabitual: 940000,
       prevision: 'AFP (10,58%)',
       salud: 'Fonasa',
       liquidaciones: [

@@ -187,9 +187,9 @@ export function resumen(ctx) {
 function tarjetaSueldo(s) {
   if (!s || !s.liquidaciones?.length) return null;
   const liq = s.liquidaciones;
-  const promedio = liq.reduce((a, l) => a + l.liquido, 0) / liq.length;
-  const total = liq.reduce((a, l) => a + l.liquido, 0);
   const anio = (liq[0].iso || '').slice(0, 4);
+  // Su líquido habitual, no un promedio (enero fue atípico por el bono).
+  const liquido = s.liquidoHabitual ?? liq.at(-1).liquido;
 
   return card(`Mi sueldo${anio ? ` — ${anio}` : ''}`, [
     el('div', { style: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px' } }, [
@@ -202,9 +202,8 @@ function tarjetaSueldo(s) {
       el('span', { class: 'list__meta' }, `Salud ${s.salud}`),
     ]),
 
-    el('div', { class: 'grid', style: { margin: '4px 0' } }, [
-      metrica(clp(promedio), 'Líquido promedio mensual'),
-      metrica(clp(total), `Total percibido · ${liq.length} meses`),
+    el('div', { style: { margin: '6px 0' } }, [
+      metrica(clp(liquido), 'Líquido mensual'),
     ]),
 
     // Líquido mensual — barra por mes.
