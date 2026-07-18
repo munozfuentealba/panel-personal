@@ -229,7 +229,7 @@ export function initChat() {
     bienvenida();
     scrollAbajo();
   } }, [icon('i-refrescar')]);
-  const minimizar = el('button', { class: 'icon-btn', title: 'Minimizar', 'aria-label': 'Minimizar chat', onclick: () => toggle(false) }, [icon('i-minimizar')]);
+  const cerrar = el('button', { class: 'icon-btn', title: 'Cerrar', 'aria-label': 'Cerrar chat', onclick: () => toggle(false) }, [icon('i-cerrar')]);
 
   const panel = el('div', { class: 'chat', hidden: true }, [
     el('div', { class: 'chat__head' }, [
@@ -239,11 +239,12 @@ export function initChat() {
         el('span', {}, 'Pregunta sobre tu panel'),
       ]),
       reiniciar,
-      minimizar,
+      cerrar,
     ]),
     el('div', { class: 'chat__body' }, [mensajes, formConv]),
   ]);
 
+  // La burbuja abre y también cierra: al estar abierta muestra una X.
   const launcher = el('button', {
     class: 'chat-launcher', 'aria-label': 'Abrir asistente', onclick: () => toggle(),
   }, [icon('i-chat')]);
@@ -252,8 +253,13 @@ export function initChat() {
     abierto = v === undefined ? !abierto : v;
     panel.hidden = !abierto;
     launcher.classList.toggle('is-open', abierto);
+    launcher.setAttribute('aria-label', abierto ? 'Cerrar asistente' : 'Abrir asistente');
+    launcher.replaceChildren(icon(abierto ? 'i-cerrar' : 'i-chat'));
     if (abierto) { scrollAbajo(); setTimeout(() => input.focus(), 50); }
   }
+
+  // Escape cierra el chat cuando está abierto.
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && abierto) toggle(false); });
 
   document.body.append(panel, launcher);
 }
