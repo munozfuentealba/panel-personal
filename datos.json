@@ -136,74 +136,6 @@
       "meta": 0,
       "nombre": "Ahorro"
     },
-    "cuenta": {
-      "banco": "BancoEstado",
-      "numero": "81400035857",
-      "saldoActual": 387889,
-      "fechaSaldo": "2026-07-01",
-      "saldos": [
-        {
-          "fecha": "2026-01-05",
-          "saldo": 39976
-        },
-        {
-          "fecha": "2026-01-29",
-          "saldo": 675134
-        },
-        {
-          "fecha": "2026-02-03",
-          "saldo": 465328
-        },
-        {
-          "fecha": "2026-02-12",
-          "saldo": 222338
-        },
-        {
-          "fecha": "2026-02-23",
-          "saldo": 31100
-        },
-        {
-          "fecha": "2026-03-02",
-          "saldo": 652285
-        },
-        {
-          "fecha": "2026-03-09",
-          "saldo": 116004
-        },
-        {
-          "fecha": "2026-03-23",
-          "saldo": 0
-        },
-        {
-          "fecha": "2026-03-31",
-          "saldo": 723778
-        },
-        {
-          "fecha": "2026-04-07",
-          "saldo": 335229
-        },
-        {
-          "fecha": "2026-05-04",
-          "saldo": 6000
-        },
-        {
-          "fecha": "2026-05-18",
-          "saldo": 71382
-        },
-        {
-          "fecha": "2026-06-01",
-          "saldo": 887174
-        },
-        {
-          "fecha": "2026-06-17",
-          "saldo": 19990
-        },
-        {
-          "fecha": "2026-07-01",
-          "saldo": 387889
-        }
-      ]
-    },
     "egresos": [
       {
         "fecha": "2026-01-05",
@@ -2533,7 +2465,62 @@
         "monto": 474,
         "cat": "Comisiones"
       }
-    ]
+    ],
+    "ahorroBanco": {
+      "banco": "Banco Estado",
+      "tipo": "Cuenta de Ahorro",
+      "anio": "2026",
+      "meses": [
+        {
+          "mes": "Ene",
+          "monto": 0
+        },
+        {
+          "mes": "Feb",
+          "monto": 0
+        },
+        {
+          "mes": "Mar",
+          "monto": 0
+        },
+        {
+          "mes": "Abr",
+          "monto": 0
+        },
+        {
+          "mes": "May",
+          "monto": 0
+        },
+        {
+          "mes": "Jun",
+          "monto": 0
+        },
+        {
+          "mes": "Jul",
+          "monto": 0
+        },
+        {
+          "mes": "Ago",
+          "monto": 0
+        },
+        {
+          "mes": "Sep",
+          "monto": 0
+        },
+        {
+          "mes": "Oct",
+          "monto": 0
+        },
+        {
+          "mes": "Nov",
+          "monto": 0
+        },
+        {
+          "mes": "Dic",
+          "monto": 0
+        }
+      ]
+    }
   },
   "marca": {
     "posicionamiento": "",
@@ -2657,5 +2644,5 @@
       }
     ]
   },
-  "actualizado": "2026-07-18T03:24:37.894Z"
+  "actualizado": "2026-07-18T03:43:54.218Z"
 }

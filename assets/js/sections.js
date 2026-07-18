@@ -221,28 +221,35 @@ function tarjetaSueldo(s) {
 }
 
 /** Tarjeta con el saldo de la cuenta corriente y su evolución. */
-function tarjetaCuenta(c) {
-  if (!c || !c.saldos?.length) return null;
-  const vals = c.saldos.map((s) => s.saldo);
-  const min = Math.min(...vals);
-  const max = Math.max(...vals);
-  const minP = c.saldos.find((s) => s.saldo === min);
-  const maxP = c.saldos.find((s) => s.saldo === max);
+/** Tarjeta de ahorro: banco, y el monto por mes del año, editable a mano. */
+function tarjetaAhorro(a, ctx) {
+  if (!a?.meses?.length) return null;
+  const conValor = a.meses.filter((m) => m.monto > 0);
+  const ultimo = conValor.at(-1);
 
-  return card(`Cuenta corriente · ${c.banco}`, [
-    el('div', { style: { display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '10px' } }, [
-      el('div', { class: 'metric__value' }, clp(c.saldoActual)),
-      c.numero ? el('span', { class: 'tag' }, `N° ${c.numero}`) : null,
-    ]),
-    el('div', { class: 'metric__label' }, `Saldo al ${fecha(c.fechaSaldo, { day: 'numeric', month: 'long', year: 'numeric' })}`),
+  return card(`Ahorro · ${a.banco}`, [
+    el('div', { class: 'metric__value' }, clp(ultimo ? ultimo.monto : 0)),
+    el('div', { class: 'metric__label' },
+      `${a.tipo} · ${a.anio}${ultimo ? ` · último registrado: ${ultimo.mes}` : ''}`),
 
-    sparkline(vals),
+    conValor.length > 1
+      ? sparkline(a.meses.map((m) => m.monto))
+      : null,
 
-    el('div', { class: 'legend', style: { marginTop: '6px' } }, [
-      el('span', { class: 'list__meta' }, `Mínimo ${clp(min)}${minP ? ` · ${fecha(minP.fecha)}` : ''}`),
-      el('span', { class: 'list__meta' }, `Máximo ${clp(max)}${maxP ? ` · ${fecha(maxP.fecha)}` : ''}`),
-      el('span', { class: 'list__meta' }, `${c.saldos.length} cierres de cartola`),
-    ]),
+    // Un campo por mes, editable. Al cambiar, guarda y refresca.
+    el('div', { class: 'form-grid', style: { marginTop: '6px' } }, a.meses.map((m) =>
+      el('div', { class: 'field' }, [
+        el('label', {}, m.mes),
+        el('input', {
+          class: 'input', type: 'number', min: '0', step: '1000',
+          value: m.monto || '', placeholder: '0',
+          'aria-label': `Ahorro de ${m.mes}`,
+          onchange: (e) => {
+            m.monto = Math.max(Number(e.target.value) || 0, 0);
+            guardar(); toast('Ahorro actualizado.'); ctx.recargar();
+          },
+        }),
+      ]))),
   ]);
 }
 
@@ -437,19 +444,9 @@ export function finanzas(ctx) {
     encabezado('i-finanzas', 'Finanzas personales',
       `Movimientos del mes en curso. ${f.monedaNota}. Los datos se guardan solo en este navegador.`),
 
-    el('div', { class: 'grid' }, [
-      // Sin movimientos este mes no hay comparación válida: no mostramos delta.
-      card('Ingresos del mes', [metrica(clp(t.ingresos), t.delMes.length ? 'Este mes' : 'Sin registrar aún',
-        t.delMes.length ? delta(variacion(t.ingresos, prev.ingresos)) : null)]),
-      card('Gastos del mes', [metrica(clp(t.gastos), t.delMes.length ? 'Este mes' : 'Sin registrar aún',
-        t.delMes.length ? delta(variacion(t.gastos, prev.gastos), { invertir: true }) : null)]),
-      card('Balance', [metrica(clp(t.balance), t.balance >= 0 ? 'A favor' : 'En rojo')]),
-      card('Tasa de ahorro', [metrica(t.ingresos ? pct((t.balance / t.ingresos) * 100, 0) : '—', 'Del ingreso mensual')]),
-    ]),
-
     el('div', { class: 'grid grid--2' }, [
       tarjetaSueldo(f.sueldo),
-      tarjetaCuenta(f.cuenta),
+      tarjetaAhorro(f.ahorroBanco, ctx),
     ].filter(Boolean)),
 
     bloqueGastos(f.egresos),
