@@ -268,10 +268,29 @@ const COLOR_CAT = {
 const colorCat = (c) => COLOR_CAT[c] || 'var(--accent)';
 const MESES_CORTO = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
+const POR_PAGINA = 12;
+
+/** Botones de paginación con ventana (1 … 4 5 6 … 20). Devuelve null si 1 página. */
+function pagerBotones(pagina, total, irA) {
+  if (total <= 1) return null;
+  const btn = (p, label, { activo = false, disabled = false } = {}) =>
+    el('button', { class: `pager__btn${activo ? ' is-active' : ''}`, disabled, onclick: () => irA(p) }, String(label));
+  const btns = [btn(pagina - 1, '‹', { disabled: pagina === 1 })];
+  const win = [];
+  for (let p = 1; p <= total; p++) if (p === 1 || p === total || Math.abs(p - pagina) <= 1) win.push(p);
+  let prev = 0;
+  for (const p of win) {
+    if (p - prev > 1) btns.push(el('span', { class: 'pager__dots' }, '…'));
+    btns.push(btn(p, p, { activo: p === pagina }));
+    prev = p;
+  }
+  btns.push(btn(pagina + 1, '›', { disabled: pagina === total }));
+  return el('div', { class: 'pager' }, btns);
+}
+
 /**
  * Bloque interactivo "En qué gasto mi dinero": selector de mes, dona por
- * categoría y lista buscable de egresos. Maneja su propio estado y solo
- * repinta su subárbol al cambiar mes o búsqueda.
+ * categoría y lista buscable y paginada de egresos. Maneja su propio estado.
  */
 function bloqueGastos(egresos) {
   if (!egresos?.length) {
@@ -283,106 +302,154 @@ function bloqueGastos(egresos) {
   const meses = [...new Set(egresos.map((e) => e.fecha.slice(0, 7)))].sort();
   let mesSel = 'todos';
   let q = '';
+  let pagina = 1;
 
   const cont = el('div', { class: 'card__body' });
+  const listaHost = el('div');
 
-  const filtrarMes = () => (mesSel === 'todos' ? egresos : egresos.filter((e) => e.fecha.startsWith(mesSel)));
-
-  const pintar = () => {
-    const delMes = filtrarMes();
-    const total = delMes.reduce((s, e) => s + e.monto, 0);
-
-    // Totales por categoría (para la dona y la leyenda)
-    const porCat = {};
-    for (const e of delMes) porCat[e.cat] = (porCat[e.cat] || 0) + e.monto;
-    const cats = Object.entries(porCat).sort((a, b) => b[1] - a[1]);
-    const segmentos = cats.map(([label, value]) => ({ label, value, color: colorCat(label) }));
-
-    // Lista filtrada por búsqueda
+  const filtrados = () => {
+    const base = mesSel === 'todos' ? egresos : egresos.filter((e) => e.fecha.startsWith(mesSel));
     const term = q.trim().toLowerCase();
-    const lista = delMes
+    return base
       .filter((e) => !term || e.desc.toLowerCase().includes(term) || e.cat.toLowerCase().includes(term))
       .sort((a, b) => b.monto - a.monto);
-
-    cont.replaceChildren(
-      // Selector de mes
-      el('div', { class: 'meses' }, [
-        el('button', {
-          class: `mes-btn${mesSel === 'todos' ? ' is-active' : ''}`,
-          onclick: () => { mesSel = 'todos'; pintar(); },
-        }, 'Todos'),
-        ...meses.map((m) => el('button', {
-          class: `mes-btn${mesSel === m ? ' is-active' : ''}`,
-          onclick: () => { mesSel = m; pintar(); },
-        }, `${MESES_CORTO[+m.slice(5, 7) - 1]} ${m.slice(0, 4)}`)),
-      ]),
-
-      // Encabezado del total
-      el('div', { style: { marginTop: '4px' } }, [
-        el('div', { class: 'metric__value', style: { fontSize: '26px' } }, clp(total)),
-        el('div', { class: 'metric__label' },
-          `${lista.length} de ${delMes.length} egresos · ${mesSel === 'todos' ? 'todo el período' : `${MESES_CORTO[+mesSel.slice(5, 7) - 1]} ${mesSel.slice(0, 4)}`}`),
-      ]),
-
-      // Dona + leyenda
-      total > 0
-        ? el('div', { class: 'gastos' }, [
-            donut(segmentos),
-            el('div', { class: 'gastos__leg' }, cats.map(([c, v]) => el('div', { class: 'gastos__row' }, [
-              el('span', { class: 'gastos__sw', style: { background: colorCat(c) } }),
-              el('span', { class: 'gastos__name' }, c),
-              el('b', {}, clp(v)),
-              el('span', {}, `${Math.round((v / total) * 100)} %`),
-            ]))),
-          ])
-        : listaVacia('Sin egresos este mes.'),
-
-      // Búsqueda
-      el('input', {
-        class: 'input',
-        type: 'search',
-        placeholder: 'Buscar egreso (ej: shell, jumbo, uber)…',
-        value: q,
-        style: { marginTop: '4px' },
-        oninput: (e) => {
-          q = e.target.value;
-          // Repinto solo la lista para no perder el foco del buscador.
-          pintarLista(lista, e.target);
-        },
-      }),
-
-      // Lista de egresos
-      listaHost,
-    );
-    pintarLista(lista);
   };
 
-  const listaHost = el('div', { class: 'list' });
-
-  function pintarLista(lista, inputFocuseado) {
-    // Recalcular por si viene de un oninput con término nuevo
-    if (inputFocuseado) {
-      const term = inputFocuseado.value.trim().toLowerCase();
-      lista = filtrarMes()
-        .filter((e) => !term || e.desc.toLowerCase().includes(term) || e.cat.toLowerCase().includes(term))
-        .sort((a, b) => b.monto - a.monto);
-    }
+  function pintarLista() {
+    const lista = filtrados();
+    const totalPag = Math.ceil(lista.length / POR_PAGINA) || 1;
+    if (pagina > totalPag) pagina = totalPag;
+    const ini = (pagina - 1) * POR_PAGINA;
     listaHost.replaceChildren(
-      ...(lista.length
-        ? lista.slice(0, 200).map((e) => el('div', { class: 'list__item' }, [
+      lista.length
+        ? el('div', { class: 'list' }, lista.slice(ini, ini + POR_PAGINA).map((e) => el('div', { class: 'list__item' }, [
             el('span', { class: 'dot', style: { background: colorCat(e.cat) } }),
             el('div', { class: 'list__main' }, [
               el('div', { class: 'list__title' }, e.desc),
               el('div', { class: 'list__meta' }, `${e.cat} · ${fecha(e.fecha)}`),
             ]),
             el('span', { class: 'list__value' }, clp(e.monto)),
-          ]))
-        : [listaVacia('Ningún egreso coincide con la búsqueda.')]),
+          ])))
+        : listaVacia('Ningún egreso coincide con la búsqueda.'),
+      pagerBotones(pagina, totalPag, (p) => { pagina = p; pintarLista(); }),
     );
   }
 
+  const pintar = () => {
+    const delMes = mesSel === 'todos' ? egresos : egresos.filter((e) => e.fecha.startsWith(mesSel));
+    const totalMonto = delMes.reduce((s, e) => s + e.monto, 0);
+    const porCat = {};
+    for (const e of delMes) porCat[e.cat] = (porCat[e.cat] || 0) + e.monto;
+    const cats = Object.entries(porCat).sort((a, b) => b[1] - a[1]);
+    const segmentos = cats.map(([label, value]) => ({ label, value, color: colorCat(label) }));
+
+    cont.replaceChildren(
+      el('div', { class: 'meses' }, [
+        el('button', {
+          class: `mes-btn${mesSel === 'todos' ? ' is-active' : ''}`,
+          onclick: () => { mesSel = 'todos'; pagina = 1; pintar(); },
+        }, 'Todos'),
+        ...meses.map((m) => el('button', {
+          class: `mes-btn${mesSel === m ? ' is-active' : ''}`,
+          onclick: () => { mesSel = m; pagina = 1; pintar(); },
+        }, `${MESES_CORTO[+m.slice(5, 7) - 1]} ${m.slice(0, 4)}`)),
+      ]),
+
+      el('div', { style: { marginTop: '4px' } }, [
+        el('div', { class: 'metric__value', style: { fontSize: '26px' } }, clp(totalMonto)),
+        el('div', { class: 'metric__label' },
+          `${delMes.length} egresos · ${mesSel === 'todos' ? 'todo el período' : `${MESES_CORTO[+mesSel.slice(5, 7) - 1]} ${mesSel.slice(0, 4)}`}`),
+      ]),
+
+      totalMonto > 0
+        ? el('div', { class: 'gastos' }, [
+            donut(segmentos),
+            el('div', { class: 'gastos__leg' }, cats.map(([c, v]) => el('div', { class: 'gastos__row' }, [
+              el('span', { class: 'gastos__sw', style: { background: colorCat(c) } }),
+              el('span', { class: 'gastos__name' }, c),
+              el('b', {}, clp(v)),
+              el('span', {}, `${Math.round((v / totalMonto) * 100)} %`),
+            ]))),
+          ])
+        : listaVacia('Sin egresos este mes.'),
+
+      el('input', {
+        class: 'input', type: 'search', placeholder: 'Buscar egreso (ej: shell, jumbo, uber)…',
+        value: q, style: { marginTop: '4px' },
+        // Solo se repinta la lista → el buscador conserva el foco.
+        oninput: (e) => { q = e.target.value; pagina = 1; pintarLista(); },
+      }),
+
+      listaHost,
+    );
+    pintarLista();
+  };
+
   pintar();
   return card('En qué gasto mi dinero', [cont]);
+}
+
+/** Tarjeta de crédito automotriz: avance, saldo y cuotas paginadas y marcables. */
+function tarjetaCredito(cr, ctx) {
+  if (!cr?.cuotas?.length) return null;
+  const n = cr.cuotas.length;
+  const pagadas = cr.cuotas.filter((c) => c.pagada);
+  const saldo = cr.cuotas.filter((c) => !c.pagada).reduce((s, c) => s + c.monto, 0);
+  const proxima = cr.cuotas.filter((c) => !c.pagada).sort((a, b) => a.fecha.localeCompare(b.fecha))[0];
+
+  const estadoDe = (c) => {
+    if (c.pagada) return ['Pagada', 'tag--ok'];
+    if (proxima && c.n === proxima.n) return ['Por pagar', 'tag--info'];
+    return ['Por vencer', 'tag--warn'];
+  };
+
+  let pagina = 1;
+  const listaHost = el('div');
+  function pintarCuotas() {
+    const orden = [...cr.cuotas].sort((a, b) => a.n - b.n);
+    const totalPag = Math.ceil(orden.length / POR_PAGINA) || 1;
+    if (pagina > totalPag) pagina = totalPag;
+    const ini = (pagina - 1) * POR_PAGINA;
+    listaHost.replaceChildren(
+      el('div', { class: 'list' }, orden.slice(ini, ini + POR_PAGINA).map((c) => {
+        const [txt, cls] = estadoDe(c);
+        return el('div', { class: 'list__item' }, [
+          el('button', {
+            class: 'icon-btn',
+            style: {
+              width: '24px', height: '24px', borderRadius: '7px', flex: 'none',
+              border: `1.5px solid ${c.pagada ? 'var(--c-finanzas)' : 'var(--border-strong)'}`,
+              background: c.pagada ? 'var(--c-finanzas)' : 'transparent',
+              color: c.pagada ? '#fff' : 'transparent',
+            },
+            'aria-label': c.pagada ? `Marcar cuota ${c.n} como pendiente` : `Marcar cuota ${c.n} como pagada`,
+            onclick: () => { c.pagada = !c.pagada; guardar(); toast(c.pagada ? 'Cuota pagada.' : 'Cuota pendiente.'); ctx.recargar(); },
+          }, [icon('i-check')]),
+          el('div', { class: 'list__main' }, [
+            el('div', { class: 'list__title' }, `Cuota ${c.n}/${n}`),
+            el('div', { class: 'list__meta' }, fecha(c.fecha, { day: 'numeric', month: 'long', year: 'numeric' })),
+          ]),
+          el('span', { class: `tag ${cls}` }, txt),
+          el('span', { class: 'list__value' }, clp(c.monto)),
+        ]);
+      })),
+      pagerBotones(pagina, totalPag, (p) => { pagina = p; pintarCuotas(); }),
+    );
+  }
+  pintarCuotas();
+
+  return card(`Crédito automotriz · ${cr.nombre}`, [
+    el('div', { class: 'grid', style: { margin: '2px 0' } }, [
+      metrica(`${pagadas.length}/${n}`, 'Cuotas pagadas'),
+      metrica(clp(saldo), 'Saldo pendiente'),
+    ]),
+    barra('Avance del crédito', pagadas.length, n, `${Math.round((pagadas.length / n) * 100)} %`),
+    proxima
+      ? el('div', { class: 'list__meta', style: { marginTop: '6px' } },
+          `Próxima: cuota ${proxima.n} · ${fecha(proxima.fecha)} · ${clp(proxima.monto)}`)
+      : el('div', { class: 'list__meta', style: { marginTop: '6px' } }, 'Crédito pagado por completo.'),
+    listaHost,
+  ]);
 }
 
 export function finanzas(ctx) {
@@ -396,6 +463,8 @@ export function finanzas(ctx) {
       tarjetaSueldo(f.sueldo),
       tarjetaAhorro(f.ahorroBanco, ctx),
     ].filter(Boolean)),
+
+    tarjetaCredito(f.credito, ctx),
 
     bloqueGastos(f.egresos),
   ];

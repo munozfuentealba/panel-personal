@@ -2520,6 +2520,161 @@
           "monto": 0
         }
       ]
+    },
+    "credito": {
+      "nombre": "Chery Tiggo Pro Max 2",
+      "cuotas": [
+        {
+          "n": 1,
+          "fecha": "2025-07-15",
+          "monto": 277524,
+          "pagada": true
+        },
+        {
+          "n": 2,
+          "fecha": "2025-08-01",
+          "monto": 274191,
+          "pagada": true
+        },
+        {
+          "n": 3,
+          "fecha": "2025-09-01",
+          "monto": 274191,
+          "pagada": true
+        },
+        {
+          "n": 4,
+          "fecha": "2025-10-01",
+          "monto": 274191,
+          "pagada": true
+        },
+        {
+          "n": 5,
+          "fecha": "2025-11-03",
+          "monto": 274191,
+          "pagada": true
+        },
+        {
+          "n": 6,
+          "fecha": "2025-12-01",
+          "monto": 274191,
+          "pagada": true
+        },
+        {
+          "n": 7,
+          "fecha": "2026-01-02",
+          "monto": 274191,
+          "pagada": true
+        },
+        {
+          "n": 8,
+          "fecha": "2026-02-02",
+          "monto": 274191,
+          "pagada": true
+        },
+        {
+          "n": 9,
+          "fecha": "2026-03-02",
+          "monto": 274191,
+          "pagada": true
+        },
+        {
+          "n": 10,
+          "fecha": "2026-04-01",
+          "monto": 274191,
+          "pagada": true
+        },
+        {
+          "n": 11,
+          "fecha": "2026-05-12",
+          "monto": 276238,
+          "pagada": true
+        },
+        {
+          "n": 12,
+          "fecha": "2026-06-01",
+          "monto": 274191,
+          "pagada": true
+        },
+        {
+          "n": 13,
+          "fecha": "2026-07-01",
+          "monto": 274191,
+          "pagada": true
+        },
+        {
+          "n": 14,
+          "fecha": "2026-08-03",
+          "monto": 274191,
+          "pagada": false
+        },
+        {
+          "n": 15,
+          "fecha": "2026-09-01",
+          "monto": 274191,
+          "pagada": false
+        },
+        {
+          "n": 16,
+          "fecha": "2026-10-01",
+          "monto": 274191,
+          "pagada": false
+        },
+        {
+          "n": 17,
+          "fecha": "2026-11-02",
+          "monto": 274191,
+          "pagada": false
+        },
+        {
+          "n": 18,
+          "fecha": "2026-12-01",
+          "monto": 274191,
+          "pagada": false
+        },
+        {
+          "n": 19,
+          "fecha": "2027-01-04",
+          "monto": 274191,
+          "pagada": false
+        },
+        {
+          "n": 20,
+          "fecha": "2027-02-01",
+          "monto": 274191,
+          "pagada": false
+        },
+        {
+          "n": 21,
+          "fecha": "2027-03-01",
+          "monto": 274191,
+          "pagada": false
+        },
+        {
+          "n": 22,
+          "fecha": "2027-04-01",
+          "monto": 274191,
+          "pagada": false
+        },
+        {
+          "n": 23,
+          "fecha": "2027-05-03",
+          "monto": 274191,
+          "pagada": false
+        },
+        {
+          "n": 24,
+          "fecha": "2027-06-01",
+          "monto": 274191,
+          "pagada": false
+        },
+        {
+          "n": 25,
+          "fecha": "2027-07-01",
+          "monto": 3282141,
+          "pagada": false
+        }
+      ]
     }
   },
   "marca": {
@@ -2644,5 +2799,5 @@
       }
     ]
   },
-  "actualizado": "2026-07-18T03:43:54.218Z"
+  "actualizado": "2026-07-18T03:59:22.444Z"
 }

@@ -67,6 +67,16 @@ const SEED = {
         { mes: 'Oct', monto: 0 }, { mes: 'Nov', monto: 0 }, { mes: 'Dic', monto: 0 },
       ],
     },
+    // Crédito automotriz: cuotas con estado. Ejemplo.
+    credito: {
+      nombre: 'Mi auto',
+      cuotas: [
+        { n: 1, fecha: '2026-01-01', monto: 200000, pagada: true },
+        { n: 2, fecha: '2026-02-01', monto: 200000, pagada: true },
+        { n: 3, fecha: '2026-03-01', monto: 200000, pagada: false },
+        { n: 4, fecha: '2026-04-01', monto: 200000, pagada: false },
+      ],
+    },
     // Egresos clasificados desde las cartolas. Ejemplo; los reales se cargan aparte.
     egresos: [
       { fecha: '2026-06-03', desc: 'COMPRA JUMBO OSORNO', monto: 38900, cat: 'Supermercado' },
