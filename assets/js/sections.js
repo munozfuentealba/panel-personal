@@ -587,13 +587,19 @@ export function empresa(ctx) {
 
     el('div', { class: 'grid grid--wide' }, [
       card('Ventas — últimos 6 meses', [
-        grafico(e.ventas.map((v) => ({ label: v.mes, a: v.v })), { formato: clp }),
+        e.ventas.length
+          ? grafico(e.ventas.map((v) => ({ label: v.mes, a: v.v })), { formato: clp })
+          : listaVacia('Sin ventas registradas todavía.'),
       ]),
       card('Tendencia', [
-        metrica(clp(e.ventas.at(-1).v), 'Último mes'),
-        sparkline(e.ventas.map((v) => v.v)),
-        el('div', { class: 'list__meta' },
-          `Promedio 6 meses: ${clp(e.ventas.reduce((s, v) => s + v.v, 0) / e.ventas.length)}`),
+        e.ventas.length
+          ? el('div', {}, [
+              metrica(clp(e.ventas.at(-1).v), 'Último mes'),
+              sparkline(e.ventas.map((v) => v.v)),
+              el('div', { class: 'list__meta' },
+                `Promedio 6 meses: ${clp(e.ventas.reduce((s, v) => s + v.v, 0) / e.ventas.length)}`),
+            ])
+          : listaVacia('Registra ventas para ver la tendencia.'),
       ]),
     ]),
 

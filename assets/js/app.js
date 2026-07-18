@@ -158,7 +158,19 @@ function pintar(sec, { animar = true } = {}) {
   }
   limpiezas = [];
 
-  const nodos = sec.render(ctx);
+  // Si una sección falla al renderizar, mostramos un aviso en vez de dejar
+  // el contenido de la sección anterior (que confundía una vista con otra).
+  let nodos;
+  try {
+    nodos = sec.render(ctx);
+  } catch (e) {
+    console.error(`La sección "${sec.id}" falló al renderizar:`, e);
+    nodos = [el('div', { class: 'card' }, [el('div', { class: 'card__body' }, [
+      el('div', { class: 'metric__value' }, 'No se pudo mostrar esta sección'),
+      el('p', { class: 'list__meta', style: { marginTop: '8px' } },
+        'Hubo un error al armar la vista. Revisa la consola para el detalle.'),
+    ])])];
+  }
   dom.view.replaceChildren(...nodos.filter(Boolean));
   dom.view.style.setProperty('--sec', sec.color);
   escalonar(dom.view);
