@@ -387,62 +387,10 @@ function bloqueGastos(egresos) {
 
 export function finanzas(ctx) {
   const f = datos.finanzas;
-  const t = totalesMes(f.movimientos);
-  const prev = f.historial.at(-2) ?? { ingresos: 0, gastos: 0 };
-
-  const porCat = {};
-  for (const m of t.delMes.filter((x) => x.monto < 0)) {
-    porCat[m.cat] = (porCat[m.cat] || 0) + Math.abs(m.monto);
-  }
-
-  const form = el('form', { class: 'card__body', onsubmit: (e) => {
-    e.preventDefault();
-    const d = Object.fromEntries(new FormData(e.target));
-    const monto = Math.abs(Number(d.monto));
-    if (!d.desc.trim() || !monto) return toast('Completa la descripción y el monto.');
-    f.movimientos.push({
-      id: uid(),
-      fecha: d.fecha || hoyISO(),
-      desc: d.desc.trim(),
-      cat: d.tipo === 'ingreso' ? 'Ingreso' : (d.cat.trim() || 'Otros'),
-      monto: d.tipo === 'ingreso' ? monto : -monto,
-    });
-    guardar();
-    toast('Movimiento agregado.');
-    ctx.recargar();
-  } }, [
-    el('div', { class: 'form-grid' }, [
-      el('div', { class: 'field' }, [
-        el('label', { for: 'fx-desc' }, 'Descripción'),
-        el('input', { class: 'input', id: 'fx-desc', name: 'desc', placeholder: 'Supermercado', required: true }),
-      ]),
-      el('div', { class: 'field' }, [
-        el('label', { for: 'fx-monto' }, 'Monto'),
-        el('input', { class: 'input', id: 'fx-monto', name: 'monto', type: 'number', min: '0', step: '1', placeholder: '25000', required: true }),
-      ]),
-      el('div', { class: 'field' }, [
-        el('label', { for: 'fx-tipo' }, 'Tipo'),
-        el('select', { class: 'input', id: 'fx-tipo', name: 'tipo' }, [
-          el('option', { value: 'gasto' }, 'Gasto'),
-          el('option', { value: 'ingreso' }, 'Ingreso'),
-        ]),
-      ]),
-      el('div', { class: 'field' }, [
-        el('label', { for: 'fx-cat' }, 'Categoría'),
-        el('input', { class: 'input', id: 'fx-cat', name: 'cat', placeholder: 'Alimentación', list: 'fx-cats' }),
-      ]),
-      el('div', { class: 'field' }, [
-        el('label', { for: 'fx-fecha' }, 'Fecha'),
-        el('input', { class: 'input', id: 'fx-fecha', name: 'fecha', type: 'date', value: hoyISO() }),
-      ]),
-    ]),
-    el('datalist', { id: 'fx-cats' }, f.presupuestos.map((p) => el('option', { value: p.cat }))),
-    el('div', {}, [el('button', { class: 'btn btn--primary', type: 'submit' }, [icon('i-mas'), 'Agregar movimiento'])]),
-  ]);
 
   return [
     encabezado('i-finanzas', 'Finanzas personales',
-      `Movimientos del mes en curso. ${f.monedaNota}. Los datos se guardan solo en este navegador.`),
+      `Tu sueldo, tu ahorro y en qué gastas tu dinero. ${f.monedaNota}.`),
 
     el('div', { class: 'grid grid--2' }, [
       tarjetaSueldo(f.sueldo),
@@ -450,97 +398,6 @@ export function finanzas(ctx) {
     ].filter(Boolean)),
 
     bloqueGastos(f.egresos),
-
-    el('div', { class: 'grid grid--wide' }, [
-      card('Ingresos vs. gastos — últimos 6 meses', [
-        grafico(f.historial.map((h) => ({ label: h.mes, a: h.ingresos, b: h.gastos })), { formato: clp }),
-        leyenda([['Ingresos', false], ['Gastos', true]]),
-      ]),
-      card('Presupuestos del mes', [
-        f.presupuestos.length
-          ? el('div', { style: { display: 'flex', flexDirection: 'column', gap: '14px' } },
-              f.presupuestos.map((p) => el('div', { style: { display: 'flex', alignItems: 'flex-start', gap: '8px' } }, [
-                el('div', { style: { flex: '1', minWidth: '0' } }, [
-                  barra(p.cat, porCat[p.cat] || 0, p.tope, `${clp(porCat[p.cat] || 0)} / ${clp(p.tope)}`),
-                ]),
-                el('input', {
-                  class: 'input', type: 'number', min: '0', step: '1000', value: p.tope,
-                  style: { width: '110px', flex: 'none' },
-                  'aria-label': `Tope de ${p.cat}`,
-                  onchange: (e) => {
-                    p.tope = Math.max(Number(e.target.value) || 0, 0);
-                    guardar(); toast('Presupuesto actualizado.'); ctx.recargar();
-                  },
-                }),
-                botonIcono('i-basura', 'Eliminar presupuesto', () => {
-                  f.presupuestos = f.presupuestos.filter((x) => x !== p);
-                  guardar(); toast('Eliminado.'); ctx.recargar();
-                }),
-              ])))
-          : listaVacia('Sin presupuestos definidos.'),
-        el('details', { style: { marginTop: '4px' } }, [
-          el('summary', { style: { cursor: 'pointer', fontSize: '13px', color: 'var(--text-3)', padding: '4px 0' } },
-            'Agregar categoría'),
-          formSimple(ctx, [
-            { name: 'cat', label: 'Categoría', placeholder: 'Salud', required: true },
-            { name: 'tope', label: 'Tope mensual', type: 'number', value: 100000 },
-          ], (d) => { f.presupuestos.push({ cat: d.cat, tope: Number(d.tope) || 0 }); }),
-        ]),
-      ]),
-    ]),
-
-    card('Meta de ahorro', [
-      el('form', { class: 'form-grid', onsubmit: (e) => {
-        e.preventDefault();
-        const d = Object.fromEntries(new FormData(e.target));
-        f.ahorro.nombre = d.nombre.trim() || f.ahorro.nombre;
-        f.ahorro.actual = Number(d.actual) || 0;
-        f.ahorro.meta = Number(d.meta) || 0;
-        guardar(); toast('Meta actualizada.'); ctx.recargar();
-      } }, [
-        el('div', { class: 'field' }, [
-          el('label', { for: 'ah-nombre' }, 'Nombre'),
-          el('input', { class: 'input', id: 'ah-nombre', name: 'nombre', value: f.ahorro.nombre }),
-        ]),
-        el('div', { class: 'field' }, [
-          el('label', { for: 'ah-actual' }, 'Ahorrado'),
-          el('input', { class: 'input', id: 'ah-actual', name: 'actual', type: 'number', min: '0', value: f.ahorro.actual }),
-        ]),
-        el('div', { class: 'field' }, [
-          el('label', { for: 'ah-meta' }, 'Meta'),
-          el('input', { class: 'input', id: 'ah-meta', name: 'meta', type: 'number', min: '0', value: f.ahorro.meta }),
-        ]),
-        el('div', { class: 'field', style: { justifyContent: 'flex-end' } }, [
-          el('button', { class: 'btn btn--primary', type: 'submit' }, [icon('i-check'), 'Guardar meta']),
-        ]),
-      ]),
-      barra(f.ahorro.nombre, f.ahorro.actual, f.ahorro.meta,
-        `${clp(f.ahorro.actual)} / ${clp(f.ahorro.meta)}`),
-    ]),
-
-    el('div', { class: 'grid grid--wide' }, [
-      card(`Movimientos de ${fecha(hoyISO(), { month: 'long' })}`, [
-        t.delMes.length
-          ? el('div', { class: 'list' }, [...t.delMes].sort((a, b) => b.fecha.localeCompare(a.fecha)).map((m) =>
-              el('div', { class: 'list__item' }, [
-                el('div', { class: 'avatar' }, m.cat.slice(0, 2).toUpperCase()),
-                el('div', { class: 'list__main' }, [
-                  el('div', { class: 'list__title' }, m.desc),
-                  el('div', { class: 'list__meta' }, `${m.cat} · ${fecha(m.fecha)}`),
-                ]),
-                el('span', { class: 'list__value', style: { color: m.monto > 0 ? 'var(--c-finanzas)' : 'inherit' } },
-                  `${m.monto > 0 ? '+' : '−'}${clp(Math.abs(m.monto))}`),
-                botonIcono('i-basura', 'Eliminar movimiento', () => {
-                  f.movimientos = f.movimientos.filter((x) => x.id !== m.id);
-                  guardar();
-                  toast('Movimiento eliminado.');
-                  ctx.recargar();
-                }),
-              ])))
-          : listaVacia('Sin movimientos este mes. Agrega el primero con el formulario.'),
-      ]),
-      card('Agregar movimiento', [form]),
-    ]),
   ];
 }
 
