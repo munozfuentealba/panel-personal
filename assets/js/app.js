@@ -4,6 +4,7 @@ import { el, icon, escalonar } from './utils.js';
 import { obtenerClima, wmoIcono } from './weather.js';
 import { iniciarRespaldo } from './backup.js';
 import { inicializar } from './store.js';
+import { initChat } from './chat.js';
 import * as S from './sections.js';
 
 /* ─── Mapa de secciones ───────────────────────────────────────────── */
@@ -261,6 +262,7 @@ async function init() {
   });
 
   avisoMensual();
+  initChat();
 
   // Pintamos de inmediato con el clima pendiente; al llegar, refrescamos.
   navegar();
