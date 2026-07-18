@@ -31,6 +31,7 @@ const porId = (id) => SECCIONES.find((s) => s.id === id) ?? SECCIONES[0];
 const dom = {
   nav: document.getElementById('nav'),
   view: document.getElementById('view'),
+  main: document.querySelector('.main'),
   titulo: document.getElementById('viewTitle'),
   subtitulo: document.getElementById('viewSubtitle'),
   cajaTitulo: document.querySelector('.topbar__title'),
@@ -207,6 +208,33 @@ async function navegar() {
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
+/* ─── Aviso de inicio de mes ──────────────────────────────────────── */
+
+/**
+ * Al comenzar el mes, recuerda subir cartolas y liquidación. Se muestra los
+ * primeros días (no solo el 1) por si el panel no se abre justo ese día, y se
+ * descarta por mes: al cerrarlo no reaparece hasta el mes siguiente.
+ */
+function avisoMensual() {
+  const hoy = new Date();
+  const mesKey = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}`;
+  const enVentana = hoy.getDate() <= 5;
+  if (!enVentana || localStorage.getItem('panel.aviso.mes') === mesKey) return;
+
+  const banner = el('div', { class: 'aviso-mes' }, [
+    el('span', { class: 'aviso-mes__ic' }, [icon('i-finanzas')]),
+    el('div', { class: 'aviso-mes__txt' }, [
+      el('strong', {}, 'Inicio de mes. '),
+      'Reúne tus cartolas de BancoEstado y tu liquidación para tener tus finanzas al día.',
+    ]),
+    el('button', {
+      class: 'aviso-mes__x', 'aria-label': 'Descartar este mes',
+      onclick: () => { localStorage.setItem('panel.aviso.mes', mesKey); banner.remove(); },
+    }, [icon('i-cerrar')]),
+  ]);
+  dom.main.insertBefore(banner, dom.view);
+}
+
 /* ─── Inicio ──────────────────────────────────────────────────────── */
 
 async function init() {
@@ -232,6 +260,8 @@ async function init() {
   addEventListener('keydown', (e) => {
     if (e.key === 'Escape') cerrarMenu();
   });
+
+  avisoMensual();
 
   // Pintamos de inmediato con el clima pendiente; al llegar, refrescamos.
   navegar();

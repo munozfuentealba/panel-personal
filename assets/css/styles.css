@@ -420,6 +420,44 @@ h1, h2, h3, h4 { font-weight: 600; line-height: 1.25; letter-spacing: -.015em; }
 }
 .icon-btn:hover { background: var(--surface-hover); color: var(--text); }
 
+/* ─── Aviso de inicio de mes ─────────────────────────────────────── */
+.aviso-mes {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin: var(--sp-5) var(--sp-8) 0;
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-md);
+  background: var(--accent-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  color: var(--text);
+  font-size: 13.5px;
+  line-height: 1.45;
+  animation: card-in 480ms var(--ease-out);
+}
+.aviso-mes__ic {
+  width: 34px; height: 34px;
+  flex: none;
+  display: grid; place-items: center;
+  border-radius: var(--r-sm);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--accent-text);
+}
+.aviso-mes__ic .icon { width: 18px; height: 18px; }
+.aviso-mes__txt { flex: 1; min-width: 0; }
+.aviso-mes__txt strong { font-weight: 600; }
+.aviso-mes__x {
+  width: 30px; height: 30px;
+  flex: none;
+  display: grid; place-items: center;
+  border-radius: var(--r-sm);
+  color: var(--text-3);
+  transition: background-color var(--t-fast), color var(--t-fast);
+}
+.aviso-mes__x:hover { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--text); }
+.aviso-mes__x .icon { width: 16px; height: 16px; }
+@media (max-width: 900px) { .aviso-mes { margin: var(--sp-4) var(--sp-4) 0; } }
+
 /* ─── Vista + transición de sección ──────────────────────────────── */
 .view {
   flex: 1;
