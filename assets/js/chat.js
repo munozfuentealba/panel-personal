@@ -220,7 +220,7 @@ export function initChat() {
     bienvenida();
     scrollAbajo();
   } }, [icon('i-refrescar')]);
-  const cerrar = el('button', { class: 'icon-btn', 'aria-label': 'Cerrar chat', onclick: () => toggle(false) }, [icon('i-cerrar')]);
+  const minimizar = el('button', { class: 'icon-btn', title: 'Minimizar', 'aria-label': 'Minimizar chat', onclick: () => toggle(false) }, [icon('i-minimizar')]);
 
   const panel = el('div', { class: 'chat', hidden: true }, [
     el('div', { class: 'chat__head' }, [
@@ -230,7 +230,7 @@ export function initChat() {
         el('span', {}, 'Pregunta sobre tu panel'),
       ]),
       reiniciar,
-      cerrar,
+      minimizar,
     ]),
     el('div', { class: 'chat__body' }, [mensajes, formConv]),
   ]);
