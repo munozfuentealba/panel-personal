@@ -10,7 +10,7 @@ import { datos, guardar, uid, exportar, reiniciar, importar, origen, exportarPar
 import * as R from './backup.js';
 import { wmoIcono, wmoTexto, CIUDADES } from './weather.js';
 import {
-  card, metrica, delta, barra, grafico, leyenda, sparkline,
+  card, metrica, delta, barra, grafico, leyenda, sparkline, donut,
   listaVacia, aviso, encabezado, botonIcono, progresoEditable,
 } from './components.js';
 
@@ -247,6 +247,138 @@ function tarjetaCuenta(c) {
   ]);
 }
 
+const COLOR_CAT = {
+  'Supermercado': '#10b981',
+  'Restaurantes y delivery': '#f59e0b',
+  'Transporte': '#3b82f6',
+  'Suscripciones y apps': '#8b5cf6',
+  'Servicios y cuentas': '#14b8a6',
+  'Crédito y deuda': '#f43f5e',
+  'Comisiones': '#64748b',
+  'Efectivo': '#a16207',
+  'Transferencias': '#ec4899',
+  'Compras varias': '#94a3b8',
+};
+const colorCat = (c) => COLOR_CAT[c] || 'var(--accent)';
+const MESES_CORTO = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+/**
+ * Bloque interactivo "En qué gasto mi dinero": selector de mes, dona por
+ * categoría y lista buscable de egresos. Maneja su propio estado y solo
+ * repinta su subárbol al cambiar mes o búsqueda.
+ */
+function bloqueGastos(egresos) {
+  if (!egresos?.length) {
+    return card('En qué gasto mi dinero', [
+      listaVacia('Aún no hay egresos cargados desde tus cartolas.'),
+    ]);
+  }
+
+  const meses = [...new Set(egresos.map((e) => e.fecha.slice(0, 7)))].sort();
+  let mesSel = 'todos';
+  let q = '';
+
+  const cont = el('div', { class: 'card__body' });
+
+  const filtrarMes = () => (mesSel === 'todos' ? egresos : egresos.filter((e) => e.fecha.startsWith(mesSel)));
+
+  const pintar = () => {
+    const delMes = filtrarMes();
+    const total = delMes.reduce((s, e) => s + e.monto, 0);
+
+    // Totales por categoría (para la dona y la leyenda)
+    const porCat = {};
+    for (const e of delMes) porCat[e.cat] = (porCat[e.cat] || 0) + e.monto;
+    const cats = Object.entries(porCat).sort((a, b) => b[1] - a[1]);
+    const segmentos = cats.map(([label, value]) => ({ label, value, color: colorCat(label) }));
+
+    // Lista filtrada por búsqueda
+    const term = q.trim().toLowerCase();
+    const lista = delMes
+      .filter((e) => !term || e.desc.toLowerCase().includes(term) || e.cat.toLowerCase().includes(term))
+      .sort((a, b) => b.monto - a.monto);
+
+    cont.replaceChildren(
+      // Selector de mes
+      el('div', { class: 'meses' }, [
+        el('button', {
+          class: `mes-btn${mesSel === 'todos' ? ' is-active' : ''}`,
+          onclick: () => { mesSel = 'todos'; pintar(); },
+        }, 'Todos'),
+        ...meses.map((m) => el('button', {
+          class: `mes-btn${mesSel === m ? ' is-active' : ''}`,
+          onclick: () => { mesSel = m; pintar(); },
+        }, `${MESES_CORTO[+m.slice(5, 7) - 1]} ${m.slice(0, 4)}`)),
+      ]),
+
+      // Encabezado del total
+      el('div', { style: { marginTop: '4px' } }, [
+        el('div', { class: 'metric__value', style: { fontSize: '26px' } }, clp(total)),
+        el('div', { class: 'metric__label' },
+          `${lista.length} de ${delMes.length} egresos · ${mesSel === 'todos' ? 'todo el período' : `${MESES_CORTO[+mesSel.slice(5, 7) - 1]} ${mesSel.slice(0, 4)}`}`),
+      ]),
+
+      // Dona + leyenda
+      total > 0
+        ? el('div', { class: 'gastos' }, [
+            donut(segmentos),
+            el('div', { class: 'gastos__leg' }, cats.map(([c, v]) => el('div', { class: 'gastos__row' }, [
+              el('span', { class: 'gastos__sw', style: { background: colorCat(c) } }),
+              el('span', { class: 'gastos__name' }, c),
+              el('b', {}, clp(v)),
+              el('span', {}, `${Math.round((v / total) * 100)} %`),
+            ]))),
+          ])
+        : listaVacia('Sin egresos este mes.'),
+
+      // Búsqueda
+      el('input', {
+        class: 'input',
+        type: 'search',
+        placeholder: 'Buscar egreso (ej: shell, jumbo, uber)…',
+        value: q,
+        style: { marginTop: '4px' },
+        oninput: (e) => {
+          q = e.target.value;
+          // Repinto solo la lista para no perder el foco del buscador.
+          pintarLista(lista, e.target);
+        },
+      }),
+
+      // Lista de egresos
+      listaHost,
+    );
+    pintarLista(lista);
+  };
+
+  const listaHost = el('div', { class: 'list' });
+
+  function pintarLista(lista, inputFocuseado) {
+    // Recalcular por si viene de un oninput con término nuevo
+    if (inputFocuseado) {
+      const term = inputFocuseado.value.trim().toLowerCase();
+      lista = filtrarMes()
+        .filter((e) => !term || e.desc.toLowerCase().includes(term) || e.cat.toLowerCase().includes(term))
+        .sort((a, b) => b.monto - a.monto);
+    }
+    listaHost.replaceChildren(
+      ...(lista.length
+        ? lista.slice(0, 200).map((e) => el('div', { class: 'list__item' }, [
+            el('span', { class: 'dot', style: { background: colorCat(e.cat) } }),
+            el('div', { class: 'list__main' }, [
+              el('div', { class: 'list__title' }, e.desc),
+              el('div', { class: 'list__meta' }, `${e.cat} · ${fecha(e.fecha)}`),
+            ]),
+            el('span', { class: 'list__value' }, clp(e.monto)),
+          ]))
+        : [listaVacia('Ningún egreso coincide con la búsqueda.')]),
+    );
+  }
+
+  pintar();
+  return card('En qué gasto mi dinero', [cont]);
+}
+
 export function finanzas(ctx) {
   const f = datos.finanzas;
   const t = totalesMes(f.movimientos);
@@ -320,6 +452,8 @@ export function finanzas(ctx) {
       tarjetaSueldo(f.sueldo),
       tarjetaCuenta(f.cuenta),
     ].filter(Boolean)),
+
+    bloqueGastos(f.egresos),
 
     el('div', { class: 'grid grid--wide' }, [
       card('Ingresos vs. gastos — últimos 6 meses', [

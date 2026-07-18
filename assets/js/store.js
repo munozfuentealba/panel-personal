@@ -66,6 +66,14 @@ const SEED = {
         { fecha: '2026-06-30', saldo: 320000 },
       ],
     },
+    // Egresos clasificados desde las cartolas. Ejemplo; los reales se cargan aparte.
+    egresos: [
+      { fecha: '2026-06-03', desc: 'COMPRA JUMBO OSORNO', monto: 38900, cat: 'Supermercado' },
+      { fecha: '2026-06-05', desc: 'COMPRA SHELL', monto: 25000, cat: 'Transporte' },
+      { fecha: '2026-06-08', desc: 'WEB PEDIDOSYA', monto: 12600, cat: 'Restaurantes y delivery' },
+      { fecha: '2026-06-10', desc: 'WEB APPLE.COM/BILL', monto: 4490, cat: 'Suscripciones y apps' },
+      { fecha: '2026-06-12', desc: 'PAGO LINEA DE CREDITO', monto: 90000, cat: 'Crédito y deuda' },
+    ],
   },
 
   marca: {

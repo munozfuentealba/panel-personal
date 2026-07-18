@@ -202,7 +202,2337 @@
           "saldo": 387889
         }
       ]
-    }
+    },
+    "egresos": [
+      {
+        "fecha": "2026-01-05",
+        "desc": "COMPRA LOS GALPONES CL",
+        "monto": 3200,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-01-05",
+        "desc": "COMPRA 40672-SBX PO CL",
+        "monto": 9800,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-01-05",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 459,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-01-05",
+        "desc": "TEF BANCOESTADO A MARTINEZ CARDENAS",
+        "monto": 5500,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-01-06",
+        "desc": "COMPRA H Y M MALL P CL",
+        "monto": 26160,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-01-07",
+        "desc": "TEF A GUZMAN BARRIENTOS VICTORIA NA",
+        "monto": 2710,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-01-08",
+        "desc": "WEB PEDIDOSYA PROPINAS",
+        "monto": 1400,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-01-08",
+        "desc": "WEB PEDIDOSYA FOOD PEY",
+        "monto": 16110,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-01-09",
+        "desc": "COMPRA SOCIEDAD COM CL",
+        "monto": 6202,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-01-09",
+        "desc": "TEF BANCOESTADO A MALDONADO ALT ANT",
+        "monto": 1570,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-01-09",
+        "desc": "TEF BANCOESTADO A MUNOZ FUENTEALBA",
+        "monto": 15000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-01-09",
+        "desc": "PAGO LINEA DE CREDITO N. 8140003586",
+        "monto": 25363,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-01-09",
+        "desc": "WEB SHOPIFY INTERNATIO",
+        "monto": 1100,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-01-09",
+        "desc": "COMPRA SOCIEDAD COM CL",
+        "monto": 3480,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-01-09",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 458,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-01-12",
+        "desc": "COMPRA FRUTOS OSORN CL",
+        "monto": 8290,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-01-12",
+        "desc": "WEB PEDIDOSYA FOOD PEY",
+        "monto": 11620,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-01-12",
+        "desc": "COMPRA JUMBO OSORNO CL",
+        "monto": 24449,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-01-12",
+        "desc": "TEF BANCOESTADO A CAMINO EMILQUEO E",
+        "monto": 15000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-01-13",
+        "desc": "GIRO CAJERO AUTOMATICO 12/01 16:21",
+        "monto": 200000,
+        "cat": "Efectivo"
+      },
+      {
+        "fecha": "2026-01-28",
+        "desc": "COMPRA CRISTO PROTE CL",
+        "monto": 233000,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-01-28",
+        "desc": "COMPRA CRISTO PROTE CL",
+        "monto": 600000,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-01-29",
+        "desc": "COMPRA UNIMARC BULN CL",
+        "monto": 36020,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-01-29",
+        "desc": "COMPRA PARIS PORTAL CL",
+        "monto": 469990,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-01-29",
+        "desc": "COMPRA TUU*GLOBAL S CL",
+        "monto": 2400,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-01-29",
+        "desc": "COMPRA COMERCIAL RE CL",
+        "monto": 16200,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-01-29",
+        "desc": "COMPRA PARKING PORT CL",
+        "monto": 1750,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-01-29",
+        "desc": "PAGO LINEA DE CREDITO N. 8140003586",
+        "monto": 400000,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-01-29",
+        "desc": "TEF BANCOESTADO A FUNERARIA MUNOZ",
+        "monto": 1000000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-01-30",
+        "desc": "PAGO LINEA DE CREDITO N. 8140003586 Operación",
+        "monto": 251226,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-02-02",
+        "desc": "WEB GOOGLE PLAY YOUTUB",
+        "monto": 5500,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-02-02",
+        "desc": "WEB APPLE.COM/BILL",
+        "monto": 4490,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-02-02",
+        "desc": "WEB APPLE.COM/BILL",
+        "monto": 10990,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-02-02",
+        "desc": "COMPRA PATAGONIA CL",
+        "monto": 121550,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-02",
+        "desc": "COMPRA POOL ALIMENT CL",
+        "monto": 8450,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-02",
+        "desc": "COMPRA C. VERDE GAL CL",
+        "monto": 3990,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-02-02",
+        "desc": "COMPRA CAFE CENTRAL CL",
+        "monto": 11550,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-02-02",
+        "desc": "COMPRA MAXIK CL",
+        "monto": 990,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-02",
+        "desc": "COMPRA SHELL.J.BUSC CL",
+        "monto": 34051,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-02-02",
+        "desc": "COMPRA UNIMARC BULN CL",
+        "monto": 6450,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-02-02",
+        "desc": "COMPRA JUMBO OSORNO CL",
+        "monto": 7020,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-02-02",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 440,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-02-02",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 440,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-02-02",
+        "desc": "PAC SANTANDER CONSUMER FINANCE LIMI",
+        "monto": 274191,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-02-02",
+        "desc": "INTERESES LINEA DE CREDITO",
+        "monto": 7131,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-02-02",
+        "desc": "IMPUESTO LINEA DE CREDITO",
+        "monto": 212,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-02-03",
+        "desc": "COMPRA CAFE CENTRAL CL",
+        "monto": 3080,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-02-03",
+        "desc": "COMPRA UNIMARC CENT CL",
+        "monto": 13997,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-02-03",
+        "desc": "COMPRA MALL CHINO V CL",
+        "monto": 10900,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-03",
+        "desc": "COMPRA AP OSORNO CL",
+        "monto": 11500,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-03",
+        "desc": "COMPRA TUU*REMOTOBI CL",
+        "monto": 44220,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-03",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 5300,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-03",
+        "desc": "COMPRA QUILLAHUA OS CL",
+        "monto": 51470,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-03",
+        "desc": "COMPRA TUU*GLOBALSE CL",
+        "monto": 1170,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-03",
+        "desc": "COMPRA M Y C LTDA CL",
+        "monto": 109500,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-03",
+        "desc": "COMPRA TUU*GLOBALSE CL",
+        "monto": 1220,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-04",
+        "desc": "WEB TWINKL",
+        "monto": 3250,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-02-04",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 14050,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-04",
+        "desc": "COMPRA TUU*SIN ENVI CL",
+        "monto": 3200,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-04",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 444,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-02-04",
+        "desc": "TEF BANCOESTADO A ILLESCA HERRERA M",
+        "monto": 13000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-02-05",
+        "desc": "COMPRA 20192 OSORNO CL",
+        "monto": 2200,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-05",
+        "desc": "COMPRA 20192 OSORNO CL",
+        "monto": 3590,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-05",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 7800,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-05",
+        "desc": "COMPRA 20192 OSORNO CL",
+        "monto": 2200,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-05",
+        "desc": "WEB PAYU *UBER TRIP Operación",
+        "monto": 2107,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-02-06",
+        "desc": "WEB PAYU *UBER TRIP",
+        "monto": 3595,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-02-06",
+        "desc": "TEF A ELGUETA MELILLANCA MARIO IVAN",
+        "monto": 3910,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-02-09",
+        "desc": "COMPRA TUU*SUPERMER CL",
+        "monto": 1500,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-09",
+        "desc": "COMPRA TUU*GLOBALSE CL",
+        "monto": 1020,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-09",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 8180,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-09",
+        "desc": "COMPRA SUPERMERCADO CL",
+        "monto": 2200,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-09",
+        "desc": "WEB STARKEN WEB",
+        "monto": 3490,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-09",
+        "desc": "WEB SHOPIFY INTERNATIO",
+        "monto": 1051,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-02-09",
+        "desc": "COMPRA LEONTINA AMP CL",
+        "monto": 6140,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-02-09",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 8800,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-09",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 2500,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-09",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 443,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-02-10",
+        "desc": "WEB STARKEN WEB",
+        "monto": 3490,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-10",
+        "desc": "COMPRA TUU*GLOBALSE CL",
+        "monto": 1350,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-10",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 2100,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-11",
+        "desc": "COMPRA LA MANO CL",
+        "monto": 5500,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-12",
+        "desc": "COMPRA LEONTINA AMP CL",
+        "monto": 7000,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-02-12",
+        "desc": "TEF BANCOESTADO A OJEDA MAYE ELISAB",
+        "monto": 20000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-02-12",
+        "desc": "TEF BANCOESTADO A OJEDA MAYE ELISAB",
+        "monto": 5000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-02-13",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 13800,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-13",
+        "desc": "COMPRA COPEC ARCOPR CL",
+        "monto": 22004,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-02-13",
+        "desc": "COMPRA LEONTINA AMP CL",
+        "monto": 4170,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-02-16",
+        "desc": "COMPRA TUU*GLOBAL P CL",
+        "monto": 1250,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-16",
+        "desc": "WEB DL*PEDIDOSYA MELT",
+        "monto": 12600,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-02-16",
+        "desc": "WEB PEDIDOSYA GROCERIE",
+        "monto": 14671,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-02-16",
+        "desc": "COMPRA DULCE PLUS CL",
+        "monto": 7300,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-02-17",
+        "desc": "COMPRA 20192 OSORNO CL",
+        "monto": 7290,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-17",
+        "desc": "COMPRA TUU*SIN ENVI CL",
+        "monto": 4000,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-17",
+        "desc": "COMPRA PARKING PORT CL",
+        "monto": 750,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-02-17",
+        "desc": "COMPRA TUU*GLOBALSE CL",
+        "monto": 4020,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-18",
+        "desc": "COMPRA FRUTOS OSORN CL",
+        "monto": 7990,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-02-18",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 7700,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-18",
+        "desc": "COMPRA AP OSORNO CL",
+        "monto": 8000,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-18",
+        "desc": "COMPRA TUU*GLOBALSE CL Operación",
+        "monto": 2620,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-18",
+        "desc": "TEF A TOLEDO BRINTRUP GABRIEL ARTUR",
+        "monto": 16600,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-02-18",
+        "desc": "COMPRA LEONTINA AMP CL",
+        "monto": 4440,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-02-20",
+        "desc": "COMPRA PLAZA TRONCA CL",
+        "monto": 3600,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-20",
+        "desc": "COMPRA PUERTO VARAS CL",
+        "monto": 11070,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-20",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 8690,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-20",
+        "desc": "TEF A MUNOZ FUENTEALBA OSCAR IGNACI",
+        "monto": 1000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-02-20",
+        "desc": "GIRO POR REDBANC 19/02 23:34",
+        "monto": 10000,
+        "cat": "Efectivo"
+      },
+      {
+        "fecha": "2026-02-20",
+        "desc": "PAGO ENTEL PCS PAGO DE CUENTAS",
+        "monto": 35970,
+        "cat": "Servicios y cuentas"
+      },
+      {
+        "fecha": "2026-02-23",
+        "desc": "COMPRA ARAMCO CL",
+        "monto": 32795,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-02-23",
+        "desc": "WEB PAYU *UBER TRIP",
+        "monto": 3301,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-02-23",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 6000,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-23",
+        "desc": "COMPRA PRONTO COPEC CL",
+        "monto": 3880,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-02-23",
+        "desc": "COMPRA LEONTINA AMP CL",
+        "monto": 3690,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-02-23",
+        "desc": "COMPRA TUU*LICARAYE CL",
+        "monto": 1800,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-23",
+        "desc": "COMPRA SUMUP * VERD CL",
+        "monto": 7300,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-23",
+        "desc": "COMPRA 20192 OSORNO CL",
+        "monto": 7780,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-23",
+        "desc": "COMPRA DULCE PLUS CL",
+        "monto": 2500,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-02-23",
+        "desc": "TEF A ERRIBARRA GONZALEZ CLAUDIA AL",
+        "monto": 15000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-02-23",
+        "desc": "TEF A NEIPAN HERRERA BRAULIO NICOLA",
+        "monto": 13600,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-02-24",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 2150,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-24",
+        "desc": "COMPRA CUGAT OSORNO CL",
+        "monto": 24962,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-24",
+        "desc": "COMPRA SHELL J BUSC CL",
+        "monto": 6490,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-02-24",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 2650,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-24",
+        "desc": "TEF BANCOESTADO A ALVAREZ GALLARDO",
+        "monto": 5000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-02-25",
+        "desc": "COMPRA 40672-SBX PO CL",
+        "monto": 5700,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-25",
+        "desc": "COMPRA OSORNO-MED CL",
+        "monto": 7750,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-02-25",
+        "desc": "COMPRA PARKING PORT CL Operación",
+        "monto": 1050,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-02-25",
+        "desc": "COMPRA TUU*GARDEN P CL",
+        "monto": 1500,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-27",
+        "desc": "COMPRA TUU*FRUTERIA CL",
+        "monto": 4600,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-02-27",
+        "desc": "COMPRA SHELL J BUSC CL",
+        "monto": 12480,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-02-27",
+        "desc": "GIRO POR REDBANC 27/02 12:05",
+        "monto": 10000,
+        "cat": "Efectivo"
+      },
+      {
+        "fecha": "2026-02-27",
+        "desc": "COMPRA ARAMCO CL",
+        "monto": 32235,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "COMPRA VERONICA EDI CL",
+        "monto": 4500,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "COMPRA ESCH7020 CAR CL",
+        "monto": 18920,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "COMPRA LOS MANIOS CL",
+        "monto": 1500,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "PAGO LINEA DE CREDITO N. 8140003586",
+        "monto": 114395,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "TEF BANCOESTADO A FLORES OJEDA JULI",
+        "monto": 20000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "PAGO TARJETA VISA DORADA",
+        "monto": 100000,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "WEB GOOGLE PLAY YOUTUB",
+        "monto": 5500,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "COMPRA LOS MANIOS CL",
+        "monto": 1680,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "COMPRA COCINA DE NU CL",
+        "monto": 4500,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "WEB APPLE.COM/BILL",
+        "monto": 4490,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "COMPRA COCINA DE NU CL",
+        "monto": 3500,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "WEB APPLE.COM/BILL",
+        "monto": 10990,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "COMPRA PIZZERIA CUE CL",
+        "monto": 2500,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "COMPRA DULCE PLUS CL",
+        "monto": 6800,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "COMPRA LOS MANIOS CL",
+        "monto": 680,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 443,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "PAC SANTANDER CONSUMER FINANCE LIMI",
+        "monto": 274191,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 443,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "INTERESES LINEA DE CREDITO",
+        "monto": 453,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-03-02",
+        "desc": "IMPUESTO LINEA DE CREDITO",
+        "monto": 67,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-03-04",
+        "desc": "WEB TWINKL",
+        "monto": 3250,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-03-04",
+        "desc": "COMPRA TUU*GLOBALSE CL",
+        "monto": 4320,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-04",
+        "desc": "COMPRA CAFE CENTRAL CL",
+        "monto": 13090,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-03-04",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 452,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-03-04",
+        "desc": "PAGO SAESA COMPRAQUI WEB",
+        "monto": 45500,
+        "cat": "Servicios y cuentas"
+      },
+      {
+        "fecha": "2026-03-04",
+        "desc": "TEF BANCOESTADO A MUNOZ FUENTEALBA",
+        "monto": 20000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-03-04",
+        "desc": "COMPRA LEONTINA AMP CL Operación",
+        "monto": 7500,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-03-05",
+        "desc": "COMPRA INVERSIONES CL",
+        "monto": 2600,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-05",
+        "desc": "COMPRA ARAMCO CL",
+        "monto": 32032,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-03-05",
+        "desc": "COMPRA TUU*GLOBAL P CL",
+        "monto": 1050,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-05",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 2890,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-05",
+        "desc": "COMPRA ORO NEGRO AU CL",
+        "monto": 8980,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-06",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 8947,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-06",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 5100,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-06",
+        "desc": "COMPRA EASY OSORNO CL",
+        "monto": 71930,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-09",
+        "desc": "COMPRA 20192 OSORNO CL",
+        "monto": 8020,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-09",
+        "desc": "COMPRA COMERCIAL Y CL",
+        "monto": 38698,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-09",
+        "desc": "COMPRA CAFE CENTRAL CL",
+        "monto": 19910,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-03-09",
+        "desc": "GIRO POR REDBANC 09/03 10:56",
+        "monto": 10000,
+        "cat": "Efectivo"
+      },
+      {
+        "fecha": "2026-03-09",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 2000,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-09",
+        "desc": "COMPRA UPA| F949 PU CL",
+        "monto": 5250,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-09",
+        "desc": "COMPRA STA ISABEL O CL",
+        "monto": 20885,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-09",
+        "desc": "COMPRA PUERTO VARAS CL",
+        "monto": 2290,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-09",
+        "desc": "COMPRA UPA| F949 PU CL",
+        "monto": 10680,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-09",
+        "desc": "COMPRA PLAZA TRONCA CL",
+        "monto": 3600,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-09",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 2000,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-09",
+        "desc": "COMPRA SHELL J BUSC CL",
+        "monto": 4190,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-03-09",
+        "desc": "COMPRA DULCE PLUS CL",
+        "monto": 1500,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-03-09",
+        "desc": "TEF BANCOESTADO A FLORES OJEDA JULI",
+        "monto": 18500,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-03-10",
+        "desc": "COMPRA GESTION INMO CL",
+        "monto": 1100,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-10",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 1440,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-10",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 4480,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-10",
+        "desc": "WEB SHOPIFY INTERNATIO",
+        "monto": 1123,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-03-10",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 469,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-03-12",
+        "desc": "COMPRA TUU*EL MAEST CL",
+        "monto": 6000,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-16",
+        "desc": "WEB ADOBE ADOBE",
+        "monto": 8087,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-03-16",
+        "desc": "COMPRA CAFE DEL CEN CL",
+        "monto": 6800,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-03-16",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 2900,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-16",
+        "desc": "COMPRA SHELL J BUSC CL",
+        "monto": 4190,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-03-18",
+        "desc": "COMPRA LA MANO CL Operación",
+        "monto": 12200,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-18",
+        "desc": "TEF A OVANDO OYARZO PATRICIA ALEJAN",
+        "monto": 10040,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-03-18",
+        "desc": "WEB APPLE.COM/BILL",
+        "monto": 5099,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-03-18",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 471,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-03-18",
+        "desc": "TEF A FUENTEALBA EMILQUEO NANCY CEC",
+        "monto": 11000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-03-18",
+        "desc": "PAGO ENTEL PCS PAGO DE CUENTAS",
+        "monto": 51990,
+        "cat": "Servicios y cuentas"
+      },
+      {
+        "fecha": "2026-03-19",
+        "desc": "TEF BANCOESTADO A MANRIQUEZ HENRIQU",
+        "monto": 3900,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-03-20",
+        "desc": "COMPRA 20192 OSORNO CL",
+        "monto": 4470,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-23",
+        "desc": "COMPRA PARKING PORT CL",
+        "monto": 2900,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-03-23",
+        "desc": "COMPRA CAFE DEL CEN CL",
+        "monto": 18920,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-03-23",
+        "desc": "COMPRA DULCE PLUS CL",
+        "monto": 2500,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-03-23",
+        "desc": "TEF BANCOESTADO A FLORES OJEDA JULI",
+        "monto": 4800,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-03-24",
+        "desc": "COMPRA PARKING PORT CL",
+        "monto": 4550,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-03-27",
+        "desc": "COMPRA OSORNO OHIGG CL",
+        "monto": 8712,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-27",
+        "desc": "COMPRA MARY JEAN CL",
+        "monto": 30300,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-27",
+        "desc": "WEB PLAYSTATION",
+        "monto": 28130,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-03-27",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 534,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "GIRO POR REDBANC 28/03 18:23",
+        "monto": 50000,
+        "cat": "Efectivo"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "COMPRA SOCIEDAD COM CL",
+        "monto": 3860,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "COMPRA TUU*RESTAURA CL",
+        "monto": 27500,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "COMPRA TUU*VALAS CL",
+        "monto": 7990,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "COMPRA FRUTOS OSORN CL Operación",
+        "monto": 7990,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "COMPRA SHELL MACKEN CL",
+        "monto": 10000,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "COMPRA C. VERDE GAL CL",
+        "monto": 5890,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "WEB PLAYSTATION",
+        "monto": 20315,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "WEB PLAYSTATION",
+        "monto": 22690,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "COMPRA UNIMARC BULN CL",
+        "monto": 3645,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "COMPRA DULCE PLUS CL",
+        "monto": 4300,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "WEB PLAYSTATION",
+        "monto": 15881,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "COMPRA PARKING PORT CL",
+        "monto": 2200,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "COMPRA LEONTINA AMP CL",
+        "monto": 3630,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "COMPRA JUMBO OSORNO CL",
+        "monto": 2694,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 480,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "TEF A FUENTEALBA EMILQUEO NANCY CEC",
+        "monto": 20000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 480,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 480,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "PAGO LINEA DE CREDITO N. 8140003586",
+        "monto": 61861,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "PAGO TARJETA VISA DORADA",
+        "monto": 80000,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-30",
+        "desc": "TEF BANCOESTADO A MUNOZ FUENTEALBA",
+        "monto": 20000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-03-31",
+        "desc": "WEB PLAYSTATION",
+        "monto": 5730,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-03-31",
+        "desc": "COMPRA HIP LIDER BE CL",
+        "monto": 65836,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-03-31",
+        "desc": "COMPRA SB 758 CL",
+        "monto": 2787,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-31",
+        "desc": "COMPRA SOCIEDAD COM CL",
+        "monto": 3667,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-03-31",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 478,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-03-31",
+        "desc": "WEB PLAYSTATION",
+        "monto": 24098,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-03-31",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 478,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-03-31",
+        "desc": "TEF A FUENTEALBA EMILQUEO NANCY CEC",
+        "monto": 669990,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-04-01",
+        "desc": "WEB APPLE.COM/BILL",
+        "monto": 4490,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-04-01",
+        "desc": "COMPRA TUU*GLOBALSE CL",
+        "monto": 1370,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-04-01",
+        "desc": "WEB APPLE.COM/BILL",
+        "monto": 10990,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-04-01",
+        "desc": "COMPRA TUU*GLOBALSE CL",
+        "monto": 950,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-04-01",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 482,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-04-01",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 482,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-04-01",
+        "desc": "COMPRA SHELL.J.BUSC CL",
+        "monto": 35000,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-04-01",
+        "desc": "WEB PLAYSTATION",
+        "monto": 18226,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-04-01",
+        "desc": "COMPRA TUU*GARDEN P CL",
+        "monto": 1200,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-04-01",
+        "desc": "COMPRA FRUTOS OSORN CL",
+        "monto": 7990,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-04-01",
+        "desc": "WEB PLAYSTATION",
+        "monto": 11388,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-04-01",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 482,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-04-01",
+        "desc": "PAC SANTANDER CONSUMER FINANCE LIMI",
+        "monto": 274191,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-04-01",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 482,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-04-01",
+        "desc": "INTERESES LINEA DE CREDITO",
+        "monto": 342,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-04-01",
+        "desc": "IMPUESTO LINEA DE CREDITO",
+        "monto": 17,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-04-02",
+        "desc": "COMPRA SODIMAC OSOR CL",
+        "monto": 1890,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-04-02",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 2200,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-04-02",
+        "desc": "TEF BANCOESTADO A BARRIA PARRA JORG",
+        "monto": 30000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-04-06",
+        "desc": "COMPRA HIP LIDER OS CL",
+        "monto": 55019,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-04-06",
+        "desc": "WEB DL*GOOGLE YOUTUBE",
+        "monto": 5500,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-04-06",
+        "desc": "TEF BANCOESTADO A FLORES OJEDA JULI",
+        "monto": 22000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-04-07",
+        "desc": "COMPRA CAFE CENTRAL CL",
+        "monto": 3000,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-04-07",
+        "desc": "WEB CINEMARK",
+        "monto": 12400,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-04-07",
+        "desc": "WEB COOPEUCH ENROLAMIE",
+        "monto": 3680,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-04-07",
+        "desc": "WEB TELEFONICA DEL SUR",
+        "monto": 39484,
+        "cat": "Servicios y cuentas"
+      },
+      {
+        "fecha": "2026-04-08",
+        "desc": "TEF A FUENTEALBA EMILQUEO NANCY CEC",
+        "monto": 30000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-04-08",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 1800,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-04-09",
+        "desc": "COMPRA MARKET LOS C CL",
+        "monto": 5850,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-04-09",
+        "desc": "TEF A TOLEDO BRINTRUP GABRIEL ARTUR",
+        "monto": 50000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-04-09",
+        "desc": "TEF BANCOESTADO A DIAZ SOTO PABLO A",
+        "monto": 5000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-04-09",
+        "desc": "WEB SHOPIFY INTERNATIO",
+        "monto": 27450,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-04-09",
+        "desc": "COMPRA SOCIEDAD COM CL",
+        "monto": 1770,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-04-09",
+        "desc": "COMPRA EVENTOS Y SE CL",
+        "monto": 3200,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-04-09",
+        "desc": "COMPRA TUU*GLOBAL P CL",
+        "monto": 3220,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-04-09",
+        "desc": "COMISION TRANSACCION INTERNACIONAL Operación",
+        "monto": 522,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-04-09",
+        "desc": "TEF BANCOESTADO A CASANOVA VELASQUE",
+        "monto": 15000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-04-10",
+        "desc": "COMPRA SALCOBRAND CL",
+        "monto": 16999,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-04-10",
+        "desc": "WEB DL*PEDIDOSYA KOCHI",
+        "monto": 11430,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-04-10",
+        "desc": "COMPRA TUU*GLOBALSE CL",
+        "monto": 1870,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-04-13",
+        "desc": "WEB ADOBE ADOBE",
+        "monto": 8087,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-04-13",
+        "desc": "PAGO MONTO MORA 30D TARJETA CREDITO",
+        "monto": 543648,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-04-14",
+        "desc": "WEB DP *SEGUROS FA",
+        "monto": 7490,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-04-15",
+        "desc": "TEF BANCOESTADO A NEIPAN HERRERA BR",
+        "monto": 10500,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-04-16",
+        "desc": "COMPRA CAFETE AEROP CL",
+        "monto": 9700,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-04-16",
+        "desc": "COMPRA OSORNO-MED CL",
+        "monto": 7880,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-04-20",
+        "desc": "COMPRA WENDY S PORT CL",
+        "monto": 12840,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-04-20",
+        "desc": "COMPRA 40672-SBX PO CL",
+        "monto": 2900,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-04",
+        "desc": "WEB PLAYSTATION",
+        "monto": 21869,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-05-04",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 462,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-05-04",
+        "desc": "INTERESES LINEA DE CREDITO",
+        "monto": 7858,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-05-04",
+        "desc": "IMPUESTO LINEA DE CREDITO",
+        "monto": 255,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-05-11",
+        "desc": "WEB DL*PEDIDOSYA KOCHI Operación",
+        "monto": 14630,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-05-11",
+        "desc": "TEF BANCOESTADO A CARDENAS CAMINO Y",
+        "monto": 10000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-05-12",
+        "desc": "COMPRA TUU*AGRO NEW CL",
+        "monto": 10500,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-12",
+        "desc": "PAC SANTANDER CONSUMER FINANCE LIMI",
+        "monto": 276238,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-05-13",
+        "desc": "COMPRA TUU*GLOBALSE CL",
+        "monto": 2100,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-13",
+        "desc": "WEB PAYU *UBER TRIP",
+        "monto": 5183,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-05-13",
+        "desc": "COMPRA JUMBO OSORNO CL",
+        "monto": 12220,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-05-13",
+        "desc": "COMPRA TUU*GLOBALSE CL",
+        "monto": 2470,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-13",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 2690,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-13",
+        "desc": "COMPRA PARKING PORT CL",
+        "monto": 3750,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-05-13",
+        "desc": "WEB STARKEN WEB",
+        "monto": 35090,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-14",
+        "desc": "GIRO POR REDBANC 13/05 22:59",
+        "monto": 10000,
+        "cat": "Efectivo"
+      },
+      {
+        "fecha": "2026-05-14",
+        "desc": "COMPRA PLAZA TRONCA CL",
+        "monto": 1100,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-14",
+        "desc": "COMPRA SHELL F949 CL",
+        "monto": 10000,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-05-14",
+        "desc": "COMPRA PLAZA TRONCA CL",
+        "monto": 1100,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-14",
+        "desc": "COMPRA PLAZA TRONCA CL",
+        "monto": 3600,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-15",
+        "desc": "WEB PEDIDOSYA FOOD PEY",
+        "monto": 6000,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-05-15",
+        "desc": "COMPRA LA MANO CL",
+        "monto": 2000,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-15",
+        "desc": "WEB PEDIDOSYA FOOD PEY",
+        "monto": 6000,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-05-18",
+        "desc": "COMPRA JUMBO OSORNO CL",
+        "monto": 2790,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-05-18",
+        "desc": "WEB PAYU *UBER TRIP",
+        "monto": 4592,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-05-18",
+        "desc": "WEB MERPAGO*MERCADOLIB",
+        "monto": 33990,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-18",
+        "desc": "COMPRA JUMBO OSORNO CL",
+        "monto": 8822,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-05-18",
+        "desc": "COMPRA EASY PORTAL CL",
+        "monto": 2990,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-18",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 4800,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-18",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 8580,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-18",
+        "desc": "COMPRA FARMACIA DEL CL",
+        "monto": 6200,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-18",
+        "desc": "WEB PEDIDOSYA FOOD PEY",
+        "monto": 6000,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-05-19",
+        "desc": "COMPRA SHELL J BUSC CL",
+        "monto": 3500,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-05-19",
+        "desc": "COMPRA SHELL J BUSC CL",
+        "monto": 6120,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-05-22",
+        "desc": "COMPRA YOGUI MARKET CL",
+        "monto": 24490,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-22",
+        "desc": "COMPRA 40672-SBX PO CL",
+        "monto": 4900,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-25",
+        "desc": "COMPRA COMERCIAL Y CL",
+        "monto": 25000,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-25",
+        "desc": "TEF BANCOESTADO A DIAZ SOTO PABLO A",
+        "monto": 6000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-05-29",
+        "desc": "WEB FS *PPSSPP.ORG",
+        "monto": 56116,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-05-29",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 1066,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-05-29",
+        "desc": "COMPRA SONIA ALBERT CL",
+        "monto": 9040,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "WEB APPLE.COM/BILL",
+        "monto": 4490,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "COMPRA GASTRONOMICA CL",
+        "monto": 27038,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "COMPRA PARKING PORT CL",
+        "monto": 2450,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "WEB TELEFONICA DEL SUR",
+        "monto": 34990,
+        "cat": "Servicios y cuentas"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "WEB APPLE.COM/BILL",
+        "monto": 10990,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "WEB GOOGLE PLAY YOUTUB",
+        "monto": 5500,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "WEB MERPAGO*RODACORP",
+        "monto": 1079,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "WEB PEDIDOSYA FOOD PEY",
+        "monto": 6000,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "COMPRA OSORNO CL",
+        "monto": 20396,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "COMPRA ARAMCO CL",
+        "monto": 20000,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "WEB DL*PEDIDOSYA PROPI",
+        "monto": 150,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "COMPRA JUMBO OSORNO CL",
+        "monto": 39747,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "COMPRA C. VERDE PZA CL",
+        "monto": 2290,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 455,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 455,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "PAC SANTANDER CONSUMER FINANCE LIMI",
+        "monto": 274191,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "TEF A MUNOZ FUENTEALBA OSCAR IGNACI",
+        "monto": 100000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "INTERESES LINEA DE CREDITO",
+        "monto": 3146,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "IMPUESTO LINEA DE CREDITO",
+        "monto": 76,
+        "cat": "Crédito y deuda"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "PAGO ENTEL PCS PAGO DE CUENTAS",
+        "monto": 60692,
+        "cat": "Servicios y cuentas"
+      },
+      {
+        "fecha": "2026-06-01",
+        "desc": "TEF BANCOESTADO A FLORES OJEDA JUL",
+        "monto": 13000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-06-02",
+        "desc": "AJUSTE COMPRA NACIONAL",
+        "monto": 11980,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-02",
+        "desc": "AJUSTE CARGO APP",
+        "monto": 20000,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-02",
+        "desc": "AJUSTE CARGO APP Operación",
+        "monto": 4500,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-02",
+        "desc": "TEF A BALCAZAR MILLALAF BORIS MARCE",
+        "monto": 2000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-06-03",
+        "desc": "COMPRA EASY PORTAL CL",
+        "monto": 3790,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-03",
+        "desc": "COMPRA COMERCIAL Y CL",
+        "monto": 30000,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-03",
+        "desc": "COMPRA TUU*GLOBAL P CL",
+        "monto": 2750,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-03",
+        "desc": "COMPRA MALL CHINO V CL",
+        "monto": 2300,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-15",
+        "desc": "COMPRA ALTA FLORERI CL",
+        "monto": 3000,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-15",
+        "desc": "COMPRA SHELL MACKEN CL",
+        "monto": 10000,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-06-15",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 3400,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-16",
+        "desc": "COMPRA OSORNO-MED CL",
+        "monto": 7880,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-06-17",
+        "desc": "COMPRA SUBWAY MACKE CL",
+        "monto": 5200,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-17",
+        "desc": "COMPRA C. VERDE GAL CL",
+        "monto": 19990,
+        "cat": "Supermercado"
+      },
+      {
+        "fecha": "2026-06-17",
+        "desc": "WEB DTV*DIRECTVGO",
+        "monto": 7200,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-06-17",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 456,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-06-22",
+        "desc": "COMPRA TUU*GLOBALSE CL",
+        "monto": 4950,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-22",
+        "desc": "WEB CINEMARK CHILE APP",
+        "monto": 14400,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-22",
+        "desc": "COMPRA SHELL.J.BUSC CL",
+        "monto": 10000,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-06-22",
+        "desc": "WEB PAYU *UBER TRIP",
+        "monto": 6895,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-06-22",
+        "desc": "COMPRA 31190-BK PAS CL",
+        "monto": 7250,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-22",
+        "desc": "COMPRA SOCIEDAD COM CL",
+        "monto": 2680,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-24",
+        "desc": "COMPRA HAULMER*NEOG CL",
+        "monto": 800,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-30",
+        "desc": "COMPRA STA ISABEL R CL",
+        "monto": 86618,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-30",
+        "desc": "COMPRA CAFE CENTRAL CL Operación",
+        "monto": 19910,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-06-30",
+        "desc": "COMPRA MERCADOPAGO* CL",
+        "monto": 32340,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-30",
+        "desc": "COMPRA CAFE CENTRAL CL",
+        "monto": 3300,
+        "cat": "Restaurantes y delivery"
+      },
+      {
+        "fecha": "2026-06-30",
+        "desc": "WEB TELEFONICA DEL SUR",
+        "monto": 35233,
+        "cat": "Servicios y cuentas"
+      },
+      {
+        "fecha": "2026-06-30",
+        "desc": "COMPRA PARKING PORT CL",
+        "monto": 800,
+        "cat": "Transporte"
+      },
+      {
+        "fecha": "2026-06-30",
+        "desc": "COMPRA TUU*LOS CONO CL",
+        "monto": 4500,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-30",
+        "desc": "COMPRA SOCIEDAD COM CL",
+        "monto": 12000,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-30",
+        "desc": "COMPRA FALABELLA OS CL",
+        "monto": 17990,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-30",
+        "desc": "COMPRA CASA IDEAS O CL",
+        "monto": 13480,
+        "cat": "Compras varias"
+      },
+      {
+        "fecha": "2026-06-30",
+        "desc": "TEF A MUNOZ FUENTEALBA OSCAR IGNACI",
+        "monto": 100000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-06-30",
+        "desc": "TEF A MORALES IBANEZ GABRIEL ANGEL",
+        "monto": 100000,
+        "cat": "Transferencias"
+      },
+      {
+        "fecha": "2026-06-30",
+        "desc": "PAGO ENTEL PCS PAGO DE CUENTAS",
+        "monto": 58827,
+        "cat": "Servicios y cuentas"
+      },
+      {
+        "fecha": "2026-07-01",
+        "desc": "WEB APPLE.COM/BILL",
+        "monto": 4490,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-07-01",
+        "desc": "WEB APPLE.COM/BILL",
+        "monto": 10990,
+        "cat": "Suscripciones y apps"
+      },
+      {
+        "fecha": "2026-07-01",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 474,
+        "cat": "Comisiones"
+      },
+      {
+        "fecha": "2026-07-01",
+        "desc": "COMISION TRANSACCION INTERNACIONAL",
+        "monto": 474,
+        "cat": "Comisiones"
+      }
+    ]
   },
   "marca": {
     "posicionamiento": "",
@@ -309,5 +2639,5 @@
       }
     ]
   },
-  "actualizado": "2026-07-17T19:02:57.872Z"
+  "actualizado": "2026-07-18T02:54:11.888Z"
 }

@@ -119,6 +119,58 @@ export function sparkline(valores) {
 }
 
 /**
+ * Gráfico de dona. `segmentos` = [{label, value, color}].
+ * Dibuja cada porción como un arco sobre un anillo usando stroke-dasharray.
+ */
+export function donut(segmentos, { size = 168, grosor = 26 } = {}) {
+  const total = segmentos.reduce((s, x) => s + x.value, 0) || 1;
+  const r = (size - grosor) / 2;
+  const cx = size / 2, cy = size / 2;
+  const circ = 2 * Math.PI * r;
+  const ns = 'http://www.w3.org/2000/svg';
+
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('class', 'donut');
+  svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
+
+  // Anillo de fondo
+  const bg = document.createElementNS(ns, 'circle');
+  for (const [k, v] of Object.entries({ cx, cy, r, fill: 'none', 'stroke-width': grosor }))
+    bg.setAttribute(k, v);
+  bg.setAttribute('stroke', 'var(--surface-hover)');
+  svg.append(bg);
+
+  let offset = 0;
+  for (const seg of segmentos) {
+    if (seg.value <= 0) continue;
+    const len = (seg.value / total) * circ;
+    const c = document.createElementNS(ns, 'circle');
+    const attrs = {
+      cx, cy, r, fill: 'none', stroke: seg.color, 'stroke-width': grosor,
+      'stroke-dasharray': `${len} ${circ - len}`, 'stroke-dashoffset': -offset,
+      transform: `rotate(-90 ${cx} ${cy})`,
+    };
+    for (const [k, v] of Object.entries(attrs)) c.setAttribute(k, v);
+    const t = document.createElementNS(ns, 'title');
+    t.textContent = `${seg.label}: ${Math.round((seg.value / total) * 100)} %`;
+    c.append(t);
+    svg.append(c);
+    offset += len;
+  }
+
+  // Total al centro
+  const g = document.createElementNS(ns, 'text');
+  g.setAttribute('x', cx); g.setAttribute('y', cy);
+  g.setAttribute('class', 'donut__center');
+  g.setAttribute('text-anchor', 'middle');
+  g.setAttribute('dominant-baseline', 'central');
+  g.textContent = compact(total);
+  svg.append(g);
+
+  return svg;
+}
+
+/**
  * Barra de progreso con deslizador. Actualiza la barra mientras arrastras y
  * guarda al soltar — no en cada píxel.
  */
