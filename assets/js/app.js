@@ -13,7 +13,6 @@ const SECCIONES = [
   { id: 'clima',      nombre: 'Clima',              icono: 'i-sol-nube',  grupo: 'Panel',   sub: 'Osorno y Puerto Montt · pronóstico a 7 días',  render: S.seccionClima, color: '#0ea5e9' },
 
   { id: 'finanzas',   nombre: 'Finanzas Personales', icono: 'i-finanzas',  grupo: 'Áreas',  sub: 'Ingresos, gastos, presupuestos y ahorro',      render: S.finanzas,   color: 'var(--c-finanzas)' },
-  { id: 'marca',      nombre: 'Marca Personal',      icono: 'i-marca',     grupo: 'Áreas',  sub: 'Objetivos, pilares de contenido e hitos',      render: S.marca,      color: 'var(--c-marca)' },
   { id: 'empresa',    nombre: 'Empresa',             icono: 'i-empresa',   grupo: 'Áreas',  sub: 'Facturación, pipeline y proyectos',           render: S.empresa,    color: 'var(--c-empresa)' },
   { id: 'instagram',  nombre: 'Red Social',          icono: 'i-instagram', grupo: 'Áreas',  sub: 'Instagram @munoz.fuentealba · seguimiento',    render: S.instagram,  color: 'var(--c-instagram)' },
   { id: 'musica',     nombre: 'Producción Musical',  icono: 'i-musica',    grupo: 'Áreas',  sub: 'Proyectos, horas de estudio e ideas',         render: S.musica,     color: 'var(--c-musica)' },
