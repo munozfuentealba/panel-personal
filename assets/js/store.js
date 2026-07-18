@@ -114,10 +114,21 @@ const SEED = {
 
   instagram: {
     usuario: 'munozfuentealba',
+    nombre: 'Tu nombre',
+    bio: '',
     seguidores: 2400,
     siguiendo: 890,
     publicaciones: 148,
     alcanceMes: 18500,
+    // Insights del export de Instagram (ejemplo). Alcance/impresiones/visitas
+    // de un período, con su variación vs el período anterior.
+    insights: {
+      periodo: 'ejemplo',
+      alcance: 18500, alcanceDelta: 12.4,
+      impresiones: 42000, impresionesDelta: 8.1,
+      visitas: 1200, visitasDelta: 5.0,
+      pctSeguidores: 60,
+    },
     // Historial que tú vas completando; el gráfico y el delta salen de aquí.
     historial: [
       { fecha: '2026-02-01', seguidores: 1960 },

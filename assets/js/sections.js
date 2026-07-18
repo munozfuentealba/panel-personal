@@ -831,9 +831,11 @@ export function instagram(ctx) {
     el('div', {}, [el('button', { class: 'btn btn--primary', type: 'submit' }, [icon('i-check'), 'Guardar y registrar hoy'])]),
   ]);
 
+  const ins = ig.insights;
+
   return [
     encabezado('i-instagram', `Instagram — @${ig.usuario}`,
-      'Panel de seguimiento manual. Instagram no permite leer estas métricas sin autenticación, así que los números los ingresas tú desde Perfil → Panel profesional en la app.'),
+      [ig.nombre, ig.bio].filter(Boolean).join(' · ') || 'Seguimiento de tu cuenta.'),
 
     card('Actualización rápida', [
       el('p', { class: 'list__meta', style: { marginBottom: '4px' } },
@@ -841,19 +843,38 @@ export function instagram(ctx) {
       rapida,
     ]),
 
-    aviso([el('div', {}, [
-      el('strong', {}, 'De dónde sacar los datos: '),
-      'en la app de Instagram, Perfil → Panel profesional → Ver todo. Para las publicaciones, toca cada una → Ver estadísticas. ',
-      'Los cambios se guardan solos; el gráfico de crecimiento se arma con cada medición.',
-    ])]),
-
     el('div', { class: 'grid' }, [
-      card('Seguidores', [metrica(num(ig.seguidores), `+${num(ig.seguidores - prev)} desde la medición anterior`,
-        delta(variacion(ig.seguidores, prev)))]),
-      card('Alcance del mes', [metrica(compact(ig.alcanceMes), 'Cuentas alcanzadas')]),
-      card('Tasa de interacción', [metrica(pct(tasa), 'Interacciones / seguidores')]),
-      card('Publicaciones', [metrica(num(ig.publicaciones), `Siguiendo a ${num(ig.siguiendo)}`)]),
+      card('Seguidores', [metrica(num(ig.seguidores),
+        ig.historial.length > 1 ? `${ig.seguidores >= prev ? '+' : '−'}${num(Math.abs(ig.seguidores - prev))} desde la medición anterior` : 'Medición actual',
+        ig.historial.length > 1 ? delta(variacion(ig.seguidores, prev)) : null)]),
+      card('Siguiendo', [metrica(num(ig.siguiendo),
+        ig.siguiendo ? `Ratio ${(ig.seguidores / ig.siguiendo).toFixed(2).replace('.', ',')} seg./sig.` : 'Cuentas que sigues')]),
+      card('Publicaciones', [metrica(num(ig.publicaciones), 'En tu perfil')]),
+      card('Alcance reciente', [metrica(compact(ins?.alcance ?? ig.alcanceMes),
+        ins?.periodo || 'Cuentas alcanzadas', ins ? delta(ins.alcanceDelta) : null)]),
     ]),
+
+    // Insights reales del export de Instagram (alcance, impresiones, visitas)
+    ins ? card('Alcance y visibilidad', [
+      el('div', { class: 'metric__label', style: { marginBottom: '14px' } },
+        `Período ${ins.periodo} · desde tu export de Instagram`),
+      el('div', { style: { display: 'flex', gap: 'var(--sp-8)', flexWrap: 'wrap' } }, [
+        metrica(compact(ins.alcance), 'Cuentas alcanzadas', delta(ins.alcanceDelta)),
+        metrica(compact(ins.impresiones), 'Impresiones', delta(ins.impresionesDelta)),
+        metrica(compact(ins.visitas), 'Visitas al perfil', delta(ins.visitasDelta)),
+      ]),
+      el('div', { style: { marginTop: 'var(--sp-5)', display: 'flex', flexDirection: 'column', gap: '10px' } }, [
+        el('div', { class: 'card__title' }, 'De dónde vino el alcance'),
+        barra('Seguidores', ins.pctSeguidores, 100, pct(ins.pctSeguidores)),
+        barra('No seguidores', 100 - ins.pctSeguidores, 100, pct(100 - ins.pctSeguidores)),
+      ]),
+    ]) : null,
+
+    aviso([el('div', {}, [
+      el('strong', {}, 'De dónde salen estos datos: '),
+      'de tu export oficial de Instagram (Configuración → Tu actividad → Descargar tu información). ',
+      'Para actualizarlos, vuelve a pedir el export y me lo pasas, o registra las mediciones a mano arriba.',
+    ])]),
 
     el('div', { class: 'grid grid--wide' }, [
       card('Crecimiento de seguidores', [

@@ -15,7 +15,7 @@ const SECCIONES = [
   { id: 'finanzas',   nombre: 'Finanzas Personales', icono: 'i-finanzas',  grupo: 'Áreas',  sub: 'Ingresos, gastos, presupuestos y ahorro',      render: S.finanzas,   color: 'var(--c-finanzas)' },
   { id: 'marca',      nombre: 'Marca Personal',      icono: 'i-marca',     grupo: 'Áreas',  sub: 'Objetivos, pilares de contenido e hitos',      render: S.marca,      color: 'var(--c-marca)' },
   { id: 'empresa',    nombre: 'Empresa',             icono: 'i-empresa',   grupo: 'Áreas',  sub: 'Facturación, pipeline y proyectos',           render: S.empresa,    color: 'var(--c-empresa)' },
-  { id: 'instagram',  nombre: 'Red Social',          icono: 'i-instagram', grupo: 'Áreas',  sub: 'Instagram @munozfuentealba · seguimiento',    render: S.instagram,  color: 'var(--c-instagram)' },
+  { id: 'instagram',  nombre: 'Red Social',          icono: 'i-instagram', grupo: 'Áreas',  sub: 'Instagram @munoz.fuentealba · seguimiento',    render: S.instagram,  color: 'var(--c-instagram)' },
   { id: 'musica',     nombre: 'Producción Musical',  icono: 'i-musica',    grupo: 'Áreas',  sub: 'Proyectos, horas de estudio e ideas',         render: S.musica,     color: 'var(--c-musica)' },
   { id: 'iglesia',    nombre: 'Iglesia',             icono: 'i-iglesia',   grupo: 'Áreas',  sub: 'Compromisos, servicio y repertorio',          render: S.iglesia,    color: 'var(--c-iglesia)' },
   { id: 'familia',    nombre: 'Familia',             icono: 'i-familia',   grupo: 'Áreas',  sub: 'Planes, fechas importantes e intenciones',    render: S.familia,    color: 'var(--c-familia)' },

@@ -2552,12 +2552,29 @@
     "ventas": []
   },
   "instagram": {
-    "usuario": "munozfuentealba",
-    "seguidores": 0,
-    "siguiendo": 0,
-    "publicaciones": 0,
-    "alcanceMes": 0,
-    "historial": [],
+    "usuario": "munoz.fuentealba",
+    "nombre": "Diego Muñoz",
+    "bio": "There is no try",
+    "seguidores": 198,
+    "siguiendo": 1580,
+    "publicaciones": 29,
+    "alcanceMes": 1138,
+    "insights": {
+      "periodo": "18 abr – 16 jul 2026",
+      "alcance": 1138,
+      "alcanceDelta": -73.2,
+      "impresiones": 10025,
+      "impresionesDelta": -74.7,
+      "visitas": 340,
+      "visitasDelta": -74.2,
+      "pctSeguidores": 47.4
+    },
+    "historial": [
+      {
+        "fecha": "2026-07-17",
+        "seguidores": 198
+      }
+    ],
     "publicacionesRecientes": []
   },
   "musica": {
@@ -2639,5 +2656,5 @@
       }
     ]
   },
-  "actualizado": "2026-07-18T02:54:11.888Z"
+  "actualizado": "2026-07-18T03:16:30.894Z"
 }
