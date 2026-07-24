@@ -1405,6 +1405,21 @@ button.texa__lesson:hover { transform: translateY(-1px); border-color: var(--tx-
 .texa__tickitem::after { content: '•'; position: absolute; right: -3px; color: var(--tx-accent); opacity: .6; }
 @keyframes texaTicker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
+/* Emojis de idiomas flotando en el fondo del hero */
+.texa__herofx { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.texa__hemoji { position: absolute; font-size: clamp(19px, 2vw, 27px); opacity: .55; animation: texaFloat 5s var(--ease-in-out) infinite; will-change: transform; }
+
+/* Número de "Tu nivel" con leve rebote */
+.texa__nivelnow { animation: texaLevel 3s var(--ease-in-out) infinite; }
+@keyframes texaLevel { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+/* Próximo tema (tarjeta) con anillo que late */
+button.texa__lesson.texa__lesson--actual { animation: texaCardPulse 2.2s var(--ease-in-out) infinite; }
+@keyframes texaCardPulse {
+  0%, 100% { box-shadow: var(--tx-shadow), 0 0 0 0 var(--tx-accent-soft); }
+  50% { box-shadow: var(--tx-shadow), 0 0 0 5px var(--tx-accent-soft); }
+}
+
 /* Motivo "T" del hero, flotando suave */
 .texa__motif { animation: texaMotif 11s ease-in-out infinite; }
 @keyframes texaMotif {
@@ -1462,6 +1477,9 @@ button.texa__lesson:hover { transform: translateY(-1px); border-color: var(--tx-
   .texa__motif { animation: texaMotif 11s ease-in-out infinite !important; }
   .texa__saludo { animation: texaSaludo 13.3s linear infinite !important; }
   .texa__lesson--actual .texa__marker { animation: texaPulse 2s ease-in-out infinite !important; }
+  .texa__hemoji { animation: texaFloat 5s ease-in-out infinite !important; }
+  .texa__nivelnow { animation: texaLevel 3s ease-in-out infinite !important; }
+  button.texa__lesson.texa__lesson--actual { animation: texaCardPulse 2.2s ease-in-out infinite !important; }
 }
 
 /* ─── Impresión ──────────────────────────────────────────────────── */

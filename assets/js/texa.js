@@ -62,6 +62,12 @@ const SINONIMOS = [
 // Saludos que rotan en el hero (toque de "idiomas").
 const SALUDOS = ['Hello', 'Hola', 'Bonjour', 'Ciao', 'Hallo', 'Olá', 'こんにちは'];
 
+// Emojis de idiomas que flotan en el fondo del hero (calienta la sección).
+const HERO_EMOJI = [
+  { e: '📚', l: '9%', t: '58%' }, { e: '✏️', l: '25%', t: '28%' }, { e: '💬', l: '45%', t: '66%' },
+  { e: '🌍', l: '63%', t: '24%' }, { e: '🔤', l: '80%', t: '60%' }, { e: '🎓', l: '91%', t: '32%' },
+];
+
 // Cinta de palabras/frases que se desliza (movimiento bien visible).
 const TICKER = [
   'Hello 👋', 'grammar', 'vocabulary', 'fluency', 'phrasal verbs', 'However,…',
@@ -603,6 +609,11 @@ export function texa() {
   const herobody = el('div', { class: 'texa__herobody' });
   const hero = el('div', { class: 'texa__hero' }, [
     el('span', { class: 'texa__motif', 'aria-hidden': 'true' }),
+    el('div', { class: 'texa__herofx', 'aria-hidden': 'true' }, HERO_EMOJI.map((x, i) =>
+      el('span', {
+        class: 'texa__hemoji',
+        style: { left: x.l, top: x.t, animationDelay: `${i * 0.5}s`, animationDuration: `${5 + (i % 3)}s` },
+      }, x.e))),
     el('div', { class: 'texa__herotop' }, [
       el('div', { class: 'texa__brand' }, [marca(20), el('span', {}, 'TEXA')]),
       el('nav', { class: 'texa__tabs', 'aria-label': 'Secciones de Texa' }, tabs),
