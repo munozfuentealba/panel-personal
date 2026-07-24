@@ -4,6 +4,7 @@ import { el, icon, escalonar } from './utils.js';
 import { obtenerClima, wmoIcono } from './weather.js';
 import { iniciarRespaldo } from './backup.js';
 import { inicializar } from './store.js';
+import { texa } from './texa.js';
 import * as S from './sections.js';
 
 /* ─── Mapa de secciones ───────────────────────────────────────────── */
@@ -19,6 +20,8 @@ const SECCIONES = [
   { id: 'iglesia',    nombre: 'Iglesia',             icono: 'i-iglesia',   grupo: 'Áreas',  sub: 'Compromisos, servicio y repertorio',          render: S.iglesia,    color: 'var(--c-iglesia)' },
   { id: 'familia',    nombre: 'Familia',             icono: 'i-familia',   grupo: 'Áreas',  sub: 'Planes, fechas importantes e intenciones',    render: S.familia,    color: 'var(--c-familia)' },
   { id: 'trabajo',    nombre: 'Trabajo',             icono: 'i-trabajo',   grupo: 'Áreas',  sub: 'Tareas, prioridades y horas de foco',         render: S.trabajo,    color: 'var(--c-trabajo)' },
+
+  { id: 'texa',       nombre: 'Texa',                icono: 'i-texa',      grupo: 'Proyectos', sub: 'Tu app de inglés · Inicio, vocabulario, traducir, aprender y chat', render: texa, color: 'var(--c-texa)' },
 
   { id: 'ajustes',    nombre: 'Ajustes',             icono: 'i-resumen',   grupo: 'Sistema', sub: 'Copia de seguridad y restablecer',           render: S.ajustes,    color: 'var(--text-3)' },
 ];
