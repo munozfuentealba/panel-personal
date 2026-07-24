@@ -1,10 +1,11 @@
 /**
  * Texa — la app de inglés de Diego, adaptada a web como una sección del panel.
  *
- * Port fiel de la app móvil (Expo/React Native) a DOM: mismas 5 pantallas
- * (Inicio, Vocabulario, Traducir, Aprender, Chat), misma identidad visual
- * (crema cálido + acento azul, marca "T"). El estado que cambia el usuario
- * (vocabulario, chat, racha) se guarda en localStorage `texa.estado`.
+ * Port de la app móvil (Expo/React Native) a un layout WEB: barra de navegación
+ * azul fija arriba (marca + pestañas), ancho amplio y contenido en varias
+ * columnas. Mantiene la identidad (crema cálido + azul, marca "T"). El estado
+ * que cambia el usuario (vocabulario, chat, nivel, racha) se guarda en
+ * localStorage `texa.estado`.
  */
 
 import { el } from './utils.js';
@@ -28,9 +29,7 @@ const SEED = {
 };
 
 const STAGE_LABEL = { nueva: 'Nueva', aprendiendo: 'Aprendiendo', dominada: 'Dominada' };
-
 const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-
 const LESSONS = [
   { title: 'Verbos frasales esenciales', detail: '18 tarjetas · 10 min', status: 'hecha' },
   { title: 'Registro formal vs. informal', detail: '14 tarjetas · 8 min', status: 'hecha' },
@@ -38,7 +37,6 @@ const LESSONS = [
   { title: 'Conectores de argumentación', detail: '16 tarjetas · 9 min', status: 'bloqueada' },
   { title: 'Falsos amigos frecuentes', detail: '22 tarjetas · 13 min', status: 'bloqueada' },
 ];
-
 const PROMPTS = {
   'es-en': { source: 'Se me pasó completamente avisarte.', suggested: 'It completely slipped my mind to let you know.' },
   'en-es': { source: 'I could really use a second pair of eyes on this.', suggested: 'Me vendría bien que alguien más lo revise.' },
@@ -54,18 +52,16 @@ const AI_REPLIES = [
   { text: 'Got it. How did that make you feel?', tip: null },
 ];
 
-/* ─── Marca ──────────────────────────────────────────────────────────── */
+/* ─── Marca e íconos ─────────────────────────────────────────────────── */
 
-function marca(size = 20, onAccent = false) {
-  const bg = onAccent ? 'rgba(255,255,255,0.22)' : '#3452D9';
-  const stem2 = onAccent ? 'rgba(255,255,255,0.6)' : '#B9C4FF';
+function marca(size = 22) {
   return el('span', {
     class: 'texa__mark', style: { width: `${size}px`, height: `${size}px` },
     html: `<svg viewBox="0 0 120 120" width="${size}" height="${size}" aria-hidden="true">
-      <rect width="120" height="120" rx="28" fill="${bg}"/>
+      <rect width="120" height="120" rx="28" fill="rgba(255,255,255,0.22)"/>
       <rect x="28" y="30" width="64" height="12" rx="6" fill="#fff"/>
       <rect x="48" y="30" width="10" height="62" rx="5" fill="#fff"/>
-      <rect x="62" y="30" width="10" height="62" rx="5" fill="${stem2}"/>
+      <rect x="62" y="30" width="10" height="62" rx="5" fill="rgba(255,255,255,0.6)"/>
     </svg>`,
   });
 }
@@ -85,29 +81,10 @@ const TABS = [
 
 /* ─── Piezas comunes ─────────────────────────────────────────────────── */
 
-function hero({ titulo, subtitulo, saludo, stats }) {
-  const contenido = [
-    el('div', { class: 'texa__brand' }, [marca(18, true), el('span', {}, 'TEXA')]),
-  ];
-  if (saludo) {
-    contenido.push(el('div', { class: 'texa__greet' }, [
-      el('span', { class: 'texa__greet-eyebrow' }, saludo),
-      el('h2', { class: 'texa__greet-name' }, titulo),
-    ]));
-    contenido.push(el('div', { class: 'texa__stats' }, stats.map((s) =>
-      el('div', { class: 'texa__stat' }, [
-        el('strong', {}, String(s.value)),
-        el('span', {}, s.unit),
-      ]))));
-  } else {
-    contenido.push(el('div', { class: 'texa__htitle' }, [
-      el('h2', {}, titulo),
-      subtitulo ? el('p', {}, subtitulo) : null,
-    ]));
-  }
-  return el('div', { class: `texa__hero${saludo ? ' texa__hero--roomy' : ''}` }, [
-    el('span', { class: 'texa__motif', 'aria-hidden': 'true' }),
-    el('div', { class: 'texa__hero-in' }, contenido),
+function cabecera(titulo, sub) {
+  return el('div', { class: 'texa__cabecera' }, [
+    el('h2', {}, titulo),
+    sub ? el('p', {}, sub) : null,
   ]);
 }
 
@@ -118,7 +95,6 @@ export function texa() {
   let estado;
   try { estado = JSON.parse(localStorage.getItem(CLAVE)) || structuredClone(SEED); }
   catch { estado = structuredClone(SEED); }
-  // Completar campos que falten si venía un guardado viejo.
   estado = Object.assign(structuredClone(SEED), estado);
   const guardar = () => { try { localStorage.setItem(CLAVE, JSON.stringify(estado)); } catch {} };
 
@@ -133,34 +109,38 @@ export function texa() {
       { to: 'aprender', eyebrow: `Aprender · Nivel ${estado.nivel}`, title: 'Modismos cotidianos', detail: 'Siguiente lección de tu recorrido' },
       { to: 'chat', eyebrow: 'Conversación', title: 'Practicá 10 minutos con la IA', detail: 'Charla libre, corrige sin cortar el flujo' },
     ];
-    return el('div', {}, [
-      hero({
-        titulo: 'Diego', saludo: 'Buen día',
-        stats: [
-          { value: estado.stats.racha, unit: 'días de racha' },
-          { value: estado.stats.vocabulario, unit: 'palabras' },
-          { value: estado.stats.hoyMin, unit: 'min hoy' },
-        ],
-      }),
-      el('div', { class: 'texa__body' }, [
-        el('div', { class: 'texa__label' }, 'Continuar'),
-        el('div', { class: 'texa__actions' }, acciones.map((a) =>
-          el('button', { class: 'texa__actioncard', onclick: () => ir(a.to) }, [
-            el('div', { class: 'texa__actioncard-main' }, [
-              el('span', { class: 'texa__eyebrow' }, a.eyebrow),
-              el('span', { class: 'texa__actiontitle' }, a.title),
-              el('span', { class: 'texa__muted' }, a.detail),
-            ]),
-            el('span', { class: 'texa__arrow' }, '→'),
-          ]))),
+    const stats = [
+      { value: estado.stats.racha, unit: 'días de racha' },
+      { value: estado.stats.vocabulario, unit: 'palabras guardadas' },
+      { value: estado.stats.hoyMin, unit: 'minutos hoy' },
+    ];
+    return el('div', { class: 'texa__page' }, [
+      el('div', { class: 'texa__cabecera' }, [
+        el('span', { class: 'texa__eyebrow' }, 'Buen día'),
+        el('h2', {}, 'Diego'),
       ]),
+      el('div', { class: 'texa__stats' }, stats.map((s) =>
+        el('div', { class: 'texa__stat' }, [
+          el('strong', {}, String(s.value)),
+          el('span', {}, s.unit),
+        ]))),
+      el('div', { class: 'texa__label' }, 'Continuar'),
+      el('div', { class: 'texa__actions' }, acciones.map((a) =>
+        el('button', { class: 'texa__actioncard', onclick: () => ir(a.to) }, [
+          el('div', { class: 'texa__actioncard-main' }, [
+            el('span', { class: 'texa__eyebrow' }, a.eyebrow),
+            el('span', { class: 'texa__actiontitle' }, a.title),
+            el('span', { class: 'texa__muted' }, a.detail),
+          ]),
+          el('span', { class: 'texa__arrow' }, '→'),
+        ]))),
     ]);
   };
 
   /* Pantalla: Vocabulario */
   const pVocabulario = () => {
     let query = '';
-    const lista = el('div', { class: 'texa__list' });
+    const lista = el('div', { class: 'texa__grid' });
     const conteo = el('div', { class: 'texa__label' });
     const pintar = () => {
       const q = query.trim().toLowerCase();
@@ -187,9 +167,9 @@ export function texa() {
     };
     nueva.addEventListener('keydown', (e) => { if (e.key === 'Enter') agregar(); });
     pintar();
-    return el('div', {}, [
-      hero({ titulo: 'Vocabulario', subtitulo: 'Guardá cualquier palabra y te la recordamos cada día hasta que la aprendas.' }),
-      el('div', { class: 'texa__body' }, [
+    return el('div', { class: 'texa__page' }, [
+      cabecera('Vocabulario', 'Guardá cualquier palabra y te la recordamos cada día hasta que la aprendas.'),
+      el('div', { class: 'texa__toolbar' }, [
         el('div', { class: 'texa__addcard' }, [
           nueva,
           el('button', { class: 'texa__btn', onclick: agregar }, 'Guardar'),
@@ -198,19 +178,24 @@ export function texa() {
           class: 'texa__search', placeholder: 'Buscar en tu vocabulario', 'aria-label': 'Buscar',
           oninput: (e) => { query = e.target.value; pintar(); },
         }),
-        el('div', { class: 'texa__section' }, [conteo, lista]),
       ]),
+      el('div', { class: 'texa__section' }, [conteo, lista]),
     ]);
   };
 
   /* Pantalla: Traducir */
   const pTraducir = () => {
     let dir = 'es-en';
-    const cuerpo = el('div', { class: 'texa__section' });
+    const cols = el('div', { class: 'texa__cols' });
     const pintar = () => {
       const p = PROMPTS[dir];
       const attempt = el('textarea', { class: 'texa__textarea', placeholder: 'Escribí tu traducción acá…', 'aria-label': 'Tu traducción' });
-      const feedback = el('div');
+      const feedback = el('div', { class: 'texa__feedwrap' }, [
+        el('div', { class: 'texa__feedhint' }, [
+          el('span', { class: 'texa__eyebrow' }, 'Corrección'),
+          el('p', { class: 'texa__muted' }, 'Escribí tu traducción y presioná “Corregir”. Acá aparecen la versión sugerida y las notas de matiz.'),
+        ]),
+      ]);
       const corregir = el('button', { class: 'texa__btn texa__btn--block', onclick: () => {
         if (!attempt.value.trim()) return;
         feedback.replaceChildren(el('div', { class: 'texa__feedback' }, [
@@ -223,43 +208,45 @@ export function texa() {
             ]))),
         ]));
       } }, 'Corregir');
-      cuerpo.replaceChildren(
-        el('div', { class: 'texa__segmented' }, [
-          el('button', { class: `texa__segment${dir === 'es-en' ? ' is-active' : ''}`, onclick: () => { dir = 'es-en'; pintar(); } }, 'ES → EN'),
-          el('button', { class: `texa__segment${dir === 'en-es' ? ' is-active' : ''}`, onclick: () => { dir = 'en-es'; pintar(); } }, 'EN → ES'),
+      cols.replaceChildren(
+        el('div', { class: 'texa__col' }, [
+          el('div', { class: 'texa__segmented' }, [
+            el('button', { class: `texa__segment${dir === 'es-en' ? ' is-active' : ''}`, onclick: () => { dir = 'es-en'; pintar(); } }, 'ES → EN'),
+            el('button', { class: `texa__segment${dir === 'en-es' ? ' is-active' : ''}`, onclick: () => { dir = 'en-es'; pintar(); } }, 'EN → ES'),
+          ]),
+          el('div', { class: 'texa__sourcecard' }, [
+            el('span', { class: 'texa__muted' }, dir === 'es-en' ? 'Texto en español' : 'Text in English'),
+            el('p', { class: 'texa__source' }, p.source),
+          ]),
+          el('div', { class: 'texa__section' }, [
+            el('span', { class: 'texa__muted' }, 'Tu traducción'),
+            attempt,
+            corregir,
+          ]),
         ]),
-        el('div', { class: 'texa__sourcecard' }, [
-          el('span', { class: 'texa__muted' }, dir === 'es-en' ? 'Texto en español' : 'Text in English'),
-          el('p', { class: 'texa__source' }, p.source),
-        ]),
-        el('div', { class: 'texa__section' }, [
-          el('span', { class: 'texa__muted' }, 'Tu traducción'),
-          attempt,
-          corregir,
-        ]),
-        feedback,
+        el('div', { class: 'texa__col' }, [feedback]),
       );
     };
     pintar();
-    return el('div', {}, [
-      hero({ titulo: 'Traducir', subtitulo: 'Traducís vos, la IA corrige matices y registro — no al revés.' }),
-      el('div', { class: 'texa__body' }, [cuerpo]),
+    return el('div', { class: 'texa__page' }, [
+      cabecera('Traducir', 'Traducís vos, la IA corrige matices y registro — no al revés.'),
+      cols,
     ]);
   };
 
   /* Pantalla: Aprender */
   const pAprender = () => {
     const niveles = el('div', { class: 'texa__levels' });
-    const lista = el('div', { class: 'texa__list' });
+    const lista = el('div', { class: 'texa__grid' });
     const tituloRec = el('div', { class: 'texa__label' });
     const pintar = () => {
       tituloRec.textContent = `Tu recorrido en nivel ${estado.nivel}`;
       niveles.replaceChildren(...LEVELS.map((lv) =>
         el('button', { class: `texa__level${lv === estado.nivel ? ' is-active' : ''}`, onclick: () => { estado.nivel = lv; guardar(); pintar(); } }, lv)));
       lista.replaceChildren(...LESSONS.map((ls) => {
-        const marca = ls.status === 'hecha' ? '✓' : ls.status === 'actual' ? '▶' : '·';
+        const m = ls.status === 'hecha' ? '✓' : ls.status === 'actual' ? '▶' : '·';
         return el('div', { class: `texa__lesson texa__lesson--${ls.status}` }, [
-          el('span', { class: 'texa__marker' }, marca),
+          el('span', { class: 'texa__marker' }, m),
           el('div', { class: 'texa__lessontext' }, [
             el('strong', {}, ls.title),
             el('span', { class: 'texa__muted' }, ls.detail),
@@ -268,9 +255,10 @@ export function texa() {
       }));
     };
     pintar();
-    return el('div', {}, [
-      hero({ titulo: 'Aprender', subtitulo: 'Elegí tu nivel y te ubicamos ahí — sin repetir lo que ya sabés.' }),
-      el('div', { class: 'texa__body' }, [niveles, el('div', { class: 'texa__section' }, [tituloRec, lista])]),
+    return el('div', { class: 'texa__page' }, [
+      cabecera('Aprender', 'Elegí tu nivel y te ubicamos ahí — sin repetir lo que ya sabés.'),
+      niveles,
+      el('div', { class: 'texa__section' }, [tituloRec, lista]),
     ]);
   };
 
@@ -308,9 +296,9 @@ export function texa() {
     const enviarBtn = el('button', { class: 'texa__send', 'aria-label': 'Enviar', onclick: enviar },
       [txIcon('<path d="M12 20V5"/><path d="M6 11l6-6 6 6"/>')]);
     pintarMensajes();
-    return el('div', { class: 'texa__chat' }, [
-      hero({ titulo: 'Chat con IA', subtitulo: 'Conversación libre en inglés. Corrige sin cortarte el ritmo.' }),
-      el('div', { class: 'texa__body texa__chatbody' }, [
+    return el('div', { class: 'texa__page texa__page--chat' }, [
+      cabecera('Chat con IA', 'Conversación libre en inglés. Corrige sin cortarte el ritmo.'),
+      el('div', { class: 'texa__chatwrap' }, [
         mensajes,
         el('div', { class: 'texa__inputbar' }, [mic, input, enviarBtn]),
       ]),
@@ -319,22 +307,25 @@ export function texa() {
 
   const PANTALLAS = { inicio: pInicio, vocabulario: pVocabulario, traducir: pTraducir, aprender: pAprender, chat: pChat };
 
-  const barra = el('div', { class: 'texa__tabbar' }, TABS.map((t) =>
-    el('button', {
-      class: `texa__tab${t.id === tab ? ' is-active' : ''}`, dataset: { tab: t.id },
-      'aria-label': t.label, onclick: () => ir(t.id),
-    }, [txIcon(t.ic), el('span', {}, t.label)])));
+  /* Barra de navegación superior (web): marca + pestañas */
+  const tabs = TABS.map((t) => el('button', {
+    class: `texa__tab${t.id === tab ? ' is-active' : ''}`, dataset: { tab: t.id },
+    'aria-label': t.label, onclick: () => ir(t.id),
+  }, [txIcon(t.ic), el('span', {}, t.label)]));
+  const appbar = el('div', { class: 'texa__appbar' }, [
+    el('div', { class: 'texa__brand' }, [marca(20), el('span', {}, 'TEXA')]),
+    el('nav', { class: 'texa__tabs', 'aria-label': 'Secciones de Texa' }, tabs),
+  ]);
 
   function marcarTab() {
-    barra.querySelectorAll('.texa__tab').forEach((b) => b.classList.toggle('is-active', b.dataset.tab === tab));
+    appbar.querySelectorAll('.texa__tab').forEach((b) => b.classList.toggle('is-active', b.dataset.tab === tab));
   }
   function ir(t) {
     tab = t;
     vista.replaceChildren(PANTALLAS[tab]());
     marcarTab();
-    vista.scrollTop = 0;
   }
 
   vista.replaceChildren(PANTALLAS[tab]());
-  return [el('div', { class: 'texa' }, [vista, barra])];
+  return [el('div', { class: 'texa' }, [appbar, vista])];
 }
