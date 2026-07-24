@@ -124,6 +124,25 @@ const callout = (tipo, titulo, iconPath, md) => el('div', { class: `texa__callou
   el('p', {}, texto(md)),
 ]);
 
+// Confeti de celebración (al aprobar una lección).
+const celebrar = () => {
+  const cap = el('div', { class: 'texa__confeti', 'aria-hidden': 'true' });
+  const cols = ['#4f86e0', '#e7b53f', '#d95757', '#3fa06a', '#7c97ff'];
+  for (let i = 0; i < 20; i++) {
+    const p = el('span', { class: 'texa__conf' });
+    p.style.left = `${42 + Math.random() * 16}%`;
+    p.style.top = '48%';
+    p.style.background = cols[i % cols.length];
+    p.style.setProperty('--dx', `${(Math.random() * 2 - 1) * 240}px`);
+    p.style.setProperty('--dy', `${-90 - Math.random() * 200}px`);
+    p.style.setProperty('--rot', `${(Math.random() * 2 - 1) * 400}deg`);
+    p.style.animationDelay = `${Math.random() * 0.12}s`;
+    cap.append(p);
+  }
+  document.body.append(cap);
+  setTimeout(() => cap.remove(), 1300);
+};
+
 const bloqueNodo = (b) => {
   switch (b.t) {
     case 'texto':
@@ -455,7 +474,9 @@ export function texa() {
 
       const hecho = !!estado.aprendido[l.id];
       const btnDone = el('button', { class: 'texa__btn texa__btn--block', onclick: () => {
+        const primera = !estado.aprendido[l.id];
         estado.aprendido[l.id] = true; guardar();
+        if (primera) celebrar();
         vista = 'nivel'; pintar();
       } }, hecho ? 'Repasada ✓ · volver' : 'Marcar como aprendida');
 
@@ -518,16 +539,31 @@ export function texa() {
       mic.classList.toggle('is-on', listening);
       input.placeholder = listening ? 'Escuchando…' : 'Escribí o hablá en inglés…';
     } }, [txIcon('<path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Z"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/>')]);
+    let escribiendo = false;
     const enviar = () => {
       const v = input.value.trim();
-      if (!v) return;
+      if (!v || escribiendo) return;
       const reply = AI_REPLIES[replyIndex % AI_REPLIES.length];
-      estado.chat.push({ from: 'user', text: v, tip: null });
-      estado.chat.push({ from: 'ai', text: reply.text, tip: reply.tip });
       replyIndex += 1;
+      estado.chat.push({ from: 'user', text: v, tip: null });
       input.value = '';
       guardar();
       pintarMensajes();
+      // Indicador "escribiendo…" antes de la respuesta
+      escribiendo = true;
+      const typing = el('div', { class: 'texa__bubblerow texa__bubblerow--ai' }, [
+        el('div', { class: 'texa__bubble texa__bubble--ai texa__typing' }, [
+          el('span', { class: 'texa__tdot' }), el('span', { class: 'texa__tdot' }), el('span', { class: 'texa__tdot' }),
+        ]),
+      ]);
+      mensajes.append(typing);
+      mensajes.scrollTop = mensajes.scrollHeight;
+      setTimeout(() => {
+        escribiendo = false;
+        estado.chat.push({ from: 'ai', text: reply.text, tip: reply.tip });
+        guardar();
+        pintarMensajes();
+      }, 850);
     };
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') enviar(); });
     const enviarBtn = el('button', { class: 'texa__send', 'aria-label': 'Enviar', onclick: enviar },
