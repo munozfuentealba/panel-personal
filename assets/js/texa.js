@@ -81,12 +81,11 @@ const TABS = [
 
 /* ─── Piezas comunes ─────────────────────────────────────────────────── */
 
-function cabecera(titulo, sub) {
-  return el('div', { class: 'texa__cabecera' }, [
-    el('h2', {}, titulo),
-    sub ? el('p', {}, sub) : null,
-  ]);
-}
+// Título del hero (texto blanco sobre el azul), como en la app.
+const heroTitulo = (titulo, sub) => [
+  el('h2', {}, titulo),
+  sub ? el('p', {}, sub) : null,
+];
 
 /* ─── Sección ────────────────────────────────────────────────────────── */
 
@@ -99,7 +98,6 @@ export function texa() {
   const guardar = () => { try { localStorage.setItem(CLAVE, JSON.stringify(estado)); } catch {} };
 
   let tab = 'inicio';
-  const vista = el('div', { class: 'texa__view' });
 
   /* Pantalla: Inicio */
   const pInicio = () => {
@@ -114,27 +112,31 @@ export function texa() {
       { value: estado.stats.vocabulario, unit: 'palabras guardadas' },
       { value: estado.stats.hoyMin, unit: 'minutos hoy' },
     ];
-    return el('div', { class: 'texa__page' }, [
-      el('div', { class: 'texa__cabecera' }, [
-        el('span', { class: 'texa__eyebrow' }, 'Buen día'),
-        el('h2', {}, 'Diego'),
-      ]),
-      el('div', { class: 'texa__stats' }, stats.map((s) =>
-        el('div', { class: 'texa__stat' }, [
-          el('strong', {}, String(s.value)),
-          el('span', {}, s.unit),
-        ]))),
-      el('div', { class: 'texa__label' }, 'Continuar'),
-      el('div', { class: 'texa__actions' }, acciones.map((a) =>
-        el('button', { class: 'texa__actioncard', onclick: () => ir(a.to) }, [
-          el('div', { class: 'texa__actioncard-main' }, [
-            el('span', { class: 'texa__eyebrow' }, a.eyebrow),
-            el('span', { class: 'texa__actiontitle' }, a.title),
-            el('span', { class: 'texa__muted' }, a.detail),
-          ]),
-          el('span', { class: 'texa__arrow' }, '→'),
-        ]))),
-    ]);
+    return {
+      hero: [
+        el('div', { class: 'texa__greet' }, [
+          el('span', { class: 'texa__greeteyebrow' }, 'Buen día'),
+          el('h2', {}, 'Diego'),
+        ]),
+        el('div', { class: 'texa__hstats' }, stats.map((s) =>
+          el('div', { class: 'texa__hstat' }, [
+            el('strong', {}, String(s.value)),
+            el('span', {}, s.unit),
+          ]))),
+      ],
+      cuerpo: [
+        el('div', { class: 'texa__label' }, 'Continuar'),
+        el('div', { class: 'texa__actions' }, acciones.map((a) =>
+          el('button', { class: 'texa__actioncard', onclick: () => ir(a.to) }, [
+            el('div', { class: 'texa__actioncard-main' }, [
+              el('span', { class: 'texa__eyebrow' }, a.eyebrow),
+              el('span', { class: 'texa__actiontitle' }, a.title),
+              el('span', { class: 'texa__muted' }, a.detail),
+            ]),
+            el('span', { class: 'texa__arrow' }, '→'),
+          ]))),
+      ],
+    };
   };
 
   /* Pantalla: Vocabulario */
@@ -167,20 +169,22 @@ export function texa() {
     };
     nueva.addEventListener('keydown', (e) => { if (e.key === 'Enter') agregar(); });
     pintar();
-    return el('div', { class: 'texa__page' }, [
-      cabecera('Vocabulario', 'Guardá cualquier palabra y te la recordamos cada día hasta que la aprendas.'),
-      el('div', { class: 'texa__toolbar' }, [
-        el('div', { class: 'texa__addcard' }, [
-          nueva,
-          el('button', { class: 'texa__btn', onclick: agregar }, 'Guardar'),
+    return {
+      hero: heroTitulo('Vocabulario', 'Guardá cualquier palabra y te la recordamos cada día hasta que la aprendas.'),
+      cuerpo: [
+        el('div', { class: 'texa__toolbar' }, [
+          el('div', { class: 'texa__addcard' }, [
+            nueva,
+            el('button', { class: 'texa__btn', onclick: agregar }, 'Guardar'),
+          ]),
+          el('input', {
+            class: 'texa__search', placeholder: 'Buscar en tu vocabulario', 'aria-label': 'Buscar',
+            oninput: (e) => { query = e.target.value; pintar(); },
+          }),
         ]),
-        el('input', {
-          class: 'texa__search', placeholder: 'Buscar en tu vocabulario', 'aria-label': 'Buscar',
-          oninput: (e) => { query = e.target.value; pintar(); },
-        }),
-      ]),
-      el('div', { class: 'texa__section' }, [conteo, lista]),
-    ]);
+        el('div', { class: 'texa__section' }, [conteo, lista]),
+      ],
+    };
   };
 
   /* Pantalla: Traducir */
@@ -228,10 +232,10 @@ export function texa() {
       );
     };
     pintar();
-    return el('div', { class: 'texa__page' }, [
-      cabecera('Traducir', 'Traducís vos, la IA corrige matices y registro — no al revés.'),
-      cols,
-    ]);
+    return {
+      hero: heroTitulo('Traducir', 'Traducís vos, la IA corrige matices y registro — no al revés.'),
+      cuerpo: [cols],
+    };
   };
 
   /* Pantalla: Aprender */
@@ -255,11 +259,10 @@ export function texa() {
       }));
     };
     pintar();
-    return el('div', { class: 'texa__page' }, [
-      cabecera('Aprender', 'Elegí tu nivel y te ubicamos ahí — sin repetir lo que ya sabés.'),
-      niveles,
-      el('div', { class: 'texa__section' }, [tituloRec, lista]),
-    ]);
+    return {
+      hero: heroTitulo('Aprender', 'Elegí tu nivel y te ubicamos ahí — sin repetir lo que ya sabés.'),
+      cuerpo: [niveles, el('div', { class: 'texa__section' }, [tituloRec, lista])],
+    };
   };
 
   /* Pantalla: Chat */
@@ -296,36 +299,47 @@ export function texa() {
     const enviarBtn = el('button', { class: 'texa__send', 'aria-label': 'Enviar', onclick: enviar },
       [txIcon('<path d="M12 20V5"/><path d="M6 11l6-6 6 6"/>')]);
     pintarMensajes();
-    return el('div', { class: 'texa__page texa__page--chat' }, [
-      cabecera('Chat con IA', 'Conversación libre en inglés. Corrige sin cortarte el ritmo.'),
-      el('div', { class: 'texa__chatwrap' }, [
-        mensajes,
-        el('div', { class: 'texa__inputbar' }, [mic, input, enviarBtn]),
-      ]),
-    ]);
+    return {
+      hero: heroTitulo('Chat con IA', 'Conversación libre en inglés. Corrige sin cortarte el ritmo.'),
+      cuerpo: [
+        el('div', { class: 'texa__chatwrap' }, [
+          mensajes,
+          el('div', { class: 'texa__inputbar' }, [mic, input, enviarBtn]),
+        ]),
+      ],
+      chat: true,
+    };
   };
 
   const PANTALLAS = { inicio: pInicio, vocabulario: pVocabulario, traducir: pTraducir, aprender: pAprender, chat: pChat };
 
-  /* Barra de navegación superior (web): marca + pestañas */
+  /* Hero azul (como en la app): marca + pestañas arriba, título/​stats debajo */
   const tabs = TABS.map((t) => el('button', {
     class: `texa__tab${t.id === tab ? ' is-active' : ''}`, dataset: { tab: t.id },
     'aria-label': t.label, onclick: () => ir(t.id),
   }, [txIcon(t.ic), el('span', {}, t.label)]));
-  const appbar = el('div', { class: 'texa__appbar' }, [
-    el('div', { class: 'texa__brand' }, [marca(20), el('span', {}, 'TEXA')]),
-    el('nav', { class: 'texa__tabs', 'aria-label': 'Secciones de Texa' }, tabs),
+  const herobody = el('div', { class: 'texa__herobody' });
+  const hero = el('div', { class: 'texa__hero' }, [
+    el('span', { class: 'texa__motif', 'aria-hidden': 'true' }),
+    el('div', { class: 'texa__herotop' }, [
+      el('div', { class: 'texa__brand' }, [marca(20), el('span', {}, 'TEXA')]),
+      el('nav', { class: 'texa__tabs', 'aria-label': 'Secciones de Texa' }, tabs),
+    ]),
+    herobody,
   ]);
+  const vista = el('div', { class: 'texa__view' });
 
   function marcarTab() {
-    appbar.querySelectorAll('.texa__tab').forEach((b) => b.classList.toggle('is-active', b.dataset.tab === tab));
+    hero.querySelectorAll('.texa__tab').forEach((b) => b.classList.toggle('is-active', b.dataset.tab === tab));
   }
   function ir(t) {
     tab = t;
-    vista.replaceChildren(PANTALLAS[tab]());
+    const s = PANTALLAS[t]();
+    herobody.replaceChildren(...s.hero.filter(Boolean));
+    vista.replaceChildren(el('div', { class: `texa__page${s.chat ? ' texa__page--chat' : ''}` }, s.cuerpo));
     marcarTab();
   }
 
-  vista.replaceChildren(PANTALLAS[tab]());
-  return [el('div', { class: 'texa' }, [appbar, vista])];
+  ir(tab);
+  return [el('div', { class: 'texa' }, [hero, vista])];
 }
