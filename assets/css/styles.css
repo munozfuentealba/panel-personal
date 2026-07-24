@@ -1203,16 +1203,73 @@ textarea.input { resize: vertical; min-height: 76px; }
 .texa__notedot--warn { background: var(--tx-warn); }
 
 /* Aprender */
+.texa__progreso {
+  display: flex; align-items: center; gap: var(--sp-4); flex-wrap: wrap;
+  background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-lg);
+  box-shadow: var(--tx-shadow); padding: var(--sp-4);
+}
+.texa__nivelnow { font-size: 30px; font-weight: 800; letter-spacing: -.02em; color: var(--tx-accent); line-height: 1.1; }
+.texa__progmeta { flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 6px; }
+.texa__bar { height: 8px; border-radius: var(--r-full); background: var(--tx-sel); overflow: hidden; }
+.texa__barfill { height: 100%; background: var(--tx-accent); border-radius: inherit; transition: width var(--t-med); }
+.texa__ghostbtn { border: 1px solid var(--tx-border); background: none; color: var(--tx-accent); font: inherit; font-size: 13px; font-weight: 700; padding: 9px 14px; border-radius: var(--r-md); cursor: pointer; }
+.texa__ghostbtn:hover { background: var(--tx-accent-soft); }
+
 .texa__levels { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
-.texa__level { flex: 1; min-width: 60px; border: 1px solid var(--tx-border); background: var(--tx-el); color: var(--tx-text2); font: inherit; font-size: 14px; font-weight: 700; padding: 11px 4px; border-radius: var(--r-md); cursor: pointer; }
+.texa__level { flex: 1; min-width: 56px; border: 1px solid var(--tx-border); background: var(--tx-el); color: var(--tx-text2); font: inherit; font-size: 14px; font-weight: 700; padding: 11px 4px; border-radius: var(--r-md); cursor: pointer; }
 .texa__level.is-active { background: var(--tx-accent); border-color: transparent; color: var(--tx-on-accent); }
-.texa__lesson { display: flex; align-items: center; gap: var(--sp-3); background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-md); box-shadow: var(--tx-shadow); padding: 13px 15px; }
-.texa__lesson--bloqueada { opacity: .5; }
+
+.texa__nivelhead { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); flex-wrap: wrap; }
+.texa__label--now { color: var(--tx-accent); }
+.texa__temanivel { display: flex; flex-direction: column; gap: var(--sp-2); margin-top: var(--sp-4); }
+.texa__back { border: none; background: none; color: var(--tx-accent); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; padding: 4px 0; }
+
+.texa__lesson {
+  display: flex; align-items: center; gap: var(--sp-3); width: 100%; text-align: left;
+  background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-md);
+  box-shadow: var(--tx-shadow); padding: 12px 15px; font: inherit; cursor: default;
+}
+button.texa__lesson { cursor: pointer; transition: transform var(--t-fast), border-color var(--t-fast); }
+button.texa__lesson:hover { transform: translateY(-1px); border-color: var(--tx-accent); }
+.texa__lesson--bloqueada { opacity: .55; }
 .texa__marker { width: 34px; height: 34px; flex: none; border-radius: var(--r-full); display: grid; place-items: center; font-size: 14px; font-weight: 700; background: var(--tx-sel); color: var(--tx-text2); }
 .texa__lesson--hecha .texa__marker { background: var(--tx-ok-soft); color: var(--tx-ok); }
-.texa__lesson--actual .texa__marker { background: var(--tx-accent-soft); color: var(--tx-accent); }
-.texa__lessontext { display: flex; flex-direction: column; gap: 2px; }
+.texa__lesson--actual .texa__marker { background: var(--tx-accent); color: var(--tx-on-accent); }
+.texa__lesson--dispo .texa__marker { background: var(--tx-accent-soft); color: var(--tx-accent); }
+.texa__lessontext { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
 .texa__lessontext strong { font-size: 15px; font-weight: 700; color: var(--tx-text); }
+.texa__lstag { flex: none; font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: var(--r-full); }
+.texa__lstag--hecha { color: var(--tx-ok); background: var(--tx-ok-soft); }
+.texa__lstag--actual, .texa__lstag--dispo { color: var(--tx-accent); background: var(--tx-accent-soft); }
+.texa__lstag--bloqueada { color: var(--tx-text2); background: var(--tx-sel); }
+
+/* Lección: explicación + ejemplos + ejercicios */
+.texa__leccion { display: flex; flex-direction: column; gap: var(--sp-5); }
+.texa__lecciontit { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -.02em; color: var(--tx-text); }
+.texa__explica { background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-lg); box-shadow: var(--tx-shadow); padding: var(--sp-4); display: flex; flex-direction: column; gap: 10px; }
+.texa__explica p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--tx-text); }
+.texa__explica strong { color: var(--tx-accent); font-weight: 700; }
+.texa__ejemplos { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-2); }
+.texa__ejemplo { background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-md); box-shadow: var(--tx-shadow); padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.texa__ejen { font-size: 15px; font-weight: 700; color: var(--tx-text); }
+.texa__ejes { font-size: 13px; color: var(--tx-text2); }
+.texa__ex { background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-md); box-shadow: var(--tx-shadow); padding: 14px 15px; display: flex; flex-direction: column; gap: 11px; }
+.texa__exq { display: flex; align-items: baseline; gap: 9px; font-size: 15.5px; line-height: 1.5; color: var(--tx-text); }
+.texa__exq strong { color: var(--tx-accent); }
+.texa__exn { flex: none; width: 22px; height: 22px; border-radius: var(--r-full); background: var(--tx-accent-soft); color: var(--tx-accent); font-size: 12px; font-weight: 700; display: inline-grid; place-items: center; }
+.texa__exopts { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+.texa__exopt { border: 1px solid var(--tx-border); background: var(--tx-bg); color: var(--tx-text); font: inherit; font-size: 14px; font-weight: 600; padding: 9px 16px; border-radius: var(--r-md); cursor: pointer; transition: border-color var(--t-fast); }
+.texa__exopt:hover { border-color: var(--tx-accent); }
+.texa__exopt.is-ok { border-color: var(--tx-ok); background: var(--tx-ok-soft); color: var(--tx-ok); }
+.texa__exopt.is-bad { border-color: var(--tx-warn); background: var(--tx-warn-soft); color: var(--tx-warn); }
+.texa__exrow { display: flex; gap: var(--sp-2); }
+.texa__exinput { flex: 1; border: 1px solid var(--tx-border); background: var(--tx-bg); color: var(--tx-text); font: inherit; font-size: 15px; padding: 9px 12px; border-radius: var(--r-md); }
+.texa__exinput:focus { outline: none; border-color: var(--tx-accent); }
+.texa__exinput.is-ok { border-color: var(--tx-ok); color: var(--tx-ok); }
+.texa__exinput.is-bad { border-color: var(--tx-warn); color: var(--tx-warn); }
+.texa__exfb { font-size: 13.5px; font-weight: 700; min-height: 0; }
+.texa__exfb.is-ok { color: var(--tx-ok); }
+.texa__exfb.is-bad { color: var(--tx-warn); }
 
 /* Chat */
 .texa__chatwrap { flex: 1; display: flex; flex-direction: column; gap: var(--sp-3); min-height: 0; }
@@ -1239,7 +1296,7 @@ textarea.input { resize: vertical; min-height: 76px; }
   .texa__hero { padding-left: var(--sp-4); padding-right: var(--sp-4); }
   .texa__view { padding: var(--sp-4); }
   .texa__hstats { grid-template-columns: 1fr; }
-  .texa__actions, .texa__grid, .texa__cols, .texa__toolbar { grid-template-columns: 1fr; }
+  .texa__actions, .texa__grid, .texa__cols, .texa__toolbar, .texa__ejemplos { grid-template-columns: 1fr; }
   .texa__feedwrap { position: static; }
   .texa__tab span { display: none; }
   .texa__tab { padding: 9px 12px; }

@@ -9,12 +9,14 @@
  */
 
 import { el } from './utils.js';
+import { CURRICULO, TODAS_LECCIONES, tieneContenido } from './texa-curriculo.js';
 
 /* ─── Datos semilla (los mismos de la app) ──────────────────────────── */
 
 const SEED = {
   stats: { racha: 4, vocabulario: 27, hoyMin: 12 },
-  nivel: 'B2',
+  nivel: 'A1',
+  aprendido: {},   // { [leccionId]: true }
   words: [
     { en: 'to brush up on', es: 'repasar / perfeccionar algo', stage: 'nueva' },
     { en: 'overwhelmed', es: 'abrumado', stage: 'nueva' },
@@ -29,14 +31,6 @@ const SEED = {
 };
 
 const STAGE_LABEL = { nueva: 'Nueva', aprendiendo: 'Aprendiendo', dominada: 'Dominada' };
-const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-const LESSONS = [
-  { title: 'Verbos frasales esenciales', detail: '18 tarjetas · 10 min', status: 'hecha' },
-  { title: 'Registro formal vs. informal', detail: '14 tarjetas · 8 min', status: 'hecha' },
-  { title: 'Modismos cotidianos', detail: '20 tarjetas · 12 min', status: 'actual' },
-  { title: 'Conectores de argumentación', detail: '16 tarjetas · 9 min', status: 'bloqueada' },
-  { title: 'Falsos amigos frecuentes', detail: '22 tarjetas · 13 min', status: 'bloqueada' },
-];
 const PROMPTS = {
   'es-en': { source: 'Se me pasó completamente avisarte.', suggested: 'It completely slipped my mind to let you know.' },
   'en-es': { source: 'I could really use a second pair of eyes on this.', suggested: 'Me vendría bien que alguien más lo revise.' },
@@ -87,6 +81,24 @@ const heroTitulo = (titulo, sub) => [
   sub ? el('p', {}, sub) : null,
 ];
 
+// Normaliza respuestas para comparar (sin tildes de apóstrofo, sin punto final).
+const norm = (s) => (s ?? '').toString().trim().toLowerCase()
+  .replace(/\s+/g, ' ').replace(/[’´`]/g, "'").replace(/[.!?]+$/, '');
+
+// Convierte **negrita** y *cursiva* en nodos.
+const texto = (str) => {
+  const out = [];
+  const re = /\*\*(.+?)\*\*|\*(.+?)\*/g;
+  let last = 0, m;
+  while ((m = re.exec(str))) {
+    if (m.index > last) out.push(document.createTextNode(str.slice(last, m.index)));
+    out.push(m[1] !== undefined ? el('strong', {}, m[1]) : el('em', {}, m[2]));
+    last = re.lastIndex;
+  }
+  if (last < String(str).length) out.push(document.createTextNode(String(str).slice(last)));
+  return out;
+};
+
 /* ─── Sección ────────────────────────────────────────────────────────── */
 
 export function texa() {
@@ -95,7 +107,18 @@ export function texa() {
   try { estado = JSON.parse(localStorage.getItem(CLAVE)) || structuredClone(SEED); }
   catch { estado = structuredClone(SEED); }
   estado = Object.assign(structuredClone(SEED), estado);
+  if (!estado.aprendido || typeof estado.aprendido !== 'object') estado.aprendido = {};
   const guardar = () => { try { localStorage.setItem(CLAVE, JSON.stringify(estado)); } catch {} };
+
+  /* ─── Progreso de Aprender ─────────────────────────────────────────── */
+  const conContenido = (n) => n.lecciones.filter(tieneContenido);
+  const completadasDe = (n) => n.lecciones.filter((l) => estado.aprendido[l.id]).length;
+  const nivelActual = () => {
+    const pend = CURRICULO.find((n) => conContenido(n).length && conContenido(n).some((l) => !estado.aprendido[l.id]));
+    if (pend) return pend.id;
+    const conAlgo = [...CURRICULO].reverse().find((n) => conContenido(n).length);
+    return conAlgo ? conAlgo.id : 'A1';
+  };
 
   let tab = 'inicio';
 
@@ -104,7 +127,7 @@ export function texa() {
     const acciones = [
       { to: 'vocabulario', eyebrow: 'Vocabulario', title: `${estado.words.filter((w) => w.stage !== 'dominada').length} palabras para repasar hoy`, detail: 'Repaso espaciado de lo que guardaste' },
       { to: 'traducir', eyebrow: 'Traducción', title: 'Frase del día para traducir', detail: '“It slipped my mind completely.”' },
-      { to: 'aprender', eyebrow: `Aprender · Nivel ${estado.nivel}`, title: 'Modismos cotidianos', detail: 'Siguiente lección de tu recorrido' },
+      { to: 'aprender', eyebrow: `Aprender · Nivel ${nivelActual()}`, title: 'Tu recorrido de gramática', detail: 'Explicación + ejercicios, nivel por nivel' },
       { to: 'chat', eyebrow: 'Conversación', title: 'Practicá 10 minutos con la IA', detail: 'Charla libre, corrige sin cortar el flujo' },
     ];
     const stats = [
@@ -240,28 +263,174 @@ export function texa() {
 
   /* Pantalla: Aprender */
   const pAprender = () => {
-    const niveles = el('div', { class: 'texa__levels' });
-    const lista = el('div', { class: 'texa__grid' });
-    const tituloRec = el('div', { class: 'texa__label' });
-    const pintar = () => {
-      tituloRec.textContent = `Tu recorrido en nivel ${estado.nivel}`;
-      niveles.replaceChildren(...LEVELS.map((lv) =>
-        el('button', { class: `texa__level${lv === estado.nivel ? ' is-active' : ''}`, onclick: () => { estado.nivel = lv; guardar(); pintar(); } }, lv)));
-      lista.replaceChildren(...LESSONS.map((ls) => {
-        const m = ls.status === 'hecha' ? '✓' : ls.status === 'actual' ? '▶' : '·';
-        return el('div', { class: `texa__lesson texa__lesson--${ls.status}` }, [
-          el('span', { class: 'texa__marker' }, m),
-          el('div', { class: 'texa__lessontext' }, [
-            el('strong', {}, ls.title),
-            el('span', { class: 'texa__muted' }, ls.detail),
-          ]),
-        ]);
-      }));
+    // vista: 'nivel' (por nivel) · 'temario' (índice) · 'leccion'
+    let vista = 'nivel';
+    let nivelSel = estado.nivel && CURRICULO.some((n) => n.id === estado.nivel) ? estado.nivel : nivelActual();
+    let leccionSel = null;
+    const cont = el('div', { class: 'texa__section' });
+
+    const irNivel = (id) => { nivelSel = id; estado.nivel = id; guardar(); vista = 'nivel'; pintar(); };
+    const abrirLeccion = (l) => { leccionSel = l; nivelSel = l.nivel; vista = 'leccion'; pintar(); cont.scrollIntoView?.({ block: 'nearest' }); };
+
+    // Fila de una lección en una lista
+    const filaLeccion = (l, esActual) => {
+      const hecho = !!estado.aprendido[l.id];
+      const dispo = tieneContenido(l);
+      const estadoCls = hecho ? 'hecha' : esActual && dispo ? 'actual' : dispo ? 'dispo' : 'bloqueada';
+      const marca = hecho ? '✓' : esActual && dispo ? '▶' : dispo ? '·' : '·';
+      return el(dispo ? 'button' : 'div', {
+        class: `texa__lesson texa__lesson--${estadoCls}`,
+        ...(dispo ? { onclick: () => abrirLeccion(l) } : {}),
+      }, [
+        el('span', { class: 'texa__marker' }, marca),
+        el('div', { class: 'texa__lessontext' }, [
+          el('strong', {}, l.titulo),
+          el('span', { class: 'texa__muted' }, l.resumen || ''),
+        ]),
+        el('span', { class: `texa__lstag texa__lstag--${estadoCls}` },
+          hecho ? 'Aprendida' : dispo ? 'Empezar' : 'En preparación'),
+      ]);
     };
+
+    // Vista "por nivel"
+    const vistaNivel = () => {
+      const nivel = CURRICULO.find((n) => n.id === nivelSel);
+      const dispo = conContenido(nivel).length;
+      const hechas = completadasDe(nivel);
+      const idxActual = nivel.lecciones.findIndex((l) => tieneContenido(l) && !estado.aprendido[l.id]);
+      const totalAutor = TODAS_LECCIONES.filter(tieneContenido).length;
+      const totalHechas = TODAS_LECCIONES.filter((l) => estado.aprendido[l.id]).length;
+      return [
+        // Banner de progreso / "el nivel que vas"
+        el('div', { class: 'texa__progreso' }, [
+          el('div', {}, [
+            el('span', { class: 'texa__eyebrow' }, 'Tu nivel'),
+            el('div', { class: 'texa__nivelnow' }, nivelActual()),
+          ]),
+          el('div', { class: 'texa__progmeta' }, [
+            el('div', { class: 'texa__bar' }, [el('div', { class: 'texa__barfill', style: { width: `${totalAutor ? (totalHechas / totalAutor) * 100 : 0}%` } })]),
+            el('span', { class: 'texa__muted' }, `${totalHechas} de ${totalAutor} temas con contenido`),
+          ]),
+          el('button', { class: 'texa__ghostbtn', onclick: () => { vista = 'temario'; pintar(); } }, 'Ver temario completo'),
+        ]),
+        // Selector de nivel
+        el('div', { class: 'texa__levels' }, CURRICULO.map((n) =>
+          el('button', { class: `texa__level${n.id === nivelSel ? ' is-active' : ''}`, onclick: () => irNivel(n.id) }, n.nombre))),
+        // Lista del nivel
+        el('div', { class: 'texa__section' }, [
+          el('div', { class: 'texa__nivelhead' }, [
+            el('div', { class: 'texa__label' }, nivel.etiqueta),
+            el('span', { class: 'texa__muted' }, dispo ? `${hechas}/${dispo} completadas` : 'En preparación'),
+          ]),
+          el('div', { class: 'texa__grid' }, nivel.lecciones.map((l, i) => filaLeccion(l, i === idxActual))),
+        ]),
+      ];
+    };
+
+    // Vista "temario completo" (índice de todos los temas)
+    const vistaTemario = () => [
+      el('div', { class: 'texa__nivelhead' }, [
+        el('button', { class: 'texa__back', onclick: () => { vista = 'nivel'; pintar(); } }, ['← Volver']),
+        el('div', { class: 'texa__label' }, `Temario completo · tu nivel: ${nivelActual()}`),
+      ]),
+      ...CURRICULO.map((n) => {
+        const dispo = conContenido(n).length;
+        return el('div', { class: 'texa__temanivel' }, [
+          el('div', { class: 'texa__nivelhead' }, [
+            el('div', { class: `texa__label${n.id === nivelActual() ? ' texa__label--now' : ''}` }, n.etiqueta),
+            el('span', { class: 'texa__muted' }, dispo ? `${completadasDe(n)}/${dispo}` : 'pronto'),
+          ]),
+          el('div', { class: 'texa__grid' }, n.lecciones.map((l) => filaLeccion(l, false))),
+        ]);
+      }),
+    ];
+
+    // Vista de una lección: explicación + ejemplos + ejercicios
+    const vistaLeccion = () => {
+      const l = leccionSel;
+      let aciertos = 0;
+      const resumenAc = el('span', { class: 'texa__muted' });
+      const pintarAc = () => { resumenAc.textContent = `Aciertos: ${aciertos}/${l.ejercicios.length}`; };
+      pintarAc();
+
+      const nodoEjercicio = (ej, i) => {
+        let contestado = false;
+        const fb = el('div', { class: 'texa__exfb' });
+        const preg = el('div', { class: 'texa__exq' }, [el('span', { class: 'texa__exn' }, `${i + 1}`), ...texto(ej.pregunta)]);
+        let control;
+        const acertar = (ok) => { if (!contestado) { contestado = true; if (ok) aciertos++; pintarAc(); } };
+        if (ej.tipo === 'opcion') {
+          control = el('div', { class: 'texa__exopts' }, ej.opciones.map((o) =>
+            el('button', { class: 'texa__exopt', onclick: (e) => {
+              if (contestado) return;
+              const ok = norm(o) === norm(ej.correcta);
+              e.currentTarget.classList.add(ok ? 'is-ok' : 'is-bad');
+              if (!ok) control.querySelectorAll('.texa__exopt').forEach((b) => { if (norm(b.textContent) === norm(ej.correcta)) b.classList.add('is-ok'); });
+              fb.textContent = ok ? '¡Correcto!' : `Correcto: ${ej.correcta}`;
+              fb.className = `texa__exfb ${ok ? 'is-ok' : 'is-bad'}`;
+              acertar(ok);
+            } }, o)));
+        } else {
+          const inp = el('input', { class: 'texa__exinput', placeholder: 'Tu respuesta…', 'aria-label': 'Respuesta' });
+          const comprobar = () => {
+            if (contestado) return;
+            const acc = [].concat(ej.respuesta).map(norm);
+            const ok = acc.includes(norm(inp.value));
+            inp.classList.add(ok ? 'is-ok' : 'is-bad');
+            inp.disabled = true;
+            fb.textContent = ok ? '¡Correcto!' : `Correcto: ${[].concat(ej.respuesta)[0]}`;
+            fb.className = `texa__exfb ${ok ? 'is-ok' : 'is-bad'}`;
+            acertar(ok);
+          };
+          inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') comprobar(); });
+          control = el('div', { class: 'texa__exrow' }, [inp, el('button', { class: 'texa__btn', onclick: comprobar }, 'Comprobar')]);
+        }
+        return el('div', { class: 'texa__ex' }, [preg, control, fb]);
+      };
+
+      const hecho = !!estado.aprendido[l.id];
+      const btnDone = el('button', { class: 'texa__btn texa__btn--block', onclick: () => {
+        estado.aprendido[l.id] = true; guardar();
+        vista = 'nivel'; pintar();
+      } }, hecho ? 'Repasada ✓ · volver' : 'Marcar como aprendida');
+
+      return [
+        el('div', { class: 'texa__nivelhead' }, [
+          el('button', { class: 'texa__back', onclick: () => { vista = 'nivel'; pintar(); } }, [`← ${l.nivel}`]),
+          hecho ? el('span', { class: 'texa__lstag texa__lstag--hecha' }, 'Aprendida') : null,
+        ]),
+        el('div', { class: 'texa__leccion' }, [
+          el('h3', { class: 'texa__lecciontit' }, l.titulo),
+          // Explicación
+          el('div', { class: 'texa__explica' }, l.explicacion.map((p) => el('p', {}, texto(p)))),
+          // Ejemplos
+          el('div', { class: 'texa__section' }, [
+            el('div', { class: 'texa__label' }, 'Ejemplos'),
+            el('div', { class: 'texa__ejemplos' }, l.ejemplos.map((e) =>
+              el('div', { class: 'texa__ejemplo' }, [
+                el('span', { class: 'texa__ejen' }, e.en),
+                el('span', { class: 'texa__ejes' }, e.es),
+              ]))),
+          ]),
+          // Ejercicios
+          el('div', { class: 'texa__section' }, [
+            el('div', { class: 'texa__nivelhead' }, [el('div', { class: 'texa__label' }, 'Ejercicios'), resumenAc]),
+            ...l.ejercicios.map(nodoEjercicio),
+          ]),
+          btnDone,
+        ]),
+      ];
+    };
+
+    function pintar() {
+      const nodos = vista === 'leccion' ? vistaLeccion() : vista === 'temario' ? vistaTemario() : vistaNivel();
+      cont.replaceChildren(...nodos.filter(Boolean));
+    }
     pintar();
+
     return {
-      hero: heroTitulo('Aprender', 'Elegí tu nivel y te ubicamos ahí — sin repetir lo que ya sabés.'),
-      cuerpo: [niveles, el('div', { class: 'texa__section' }, [tituloRec, lista])],
+      hero: heroTitulo('Aprender', 'Gramática de inglés desde cero: explicación, ejemplos y ejercicios, nivel por nivel.'),
+      cuerpo: [cont],
     };
   };
 
