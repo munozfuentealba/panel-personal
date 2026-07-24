@@ -1093,8 +1093,9 @@ textarea.input { resize: vertical; min-height: 76px; }
 .texa__tabic svg { width: 18px; height: 18px; display: block; }
 
 /* Área de contenido */
-.texa__view { padding: var(--sp-6) var(--sp-6) var(--sp-8); }
-.texa__page { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--sp-5); }
+.texa__view { padding: var(--sp-6) var(--sp-7, 28px) var(--sp-8); }
+.texa__page { width: 100%; display: flex; flex-direction: column; gap: var(--sp-5); }
+.texa__page--chat { max-width: 1000px; }
 .texa__page--chat { height: calc(100vh - var(--topbar-h) - 190px); min-height: 460px; }
 
 .texa__cabecera h2 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -.02em; color: var(--tx-text); }
