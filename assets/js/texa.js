@@ -46,6 +46,22 @@ const AI_REPLIES = [
   { text: 'Got it. How did that make you feel?', tip: null },
 ];
 
+// Burbujas de sinónimos por nivel (decoración animada de Inicio).
+const SINONIMOS = [
+  { w: 'need', lvl: 'A1', c: 'blue' },
+  { w: 'require', lvl: 'B1', c: 'yellow' },
+  { w: 'necessitate', lvl: 'C1', c: 'red' },
+  { w: 'get', lvl: 'A1', c: 'blue' },
+  { w: 'obtain', lvl: 'B1', c: 'yellow' },
+  { w: 'acquire', lvl: 'C1', c: 'green' },
+  { w: 'big', lvl: 'A1', c: 'blue' },
+  { w: 'huge', lvl: 'B1', c: 'yellow' },
+  { w: 'colossal', lvl: 'C1', c: 'red' },
+];
+
+// Saludos que rotan en el hero (toque de "idiomas").
+const SALUDOS = ['Hello', 'Hola', 'Bonjour', 'Ciao', 'Hallo', 'Olá', 'こんにちは'];
+
 /* ─── Marca e íconos ─────────────────────────────────────────────────── */
 
 function marca(size = 22) {
@@ -191,6 +207,22 @@ export function texa() {
             ]),
             el('span', { class: 'texa__arrow' }, '→'),
           ]))),
+        // Banda con vida: saludos que rotan + burbujas de sinónimos por nivel
+        el('div', { class: 'texa__vivos' }, [
+          el('div', { class: 'texa__vivostit' }, [
+            el('span', { class: 'texa__saludos', 'aria-hidden': 'true' }, SALUDOS.map((s, i) =>
+              el('span', { class: 'texa__saludo', style: { animationDelay: `${i * 1.9}s` } }, s))),
+            el('strong', {}, 'El inglés tiene un matiz para cada nivel.'),
+          ]),
+          el('div', { class: 'texa__nube' }, SINONIMOS.map((p, i) =>
+            el('span', {
+              class: `texa__bub texa__bub--${p.c}`,
+              style: { animationDelay: `${(i % 6) * 0.45}s`, animationDuration: `${4 + (i % 3) * 0.7}s` },
+            }, [
+              el('span', { class: 'texa__bublvl' }, p.lvl),
+              el('span', {}, p.w),
+            ]))),
+        ]),
       ],
     };
   };

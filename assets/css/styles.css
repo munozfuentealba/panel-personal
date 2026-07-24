@@ -1333,6 +1333,69 @@ button.texa__lesson:hover { transform: translateY(-1px); border-color: var(--tx-
   .texa__tab { padding: 9px 12px; }
 }
 
+/* Texa · vida (elementos animados) */
+.texa__vivos {
+  margin-top: var(--sp-2);
+  background: linear-gradient(180deg, var(--tx-accent-soft), transparent);
+  border: 1px solid var(--tx-border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-5) var(--sp-4) var(--sp-4);
+  overflow: hidden;
+}
+.texa__vivostit { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: var(--sp-2); text-align: center; }
+.texa__vivostit strong { font-size: 15px; font-weight: 700; color: var(--tx-text); }
+.texa__saludos { position: relative; display: inline-grid; min-width: 90px; height: 1.4em; }
+.texa__saludo {
+  grid-area: 1 / 1; text-align: center;
+  font-size: 17px; font-weight: 800; color: var(--tx-accent);
+  opacity: 0; animation: texaSaludo 13.3s linear infinite;
+}
+@keyframes texaSaludo {
+  0% { opacity: 0; transform: translateY(7px); }
+  3% { opacity: 1; transform: none; }
+  11% { opacity: 1; transform: none; }
+  14% { opacity: 0; transform: translateY(-7px); }
+  100% { opacity: 0; }
+}
+
+.texa__nube { display: flex; flex-wrap: wrap; gap: 14px 18px; align-items: center; justify-content: center; padding: var(--sp-3) 0 var(--sp-2); }
+.texa__bub {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border-radius: 17px;
+  color: #fff; font-weight: 800; font-size: clamp(15px, 1vw + 12px, 21px);
+  box-shadow: 0 6px 16px rgba(40, 30, 15, .16);
+  animation: texaFloat 4.5s var(--ease-in-out) infinite;
+  will-change: transform;
+}
+.texa__bub::after {
+  content: ''; position: absolute; left: 22px; bottom: -6px;
+  border: 8px solid transparent; border-top-color: var(--bub); border-bottom: 0;
+}
+.texa__bub--blue { --bub: #4f86e0; background: var(--bub); }
+.texa__bub--yellow { --bub: #e7b53f; background: var(--bub); }
+.texa__bub--red { --bub: #d95757; background: var(--bub); }
+.texa__bub--green { --bub: #3fa06a; background: var(--bub); }
+.texa__bublvl { background: #fff; color: #1e2a5a; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 7px; }
+@keyframes texaFloat { 0%, 100% { transform: translateY(0) rotate(-.5deg); } 50% { transform: translateY(-9px) rotate(.5deg); } }
+
+/* Motivo "T" del hero, flotando suave */
+.texa__motif { animation: texaMotif 11s ease-in-out infinite; }
+@keyframes texaMotif {
+  0%, 100% { transform: rotate(12deg) translateY(0); }
+  50% { transform: rotate(9deg) translateY(-12px); }
+}
+
+/* Entrada escalonada del contenido de una lección */
+.texa__contenido > * { animation: texaRise .5s var(--ease-out) both; }
+.texa__contenido > *:nth-child(1) { animation-delay: .02s; }
+.texa__contenido > *:nth-child(2) { animation-delay: .08s; }
+.texa__contenido > *:nth-child(3) { animation-delay: .14s; }
+.texa__contenido > *:nth-child(4) { animation-delay: .20s; }
+.texa__contenido > *:nth-child(5) { animation-delay: .26s; }
+.texa__contenido > *:nth-child(6) { animation-delay: .32s; }
+@keyframes texaRise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
 /* ─── Impresión ──────────────────────────────────────────────────── */
 @media print {
   .sidebar, .topbar, .toast { display: none; }
