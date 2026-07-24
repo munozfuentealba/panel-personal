@@ -62,6 +62,13 @@ const SINONIMOS = [
 // Saludos que rotan en el hero (toque de "idiomas").
 const SALUDOS = ['Hello', 'Hola', 'Bonjour', 'Ciao', 'Hallo', 'Olá', 'こんにちは'];
 
+// Cinta de palabras/frases que se desliza (movimiento bien visible).
+const TICKER = [
+  'Hello 👋', 'grammar', 'vocabulary', 'fluency', 'phrasal verbs', 'However,…',
+  'nevertheless', 'a piece of cake 🍰', 'break the ice 🧊', 'Hola → Hello',
+  'I’ve been learning', 'once upon a time', 'practice makes perfect ✨', 'small talk',
+];
+
 /* ─── Marca e íconos ─────────────────────────────────────────────────── */
 
 function marca(size = 22) {
@@ -207,7 +214,7 @@ export function texa() {
       hero: [
         el('div', { class: 'texa__greet' }, [
           el('span', { class: 'texa__greeteyebrow' }, 'Buen día'),
-          el('h2', {}, 'Diego'),
+          el('h2', {}, ['Diego ', el('span', { class: 'texa__wave', 'aria-hidden': 'true' }, '👋')]),
         ]),
         el('div', { class: 'texa__hstats' }, stats.map((s) =>
           el('div', { class: 'texa__hstat' }, [
@@ -216,6 +223,11 @@ export function texa() {
           ]))),
       ],
       cuerpo: [
+        // Cinta de palabras que se desliza (movimiento siempre visible)
+        el('div', { class: 'texa__ticker', 'aria-hidden': 'true' }, [
+          el('div', { class: 'texa__tickrow' }, [...TICKER, ...TICKER].map((w) =>
+            el('span', { class: 'texa__tickitem' }, w))),
+        ]),
         el('div', { class: 'texa__label' }, 'Continuar'),
         el('div', { class: 'texa__actions' }, acciones.map((a) =>
           el('button', { class: 'texa__actioncard', onclick: () => ir(a.to) }, [

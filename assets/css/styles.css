@@ -1377,7 +1377,33 @@ button.texa__lesson:hover { transform: translateY(-1px); border-color: var(--tx-
 .texa__bub--red { --bub: #d95757; background: var(--bub); }
 .texa__bub--green { --bub: #3fa06a; background: var(--bub); }
 .texa__bublvl { background: #fff; color: #1e2a5a; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 7px; }
-@keyframes texaFloat { 0%, 100% { transform: translateY(0) rotate(-.5deg); } 50% { transform: translateY(-9px) rotate(.5deg); } }
+@keyframes texaFloat { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-16px) rotate(3deg); } }
+
+/* Saludo con mano que saluda */
+.texa__wave { display: inline-block; transform-origin: 70% 80%; animation: texaWave 2.4s ease-in-out infinite; }
+@keyframes texaWave {
+  0%, 60%, 100% { transform: rotate(0); }
+  10% { transform: rotate(16deg); }
+  20% { transform: rotate(-10deg); }
+  30% { transform: rotate(16deg); }
+  40% { transform: rotate(-6deg); }
+  50% { transform: rotate(12deg); }
+}
+
+/* Cinta de palabras que se desliza */
+.texa__ticker {
+  overflow: hidden;
+  border: 1px solid var(--tx-border);
+  border-radius: var(--r-full);
+  background: var(--tx-el);
+  padding: 9px 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.texa__tickrow { display: inline-flex; align-items: center; white-space: nowrap; animation: texaTicker 26s linear infinite; }
+.texa__tickitem { display: inline-flex; align-items: center; font-size: 14.5px; font-weight: 700; color: var(--tx-text); padding: 0 var(--sp-4); position: relative; }
+.texa__tickitem::after { content: '•'; position: absolute; right: -3px; color: var(--tx-accent); opacity: .6; }
+@keyframes texaTicker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 /* Motivo "T" del hero, flotando suave */
 .texa__motif { animation: texaMotif 11s ease-in-out infinite; }
@@ -1424,6 +1450,18 @@ button.texa__lesson:hover { transform: translateY(-1px); border-color: var(--tx-
 @keyframes texaConf {
   0% { transform: translate(0, 0) rotate(0); opacity: 1; }
   100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; }
+}
+
+/* Texa lo pidió con vida explícitamente: sus animaciones decorativas continuas
+   siguen corriendo aunque el sistema tenga "reducir movimiento". El resto del
+   panel sí respeta esa preferencia. */
+@media (prefers-reduced-motion: reduce) {
+  .texa__tickrow { animation: texaTicker 26s linear infinite !important; }
+  .texa__wave { animation: texaWave 2.4s ease-in-out infinite !important; }
+  .texa__bub { animation: texaFloat 4.5s ease-in-out infinite !important; }
+  .texa__motif { animation: texaMotif 11s ease-in-out infinite !important; }
+  .texa__saludo { animation: texaSaludo 13.3s linear infinite !important; }
+  .texa__lesson--actual .texa__marker { animation: texaPulse 2s ease-in-out infinite !important; }
 }
 
 /* ─── Impresión ──────────────────────────────────────────────────── */
