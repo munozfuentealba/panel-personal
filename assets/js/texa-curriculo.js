@@ -1,12 +1,21 @@
 /**
  * Currículo de Texa — Aprender.
  *
- * Estructura por nivel (A1–C2 + Skills). Cada lección puede traer contenido
- * completo (explicacion + ejemplos + ejercicios) o solo el título (contenido
- * pendiente → se muestra "En preparación"). Los ejercicios se autocorrigen:
- *   { tipo: 'hueco',  pregunta, respuesta }   respuesta: string | string[]
- *   { tipo: 'opcion', pregunta, opciones, correcta }
- * La `pregunta` usa "___" para marcar el hueco.
+ * Cada lección con contenido trae:
+ *   contenido: [ bloques ]   ejemplos: [{en,es}]   ejercicios: [...]
+ *
+ * Bloques (diseño variado, no solo texto):
+ *   { t:'texto',      md }                        párrafo (admite **negrita** / *cursiva*)
+ *   { t:'estructura', partes:[...] }              fórmula en "chips" unidas por +
+ *   { t:'tabla',      cols:[...], filas:[[...]] } tabla (1ª columna = encabezado de fila)
+ *   { t:'clave',      items:[...] }               ideas clave con viñeta ✓
+ *   { t:'ojo',        md }                         aviso del error típico
+ *   { t:'dato',       md }                         dato curioso "¿Sabías que…?"
+ *
+ * Ejercicios (autocorregidos):
+ *   { tipo:'hueco',  pregunta, respuesta }   respuesta: string | string[]
+ *   { tipo:'opcion', pregunta, opciones, correcta }
+ * La `pregunta` usa "___" para el hueco.
  */
 
 const soloTitulo = (titulo, resumen) => ({ titulo, resumen });
@@ -17,18 +26,22 @@ const A1 = [
   {
     titulo: 'Verbo "to be" (am / is / are)',
     resumen: 'Ser o estar: el verbo más básico.',
-    explicacion: [
-      'El verbo to be significa ser o estar. Cambia según la persona: **I am**, **you / we / they are**, **he / she / it is**.',
-      'Negativo con not: *I am not, she isn’t, they aren’t*. Para preguntar, se invierte: *Are you…? Is he…?*',
+    contenido: [
+      { t: 'texto', md: 'El verbo *to be* (ser o estar) es el más usado del inglés: aparece en descripciones, ubicaciones, edades y estados de ánimo. Casi todo lo demás se construye sobre él, así que vale la pena dominarlo primero.' },
+      { t: 'estructura', partes: ['Sujeto', 'am / is / are', 'resto'] },
+      { t: 'tabla', cols: ['Sujeto', 'to be'], filas: [['I', 'am'], ['You / We / They', 'are'], ['He / She / It', 'is']] },
+      { t: 'clave', items: ['Con **I** siempre *am*.', 'Con singular **he / she / it** → *is*.', 'Con plural **we / you / they** → *are*.', 'Negativo: agrega *not* → *isn’t, aren’t*.'] },
+      { t: 'ojo', md: 'En español decimos "tengo 20 años", pero en inglés se usa *to be*: **I’m 20**, nunca *I have 20*. Lo mismo con calor, frío, hambre: *I’m hot / hungry*.' },
+      { t: 'dato', md: '*am, is* y *are* vienen de raíces distintas del inglés antiguo, por eso no se parecen entre sí. Es el único verbo tan "irregular" del idioma.' },
     ],
     ejemplos: [
-      { en: 'I am from Chile.', es: 'Soy de Chile.' },
+      { en: 'I’m from Chile.', es: 'Soy de Chile.' },
       { en: 'She is a teacher.', es: 'Ella es profesora.' },
       { en: 'We are in Osorno.', es: 'Estamos en Osorno.' },
       { en: 'They aren’t ready.', es: 'No están listos.' },
     ],
     ejercicios: [
-      { tipo: 'hueco', pregunta: 'I ___ a student.', respuesta: ['am'] },
+      { tipo: 'hueco', pregunta: 'I ___ a student.', respuesta: ['am', 'am '] },
       { tipo: 'opcion', pregunta: 'She ___ happy.', opciones: ['am', 'is', 'are'], correcta: 'is' },
       { tipo: 'hueco', pregunta: 'They ___ from Chile.', respuesta: ['are'] },
     ],
@@ -36,9 +49,13 @@ const A1 = [
   {
     titulo: 'Posesivos (my, your…) y el ’s',
     resumen: 'De quién es algo.',
-    explicacion: [
-      'Los adjetivos posesivos indican de quién: **my, your, his, her, its, our, their**. Van antes del sustantivo: *my guitar*.',
-      'Para personas y cosas se usa **’s**: *Diego’s dog* = el perro de Diego.',
+    contenido: [
+      { t: 'texto', md: 'Los posesivos dicen *de quién* es algo. A diferencia del español ("mi/mis"), en inglés **no cambian** según el objeto: *my* sirve igual para singular y plural.' },
+      { t: 'estructura', partes: ['Posesivo', 'sustantivo'] },
+      { t: 'tabla', cols: ['Persona', 'Posesivo'], filas: [['I', 'my'], ['you', 'your'], ['he', 'his'], ['she', 'her'], ['it', 'its'], ['we', 'our'], ['they', 'their']] },
+      { t: 'clave', items: ['Van **antes** del sustantivo: *my guitar*.', 'Para el nombre de alguien, usa **’s**: *Ana’s book* (el libro de Ana).', 'Con plurales que ya terminan en -s, solo apóstrofo: *my parents’ car*.'] },
+      { t: 'ojo', md: 'No confundas **its** (su, de ello) con **it’s** (= *it is*). *The dog wags **its** tail* / ***It’s** late*.' },
+      { t: 'dato', md: 'El **’s** es lo que queda del "genitivo sajón", una terminación del inglés antiguo. Por eso funciona distinto a la preposición *of*.' },
     ],
     ejemplos: [
       { en: 'This is my car.', es: 'Este es mi auto.' },
@@ -55,9 +72,12 @@ const A1 = [
   {
     titulo: 'this / that / these / those + plurales',
     resumen: 'Señalar cosas y formar el plural.',
-    explicacion: [
-      '**this** (esto, cerca) / **that** (eso, lejos). En plural: **these** / **those**.',
-      'El plural suele agregar **-s** (book → books) y **-es** tras s, x, ch, sh (box → boxes).',
+    contenido: [
+      { t: 'texto', md: 'Los demostrativos señalan cosas según la **distancia** (cerca/lejos) y el **número** (uno/varios). De paso practicamos el plural, que en inglés casi siempre es solo **-s**.' },
+      { t: 'tabla', cols: ['', 'Cerca', 'Lejos'], filas: [['Singular', 'this', 'that'], ['Plural', 'these', 'those']] },
+      { t: 'clave', items: ['**-s** normal: *cat → cats*.', '**-es** tras s, x, ch, sh: *box → boxes*.', '**-ies** si termina en consonante + y: *baby → babies*.'] },
+      { t: 'ojo', md: 'Hay plurales irregulares que hay que memorizar: *child → children, man → men, foot → feet, person → people*.' },
+      { t: 'dato', md: 'Algunos sustantivos no cambian en plural: *sheep, fish, deer*. Se dice *one sheep, two sheep*.' },
     ],
     ejemplos: [
       { en: 'This is my phone.', es: 'Este es mi teléfono.' },
@@ -74,9 +94,12 @@ const A1 = [
   {
     titulo: 'there is / there are',
     resumen: 'Decir que algo existe (hay).',
-    explicacion: [
-      '**There is** + singular; **There are** + plural. Equivalen a "hay".',
-      'Negativo: *there isn’t / there aren’t*. Pregunta: *Is there…? Are there…?*',
+    contenido: [
+      { t: 'texto', md: 'Usamos *there is / there are* para decir que algo **existe** (equivale a "hay"). El verbo concuerda con lo que viene **después**, no con "there".' },
+      { t: 'tabla', cols: ['Situación', 'Forma'], filas: [['Singular', 'There is (There’s)'], ['Plural', 'There are'], ['Negativo', 'There isn’t / aren’t'], ['Pregunta', 'Is there…? / Are there…?']] },
+      { t: 'clave', items: ['Con incontables → *there is*: *there is milk*.', 'En una lista, concuerda con el **primer** elemento: *There is a book and two pens*.'] },
+      { t: 'ojo', md: 'No lo confundas con *they are*. **There is/are** = "hay" (existencia); **they are** = "ellos/ellas son/están".' },
+      { t: 'dato', md: 'En conversación informal muchos nativos dicen *there’s two…* incluso con plural, aunque lo correcto sigue siendo *there are*.' },
     ],
     ejemplos: [
       { en: 'There is a book on the table.', es: 'Hay un libro en la mesa.' },
@@ -86,16 +109,20 @@ const A1 = [
     ],
     ejercicios: [
       { tipo: 'opcion', pregunta: '___ three apples.', opciones: ['There is', 'There are'], correcta: 'There are' },
-      { tipo: 'hueco', pregunta: '___ a problem with the car. (Hay un)', respuesta: ['there is', 'there’s', 'there s'] },
+      { tipo: 'hueco', pregunta: '___ a problem with the car. (Hay un)', respuesta: ['there is', 'there’s', 'theres', "there's"] },
       { tipo: 'opcion', pregunta: '___ any milk? (¿hay?)', opciones: ['Is there', 'Are there'], correcta: 'Is there' },
     ],
   },
   {
     titulo: 'Present Simple',
     resumen: 'Hábitos, rutinas y verdades generales.',
-    explicacion: [
-      'Para hábitos, rutinas y verdades: *I work, she works*. En **he / she / it** se agrega **-s** (y **-es / -ies** en algunos verbos: study → studies).',
-      'Negativo con *don’t / doesn’t*; pregunta con *do / does* + verbo base.',
+    contenido: [
+      { t: 'texto', md: 'El presente simple describe lo **habitual**, las rutinas y las verdades generales — no lo que pasa justo ahora. Es el tiempo que más usarás para hablar de tu día a día.' },
+      { t: 'estructura', partes: ['Sujeto', 'verbo (+ -s en he/she/it)'] },
+      { t: 'tabla', cols: ['Sujeto', 'trabajar'], filas: [['I / You / We / They', 'work'], ['He / She / It', 'works']] },
+      { t: 'clave', items: ['Solo **he / she / it** lleva **-s**.', 'Tras o, s, x, ch, sh → **-es**: *go → goes, watch → watches*.', 'Consonante + y → **-ies**: *study → studies*.'] },
+      { t: 'ojo', md: 'El error más común es olvidar la **-s** en la tercera persona: *She work* ✗ → *She **works*** ✓.' },
+      { t: 'dato', md: 'Esa **-s** de "he works" es casi lo único que sobrevive de un sistema de conjugación mucho más grande que el inglés tuvo hace siglos.' },
     ],
     ejemplos: [
       { en: 'I work at a bakery.', es: 'Trabajo en una panadería.' },
@@ -112,9 +139,13 @@ const A1 = [
   {
     titulo: 'Preguntas y negativos (do / does, WH-)',
     resumen: 'Negar y preguntar en presente.',
-    explicacion: [
-      'Negativo en presente simple: **don’t** (I/you/we/they) o **doesn’t** (he/she/it) + verbo base: *She doesn’t work*.',
-      'Preguntas sí/no con **Do/Does**; preguntas abiertas con **What, Where, When, Who, Why, How** + do/does.',
+    contenido: [
+      { t: 'texto', md: 'Para preguntar y negar en presente simple, el inglés usa un **auxiliar**: *do / does*. Lo clave: el verbo principal vuelve a su forma **base** (sin -s).' },
+      { t: 'estructura', partes: ['Do / Does', 'sujeto', 'verbo base?'] },
+      { t: 'tabla', cols: ['Sujeto', 'Auxiliar'], filas: [['I / You / We / They', 'do / don’t'], ['He / She / It', 'does / doesn’t']] },
+      { t: 'clave', items: ['La **-s** pasa al auxiliar (*does*) y el verbo queda base: *Does she **work**?*', 'Negativo: *don’t / doesn’t* + verbo base.', 'WH-: *What, Where, When, Why, How* + do/does + sujeto + verbo.'] },
+      { t: 'ojo', md: '*Does she works?* ✗ — con *does*, el verbo NO lleva -s: *Does she **work**?* ✓.' },
+      { t: 'dato', md: 'Este *do* auxiliar es rarísimo entre idiomas: casi ninguna otra lengua europea lo usa para preguntar. Es un sello propio del inglés.' },
     ],
     ejemplos: [
       { en: 'Do you like coffee?', es: '¿Te gusta el café?' },
@@ -124,16 +155,19 @@ const A1 = [
     ],
     ejercicios: [
       { tipo: 'opcion', pregunta: '___ she like tea?', opciones: ['Do', 'Does'], correcta: 'Does' },
-      { tipo: 'hueco', pregunta: 'They ___ on Sunday. (not / work)', respuesta: ['don’t work', 'do not work', 'dont work'] },
+      { tipo: 'hueco', pregunta: 'They ___ on Sunday. (not / work)', respuesta: ['don’t work', 'do not work', 'dont work', "don't work"] },
       { tipo: 'opcion', pregunta: '___ do you live?', opciones: ['What', 'Where', 'Who'], correcta: 'Where' },
     ],
   },
   {
     titulo: 'Artículos a / an / the (intro)',
     resumen: 'Uno cualquiera vs. algo específico.',
-    explicacion: [
-      '**a / an** = uno cualquiera (a book, an apple). Se usa *an* antes de sonido vocálico.',
-      '**the** = algo específico o ya conocido. Sin artículo para cosas en general en plural: *I like dogs*.',
+    contenido: [
+      { t: 'texto', md: 'Los artículos dicen si hablamos de algo **cualquiera** (*a / an*) o de algo **específico y conocido** (*the*). El español los usa distinto, así que hay que prestar atención.' },
+      { t: 'tabla', cols: ['Artículo', 'Cuándo', 'Ejemplo'], filas: [['a', 'uno cualquiera, ante consonante', 'a dog'], ['an', 'uno cualquiera, ante sonido vocálico', 'an hour'], ['the', 'algo específico/conocido', 'the moon'], ['—', 'general, en plural o incontable', 'I like music']] },
+      { t: 'clave', items: ['*an* se elige por el **sonido**, no la letra: *an hour* (h muda), *a university* (suena "iu").', 'La 1ª vez *a/an*, después *the*: *I saw **a** cat. **The** cat was black.*'] },
+      { t: 'ojo', md: 'En español dices "me gusta **la** música"; en inglés general va SIN *the*: *I like music*, no *the music*.' },
+      { t: 'dato', md: '*the* es la palabra más frecuente del inglés: aparece en cerca del 5% de todo lo que se escribe.' },
     ],
     ejemplos: [
       { en: 'I have a dog.', es: 'Tengo un perro.' },
@@ -150,9 +184,13 @@ const A1 = [
   {
     titulo: 'can (habilidad)',
     resumen: 'Poder / saber hacer algo.',
-    explicacion: [
-      '**can** = poder o saber hacer. Es igual para todas las personas (*I can, she can*) y va seguido del verbo base.',
-      'Negativo: *can’t / cannot*. Pregunta: *Can you…?*',
+    contenido: [
+      { t: 'texto', md: '*can* expresa **habilidad** y **posibilidad** ("poder / saber"). Es un verbo *modal*: no cambia con la persona y va seguido del verbo en **base**.' },
+      { t: 'estructura', partes: ['Sujeto', 'can', 'verbo base'] },
+      { t: 'tabla', cols: ['Forma', 'Ejemplo'], filas: [['Afirmativo', 'I can swim'], ['Negativo', 'I can’t (cannot) swim'], ['Pregunta', 'Can you swim?']] },
+      { t: 'clave', items: ['Igual para todos: *he **can***, nunca *he cans*.', 'Después va el verbo base, **sin** *to*: *can swim*, no *can to swim*.'] },
+      { t: 'ojo', md: '*He can to drive* ✗ → *He can **drive*** ✓. Nunca pongas *to* después de *can*.' },
+      { t: 'dato', md: '*can* y *could* vienen de un antiguo verbo que significaba "saber". Por eso sirve para "saber hacer algo", no solo "poder".' },
     ],
     ejemplos: [
       { en: 'I can swim.', es: 'Sé nadar.' },
@@ -169,9 +207,12 @@ const A1 = [
   {
     titulo: 'Preposiciones in / on / at',
     resumen: 'Tiempo y lugar.',
-    explicacion: [
-      'Tiempo: **at** para horas (at 5), **on** para días y fechas (on Monday), **in** para meses, años y partes del día (in July, in the morning).',
-      'Lugar: **at** un punto (at home), **on** una superficie (on the table), **in** un espacio cerrado (in the room).',
+    contenido: [
+      { t: 'texto', md: 'Estas tres preposiciones marcan **tiempo** y **lugar**, y confunden porque en español casi siempre usamos solo "en". El truco: ir de lo **general** (*in*) a lo **puntual** (*at*).' },
+      { t: 'tabla', cols: ['Prep.', 'Tiempo', 'Ejemplo'], filas: [['in', 'meses, años, partes del día', 'in July, in the morning'], ['on', 'días y fechas', 'on Monday'], ['at', 'horas', 'at 7:00']] },
+      { t: 'clave', items: ['Lugar: **at** un punto (*at home*), **on** una superficie (*on the table*), **in** un espacio (*in the car*).', 'Regla mental: de lo amplio (**in**) a lo exacto (**at**).'] },
+      { t: 'ojo', md: 'Es *in the morning / afternoon / evening* pero **at night**. Esa excepción hay que memorizarla.' },
+      { t: 'dato', md: '*at* para horas viene de marcar un "punto" exacto en el tiempo; *in* para meses, de estar "dentro" de un período más largo.' },
     ],
     ejemplos: [
       { en: 'The meeting is at 3 p.m.', es: 'La reunión es a las 3.' },
@@ -188,9 +229,12 @@ const A1 = [
   {
     titulo: 'Adverbios de frecuencia',
     resumen: 'Cada cuánto pasa algo.',
-    explicacion: [
-      'Dicen la frecuencia: **always, usually, often, sometimes, rarely, never**. Van **antes** del verbo principal…',
-      '…pero **después** del verbo *to be*: *I always drink coffee* / *She is never late*.',
+    contenido: [
+      { t: 'texto', md: 'Dicen **cada cuánto** ocurre algo. Lo complicado no es la palabra, sino su **posición**, que cambia según el verbo.' },
+      { t: 'tabla', cols: ['Adverbio', 'Frecuencia'], filas: [['always', 'siempre (100%)'], ['usually', 'normalmente (~80%)'], ['often', 'a menudo (~60%)'], ['sometimes', 'a veces (~40%)'], ['rarely', 'rara vez (~10%)'], ['never', 'nunca (0%)']] },
+      { t: 'clave', items: ['**Antes** del verbo principal: *I **always** drink coffee*.', '**Después** del verbo *to be*: *She **is** never late*.', 'En preguntas van tras el sujeto: *Do you **often** travel?*'] },
+      { t: 'ojo', md: '*never* ya es negativo: no se combina con *don’t*. *I don’t never…* ✗ → *I **never**…* ✓.' },
+      { t: 'dato', md: 'La doble negación (*I don’t know nothing*) se considera incorrecta en inglés estándar, aunque aparezca en canciones. Con una negación basta.' },
     ],
     ejemplos: [
       { en: 'I always drink coffee.', es: 'Siempre tomo café.' },
@@ -290,4 +334,4 @@ export const CURRICULO = [
 ];
 
 export const TODAS_LECCIONES = CURRICULO.flatMap((n) => n.lecciones);
-export const tieneContenido = (l) => Array.isArray(l.explicacion) && l.explicacion.length > 0;
+export const tieneContenido = (l) => Array.isArray(l.contenido) && l.contenido.length > 0;

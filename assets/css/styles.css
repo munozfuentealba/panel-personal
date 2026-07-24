@@ -1246,9 +1246,40 @@ button.texa__lesson:hover { transform: translateY(-1px); border-color: var(--tx-
 /* Lección: explicación + ejemplos + ejercicios */
 .texa__leccion { display: flex; flex-direction: column; gap: var(--sp-5); }
 .texa__lecciontit { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -.02em; color: var(--tx-text); }
-.texa__explica { background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-lg); box-shadow: var(--tx-shadow); padding: var(--sp-4); display: flex; flex-direction: column; gap: 10px; }
-.texa__explica p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--tx-text); }
-.texa__explica strong { color: var(--tx-accent); font-weight: 700; }
+.texa__contenido { display: flex; flex-direction: column; gap: var(--sp-3); }
+.texa__lp { margin: 0; font-size: 15.5px; line-height: 1.65; color: var(--tx-text); }
+.texa__lp strong { color: var(--tx-accent); font-weight: 700; }
+.texa__lp em, .texa__clave em, .texa__callout em, .texa__tabla em { font-style: italic; }
+.texa__clave strong, .texa__callout strong, .texa__tabla strong { color: var(--tx-accent); font-weight: 700; }
+
+/* Fórmula de estructura (chips + +) */
+.texa__formula { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; background: var(--tx-accent-soft); border-radius: var(--r-md); padding: 14px 16px; }
+.texa__fpart { background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-sm); padding: 7px 13px; font-size: 14px; font-weight: 700; color: var(--tx-text); }
+.texa__fplus { color: var(--tx-accent); font-weight: 800; font-size: 16px; }
+
+/* Tabla */
+.texa__tablawrap { overflow-x: auto; }
+.texa__tabla { width: 100%; border-collapse: collapse; background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-md); overflow: hidden; font-size: 14px; }
+.texa__tabla th, .texa__tabla td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--tx-border); }
+.texa__tabla thead th { background: var(--tx-sel); font-size: 11.5px; text-transform: uppercase; letter-spacing: .03em; color: var(--tx-text2); font-weight: 700; }
+.texa__tabla tbody th { font-weight: 700; color: var(--tx-text); white-space: nowrap; }
+.texa__tabla tbody td { color: var(--tx-text2); }
+.texa__tabla tbody tr:last-child th, .texa__tabla tbody tr:last-child td { border-bottom: none; }
+
+/* Ideas clave */
+.texa__clave { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+.texa__clave li { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; line-height: 1.55; color: var(--tx-text); }
+.texa__clavedot { flex: none; width: 20px; height: 20px; margin-top: 1px; border-radius: 50%; background: var(--tx-ok-soft); color: var(--tx-ok); font-size: 11px; font-weight: 800; display: grid; place-items: center; }
+
+/* Callouts: Ojo / ¿Sabías que…? */
+.texa__callout { border-radius: var(--r-md); padding: 13px 15px; display: flex; flex-direction: column; gap: 6px; border: 1px solid transparent; }
+.texa__callout p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--tx-text); }
+.texa__calhead { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .03em; }
+.texa__calhead .texa__tabic svg { width: 17px; height: 17px; }
+.texa__callout--ojo { background: var(--tx-warn-soft); border-color: color-mix(in srgb, var(--tx-warn) 32%, transparent); }
+.texa__callout--ojo .texa__calhead { color: var(--tx-warn); }
+.texa__callout--dato { background: var(--tx-accent-soft); border-color: color-mix(in srgb, var(--tx-accent) 26%, transparent); }
+.texa__callout--dato .texa__calhead { color: var(--tx-accent); }
 .texa__ejemplos { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-2); }
 .texa__ejemplo { background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-md); box-shadow: var(--tx-shadow); padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
 .texa__ejen { font-size: 15px; font-weight: 700; color: var(--tx-text); }

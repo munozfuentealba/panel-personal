@@ -99,6 +99,39 @@ const texto = (str) => {
   return out;
 };
 
+// Bloques de contenido de una lección (diseño variado).
+const ICON_OJO = '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h16.9a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>';
+const ICON_DATO = '<path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 2a6 6 0 0 0-3.6 10.8c.5.4.9 1 1 1.7l.1.5h5l.1-.5c.1-.7.5-1.3 1-1.7A6 6 0 0 0 12 2Z"/>';
+
+const callout = (tipo, titulo, iconPath, md) => el('div', { class: `texa__callout texa__callout--${tipo}` }, [
+  el('div', { class: 'texa__calhead' }, [txIcon(iconPath), el('strong', {}, titulo)]),
+  el('p', {}, texto(md)),
+]);
+
+const bloqueNodo = (b) => {
+  switch (b.t) {
+    case 'texto':
+      return el('p', { class: 'texa__lp' }, texto(b.md));
+    case 'estructura':
+      return el('div', { class: 'texa__formula' }, b.partes.flatMap((p, i) =>
+        (i ? [el('span', { class: 'texa__fplus' }, '+'), el('span', { class: 'texa__fpart' }, p)] : [el('span', { class: 'texa__fpart' }, p)])));
+    case 'tabla':
+      return el('div', { class: 'texa__tablawrap' }, [el('table', { class: 'texa__tabla' }, [
+        b.cols ? el('thead', {}, [el('tr', {}, b.cols.map((c) => el('th', {}, c)))]) : null,
+        el('tbody', {}, b.filas.map((f) => el('tr', {}, f.map((c, ci) => el(ci === 0 ? 'th' : 'td', {}, texto(c)))))),
+      ])]);
+    case 'clave':
+      return el('ul', { class: 'texa__clave' }, b.items.map((it) =>
+        el('li', {}, [el('span', { class: 'texa__clavedot' }, '✓'), el('span', {}, texto(it))])));
+    case 'ojo':
+      return callout('ojo', 'Ojo', ICON_OJO, b.md);
+    case 'dato':
+      return callout('dato', '¿Sabías que…?', ICON_DATO, b.md);
+    default:
+      return null;
+  }
+};
+
 /* ─── Sección ────────────────────────────────────────────────────────── */
 
 export function texa() {
@@ -401,8 +434,8 @@ export function texa() {
         ]),
         el('div', { class: 'texa__leccion' }, [
           el('h3', { class: 'texa__lecciontit' }, l.titulo),
-          // Explicación
-          el('div', { class: 'texa__explica' }, l.explicacion.map((p) => el('p', {}, texto(p)))),
+          // Contenido en bloques (por qué, estructura, tabla, claves, ojo, dato)
+          el('div', { class: 'texa__contenido' }, l.contenido.map(bloqueNodo).filter(Boolean)),
           // Ejemplos
           el('div', { class: 'texa__section' }, [
             el('div', { class: 'texa__label' }, 'Ejemplos'),
