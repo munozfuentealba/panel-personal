@@ -31,7 +31,7 @@ const A1 = [
       { t: 'texto', md: 'Se usa para: identidad (*I am Diego*), nacionalidad (*She is Chilean*), estados y emociones (*They are tired*), ubicación (*The keys are here*) y descripción (*The house is big*).' },
       { t: 'estructura', partes: ['Sujeto', 'am / is / are', 'resto'] },
       { t: 'tabla', cols: ['Sujeto', 'Forma', 'Contracción'], filas: [['I', 'am', 'I’m'], ['You / We / They', 'are', 'you’re / we’re / they’re'], ['He / She / It', 'is', 'he’s / she’s / it’s']] },
-      { t: 'tabla', cols: ['', 'Ejemplo'], filas: [['Negativo', 'She isn’t ready. / They aren’t home.'], ['Pregunta', 'Are you ok? / Is he here?'], ['Respuesta corta', 'Yes, I am. / No, she isn’t.']] },
+      { t: 'tabla', cols: ['', 'Ejemplo'], filas: [['Afirmativo', 'I am ready. / She is here.'], ['Negativo', 'She isn’t ready. / They aren’t home.'], ['Pregunta', 'Are you ok? / Is he here?'], ['Respuesta corta', 'Yes, I am. / No, she isn’t.']] },
       { t: 'clave', items: ['Con **I** → *am*; singular **he / she / it** → *is*; plural → *are*.', 'En preguntas, el verbo va **antes** del sujeto: *Are you…?*', 'Las contracciones (*I’m, isn’t*) son muy comunes al hablar.'] },
       { t: 'ojo', md: 'En español dices "tengo 20 años / tengo hambre / tengo razón", pero el inglés usa *to be*: **I’m 20 / I’m hungry / I’m right** — nunca *I have*.' },
       { t: 'ojo', md: 'No omitas el verbo. *She happy* ✗ → *She **is** happy* ✓. En inglés el verbo *to be* es obligatorio.' },
