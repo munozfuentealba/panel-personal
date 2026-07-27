@@ -1021,6 +1021,9 @@ textarea.input { resize: vertical; min-height: 76px; }
    Texa — app de inglés embebida, en layout WEB (crema + azul)
    ══════════════════════════════════════════════════════════════════ */
 
+/* Texa usa todo el ancho disponible (rompe el tope de 1400px del .view) */
+.view:has(> .texa) { max-width: none; }
+
 .texa {
   --tx-bg: #f3ebdc;
   --tx-el: #ffffff;
@@ -1107,10 +1110,10 @@ textarea.input { resize: vertical; min-height: 76px; }
 .texa__tabic svg { width: 18px; height: 18px; display: block; }
 
 /* Cuerpo del hero: título/​saludo/​stats en blanco */
-.texa__herobody { position: relative; z-index: 1; margin-top: var(--sp-5); max-width: 62ch; }
-.texa__herobody h2 { margin: 0; font-size: 27px; font-weight: 800; letter-spacing: -.02em; color: #fff; }
-.texa__herobody p { margin: 8px 0 0; font-size: 14.5px; line-height: 1.5; color: rgba(255,255,255,.8); }
-.texa__greet { display: flex; flex-direction: column; gap: 2px; }
+.texa__herobody { position: relative; z-index: 1; margin-top: var(--sp-5); }
+.texa__herobody h2 { margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -.02em; color: #fff; }
+.texa__herobody > p { margin: 8px 0 0; font-size: 15px; line-height: 1.5; color: rgba(255,255,255,.8); max-width: 62ch; }
+.texa__greet { display: flex; flex-direction: column; gap: 2px; max-width: 62ch; }
 .texa__greeteyebrow { font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: rgba(255,255,255,.75); }
 .texa__hstats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-3); margin-top: var(--sp-4); max-width: none; }
 .texa__hstat {
