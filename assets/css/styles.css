@@ -1021,8 +1021,8 @@ textarea.input { resize: vertical; min-height: 76px; }
    Texa — app de inglés embebida, en layout WEB (crema + azul)
    ══════════════════════════════════════════════════════════════════ */
 
-/* Texa usa todo el ancho disponible (rompe el tope de 1400px del .view) */
-.view:has(> .texa) { max-width: none; }
+/* Texa usa TODA el área de contenido: sin tope de ancho y sin padding del .view */
+.view:has(> .texa) { max-width: none; padding: 0; }
 
 .texa {
   --tx-bg: #f3ebdc;
@@ -1042,11 +1042,10 @@ textarea.input { resize: vertical; min-height: 76px; }
 
   background: var(--tx-bg);
   color: var(--tx-text);
-  border: 1px solid var(--tx-border);
-  border-radius: var(--r-xl);
+  border: none;
+  border-radius: 0;
   overflow: hidden;
-  min-height: calc(100vh - var(--topbar-h) - var(--sp-8));
-  box-shadow: var(--shadow-md);
+  min-height: calc(100vh - var(--topbar-h));
 }
 [data-theme='dark'] .texa {
   --tx-bg: #171310;
