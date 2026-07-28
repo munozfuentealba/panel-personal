@@ -1091,20 +1091,28 @@ textarea.input { resize: vertical; min-height: 76px; }
 }
 .texa__herotop {
   position: relative; z-index: 1;
-  display: flex; align-items: center; gap: var(--sp-4); flex-wrap: wrap;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 44px;
 }
-.texa__brand { display: flex; align-items: center; gap: 7px; margin-right: auto; }
+.texa__brand { position: absolute; left: 0; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 7px; }
 .texa__brand span { font-size: 12px; font-weight: 800; letter-spacing: 1.5px; color: rgba(255,255,255,.9); }
-.texa__tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+/* Barra de pestañas: centrada y notoria (estilo segmentado) */
+.texa__tabs {
+  display: flex; gap: 3px;
+  background: rgba(255, 255, 255, .16);
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: var(--r-full);
+  padding: 5px;
+}
 .texa__tab {
-  display: inline-flex; align-items: center; gap: 7px;
+  display: inline-flex; align-items: center; gap: 8px;
   border: none; background: none; cursor: pointer;
-  color: rgba(255,255,255,.78); font: inherit; font-size: 13.5px; font-weight: 600;
-  padding: 8px 14px; border-radius: var(--r-full);
+  color: rgba(255, 255, 255, .82); font: inherit; font-size: 14px; font-weight: 700;
+  padding: 9px 18px; border-radius: var(--r-full);
   transition: background var(--t-fast), color var(--t-fast);
 }
-.texa__tab:hover { color: #fff; background: rgba(255,255,255,.14); }
-.texa__tab.is-active { color: #fff; background: rgba(255,255,255,.22); }
+.texa__tab:hover { color: #fff; background: rgba(255, 255, 255, .14); }
+.texa__tab.is-active { color: var(--tx-accent); background: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, .14); }
 .texa__tabic { display: inline-flex; }
 .texa__tabic svg { width: 18px; height: 18px; display: block; }
 
@@ -1331,8 +1339,12 @@ button.texa__lesson:hover { transform: translateY(-1px); border-color: var(--tx-
   .texa__hstats { grid-template-columns: 1fr; }
   .texa__actions, .texa__grid, .texa__cols, .texa__toolbar, .texa__ejemplos { grid-template-columns: 1fr; }
   .texa__feedwrap { position: static; }
+  /* La marca deja de ser absoluta para no chocar con las pestañas centradas */
+  .texa__herotop { flex-wrap: wrap; gap: var(--sp-2); }
+  .texa__brand { position: static; transform: none; }
+  .texa__tabs { margin-left: auto; }
   .texa__tab span { display: none; }
-  .texa__tab { padding: 9px 12px; }
+  .texa__tab { padding: 9px 13px; }
 }
 
 /* Texa · vida (elementos animados) */
