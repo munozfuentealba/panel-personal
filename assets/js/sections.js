@@ -120,7 +120,7 @@ export function resumen(ctx) {
   const igPrev = ig.historial.at(-2)?.seguidores ?? ig.seguidores;
 
   const agenda = [
-    ...datos.trabajo.tareas.filter((x) => !x.hecha).map((x) => ({ titulo: x.texto, fecha: x.vence, origen: x.para ? `Trabajo · ${x.para}` : 'Trabajo', sec: 'trabajo' })),
+    ...datos.trabajo.tareas.filter((x) => !x.hecha).map((x) => ({ titulo: x.texto, fecha: x.vence, origen: x.para ? `To Do · ${x.para}` : 'To Do', sec: 'trabajo' })),
     ...datos.marca.hitos.map((e) => ({ ...e, titulo: e.texto, origen: 'Marca', sec: 'marca' })),
   ];
 
@@ -891,7 +891,7 @@ export function musica(ctx) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   Trabajo
+   To Do (área "trabajo")
    ══════════════════════════════════════════════════════════════════ */
 
 export function trabajo(ctx) {
@@ -931,7 +931,7 @@ export function trabajo(ctx) {
   ]);
 
   return [
-    encabezado('i-trabajo', 'Trabajo', 'Tareas, prioridades y horas de foco.'),
+    encabezado('i-trabajo', 'To Do', 'Tareas, prioridades y horas de foco.'),
 
     el('div', { class: 'grid' }, [
       card('Pendientes', [metrica(pend.length, `${pend.filter((x) => x.prio === 'alta').length} de prioridad alta`)]),
