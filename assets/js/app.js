@@ -17,8 +17,6 @@ const SECCIONES = [
   { id: 'empresa',    nombre: 'Empresa',             icono: 'i-empresa',   grupo: 'Áreas',  sub: 'Facturación, pipeline y proyectos',           render: S.empresa,    color: 'var(--c-empresa)' },
   { id: 'instagram',  nombre: 'Red Social',          icono: 'i-instagram', grupo: 'Áreas',  sub: 'Instagram @munoz.fuentealba · seguimiento',    render: S.instagram,  color: 'var(--c-instagram)' },
   { id: 'musica',     nombre: 'Producción Musical',  icono: 'i-musica',    grupo: 'Áreas',  sub: 'Proyectos, horas de estudio e ideas',         render: S.musica,     color: 'var(--c-musica)' },
-  { id: 'iglesia',    nombre: 'Iglesia',             icono: 'i-iglesia',   grupo: 'Áreas',  sub: 'Compromisos, servicio y repertorio',          render: S.iglesia,    color: 'var(--c-iglesia)' },
-  { id: 'familia',    nombre: 'Familia',             icono: 'i-familia',   grupo: 'Áreas',  sub: 'Planes, fechas importantes e intenciones',    render: S.familia,    color: 'var(--c-familia)' },
   { id: 'trabajo',    nombre: 'Trabajo',             icono: 'i-trabajo',   grupo: 'Áreas',  sub: 'Tareas, prioridades y horas de foco',         render: S.trabajo,    color: 'var(--c-trabajo)' },
 
   { id: 'texa',       nombre: 'Texa',                icono: 'i-texa',      grupo: 'Proyectos', sub: 'Tu app de inglés · Inicio, vocabulario, traducir, aprender y chat', render: texa, color: 'var(--c-texa)', pantallaCompleta: true },
