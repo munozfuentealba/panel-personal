@@ -916,10 +916,11 @@ export function trabajo(ctx) {
     const inPrio = el('select', { class: 'input', 'aria-label': 'Prioridad' },
       ['alta', 'media', 'baja'].map((o) => el('option', { value: o, selected: o === x.prio }, o)));
     const inVence = el('input', { class: 'input', type: 'date', value: x.vence, 'aria-label': 'Vence' });
+    const inHora = el('input', { class: 'input', type: 'time', value: x.hora || '', 'aria-label': 'Hora' });
     const guardarEdit = () => {
       const txt = inTexto.value.trim();
       if (!txt) { inTexto.focus(); return; }
-      Object.assign(x, { texto: txt, para: inPara.value, prio: inPrio.value, vence: inVence.value });
+      Object.assign(x, { texto: txt, para: inPara.value, prio: inPrio.value, vence: inVence.value, hora: inHora.value || '' });
       editandoId = null; guardar(); toast('Tarea actualizada.'); ctx.recargar();
     };
     const cancelar = () => { editandoId = null; ctx.recargar(); };
@@ -929,7 +930,7 @@ export function trabajo(ctx) {
     });
     requestAnimationFrame(() => { inTexto.focus(); inTexto.select(); });
     return el('div', { class: 'list__item tarea-editor' }, [
-      el('div', { class: 'tarea-editor__campos' }, [inTexto, inPara, inPrio, inVence]),
+      el('div', { class: 'tarea-editor__campos' }, [inTexto, inPara, inPrio, inVence, inHora]),
       el('div', { class: 'tarea-editor__acc' }, [
         el('button', { class: 'btn btn--primary btn--sm', onclick: guardarEdit }, [icon('i-check'), 'Guardar']),
         el('button', { class: 'btn btn--ghost btn--sm', title: 'Cancelar', 'aria-label': 'Cancelar', onclick: cancelar }, [icon('i-cerrar')]),
@@ -956,7 +957,7 @@ export function trabajo(ctx) {
           class: 'list__title',
           style: x.hecha ? { textDecoration: 'line-through', color: 'var(--text-3)' } : {},
         }, x.texto),
-        el('div', { class: 'list__meta' }, `Vence ${relativo(x.vence)} · ${fecha(x.vence)}`),
+        el('div', { class: 'list__meta' }, `Vence ${relativo(x.vence)} · ${fecha(x.vence)}${x.hora ? ` · ${x.hora}` : ''}`),
       ]),
       !x.hecha && x.vence < hoyISO() ? el('span', { class: 'delta delta--down' }, 'Atrasada') : null,
       x.para ? el('span', { class: 'tag' }, x.para) : null,
@@ -1006,14 +1007,17 @@ export function trabajo(ctx) {
           ...Array.from({ length: dias }, (_, i) => {
             const d = i + 1;
             const iso = `${anio}-${String(mes + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-            const evs = porDia[d] || [];
+            const evs = (porDia[d] || []).slice().sort((a, b) => (a.hora || '').localeCompare(b.hora || ''));
             return el('div', { class: `cal__cell${iso === hoyStr ? ' is-today' : ''}` }, [
               el('span', { class: 'cal__dn' }, String(d)),
               ...evs.slice(0, 3).map((x) => el('button', {
                 class: `cal__ev cal__ev--${x.prio}${x.hecha ? ' is-done' : ''}`,
-                title: `${x.texto}${x.para ? ` · ${x.para}` : ''}`,
+                title: `${x.hora ? `${x.hora} · ` : ''}${x.texto}${x.para ? ` · ${x.para}` : ''}`,
                 onclick: () => { editandoId = x.id; ctx.recargar(); },
-              }, x.texto)),
+              }, [
+                x.hora ? el('span', { class: 'cal__ev-h' }, x.hora) : null,
+                x.texto,
+              ])),
               evs.length > 3 ? el('span', { class: 'cal__more' }, `+${evs.length - 3}`) : null,
             ]);
           }),
@@ -1039,7 +1043,7 @@ export function trabajo(ctx) {
     el('div', { class: 'grid grid--wide' }, [
       card('Tareas', [
         pend.length ? el('div', { class: 'list' }, pend
-          .sort((a, b) => a.vence.localeCompare(b.vence))
+          .sort((a, b) => (a.vence + (a.hora || '')).localeCompare(b.vence + (b.hora || '')))
           .map(fila)) : listaVacia('Sin pendientes. Buen trabajo.'),
         hechas.length
           ? el('details', { open: hechas.some((h) => h.id === editandoId), style: { marginTop: '12px' } }, [
@@ -1057,6 +1061,7 @@ export function trabajo(ctx) {
             { name: 'para', label: 'Para', tipo: 'select', opciones: DESTINATARIOS, value: 'Personal' },
             { name: 'prio', label: 'Prioridad', tipo: 'select', opciones: ['alta', 'media', 'baja'], value: 'media' },
             { name: 'vence', label: 'Vence', type: 'date', value: hoyISO() },
+            { name: 'hora', label: 'Hora (opcional)', type: 'time' },
           ], (d) => { t.tareas.push({ id: uid(), ...d, hecha: false }); }),
         ]),
         card('Horas de foco por día', [

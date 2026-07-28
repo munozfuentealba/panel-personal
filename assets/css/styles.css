@@ -760,11 +760,12 @@ textarea.input { resize: vertical; min-height: 76px; }
 .cal__ev--media { background: rgba(59, 130, 246, .15); color: #3b82f6; }
 .cal__ev--baja { background: var(--surface-hover); color: var(--text-2); }
 .cal__ev.is-done { opacity: .5; text-decoration: line-through; }
+.cal__ev-h { font-weight: 700; margin-right: 4px; }
 .cal__more { font-size: 10px; color: var(--text-3); padding-left: 4px; }
 
 /* Editor en línea de tareas */
 .tarea-editor { flex-direction: column; align-items: stretch; gap: var(--sp-2); }
-.tarea-editor__campos { display: grid; grid-template-columns: 2.2fr 1.2fr 1fr 1.1fr; gap: var(--sp-2); width: 100%; }
+.tarea-editor__campos { display: grid; grid-template-columns: 2fr 1.2fr 0.9fr 1.1fr 0.85fr; gap: var(--sp-2); width: 100%; }
 .tarea-editor__campos .input { font-size: 13px; padding: 7px var(--sp-2); }
 .tarea-editor__acc { display: flex; gap: var(--sp-2); }
 @media (max-width: 720px) {
