@@ -894,7 +894,7 @@ export function musica(ctx) {
    To Do (área "trabajo")
    ══════════════════════════════════════════════════════════════════ */
 
-const DESTINATARIOS = ['Gabriel', 'Radio Crea', 'Iglesia', 'Colegio Bosquemar', 'Colegio Puerto Montt', 'Personal'];
+const DESTINATARIOS = ['Gabriel', 'Radio Crea', 'Iglesia', 'Colegio Bosquemar', 'Colegio Puerto Montt', 'Panadería', 'Personal'];
 const TONO_PRIO = { alta: 'tag--warn', media: 'tag--info', baja: '' };
 const MESES_CAL = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 // Estado local del área (persiste entre re-render dentro de la sesión).
