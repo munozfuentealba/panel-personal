@@ -1033,43 +1033,48 @@ textarea.input { resize: vertical; min-height: 76px; }
 .shell.is-full .texa { min-height: 100vh; }
 
 .texa {
-  --tx-bg: #f3ebdc;
+  /* Texa v2 — claro y azul */
+  --tx-bg: #f4f6fc;
   --tx-el: #ffffff;
-  --tx-sel: #eadfc5;
-  --tx-border: #ede0c8;
-  --tx-text: #2b2114;
-  --tx-text2: #8a7c64;
-  --tx-accent: #3452d9;
-  --tx-accent-soft: #3452d91a;
+  --tx-sel: #eef1fb;
+  --tx-border: #e6e9f5;
+  --tx-text: #14162e;
+  --tx-text2: #6a7093;
+  --tx-accent: #4f46e5;
+  --tx-accent-2: #8b5cf6;
+  --tx-accent-soft: rgba(79, 70, 229, .08);
   --tx-on-accent: #ffffff;
-  --tx-ok: #2f8f6b;
-  --tx-ok-soft: #2f8f6b1a;
-  --tx-warn: #c97a1f;
-  --tx-warn-soft: #c97a1f1a;
-  --tx-shadow: 0 3px 10px rgba(60, 40, 20, .09);
+  --tx-ok: #16a34a;
+  --tx-ok-soft: rgba(22, 163, 74, .1);
+  --tx-warn: #d97706;
+  --tx-warn-soft: rgba(217, 119, 6, .1);
+  --tx-shadow: 0 6px 22px rgba(30, 34, 90, .07);
+  --tx-shadow-lg: 0 24px 60px rgba(30, 34, 90, .13);
 
   background: var(--tx-bg);
   color: var(--tx-text);
   border: none;
   border-radius: 0;
-  overflow: hidden;
   min-height: calc(100vh - var(--topbar-h));
+  font-feature-settings: 'cv02', 'cv03';
 }
 [data-theme='dark'] .texa {
-  --tx-bg: #171310;
-  --tx-el: #231d17;
-  --tx-sel: #2e251c;
-  --tx-border: #3a2f23;
-  --tx-text: #f3ecdd;
-  --tx-text2: #b0a28c;
-  --tx-accent: #7c97ff;
-  --tx-accent-soft: #7c97ff26;
-  --tx-on-accent: #0e1116;
-  --tx-ok: #5fc9a0;
-  --tx-ok-soft: #5fc9a026;
-  --tx-warn: #e8a54f;
-  --tx-warn-soft: #e8a54f26;
-  --tx-shadow: 0 3px 12px rgba(0, 0, 0, .35);
+  --tx-bg: #0d0e18;
+  --tx-el: #16182a;
+  --tx-sel: #1e2138;
+  --tx-border: #262a44;
+  --tx-text: #edeefb;
+  --tx-text2: #9297bb;
+  --tx-accent: #7c86ff;
+  --tx-accent-2: #a78bfa;
+  --tx-accent-soft: rgba(124, 134, 255, .16);
+  --tx-on-accent: #0d0e18;
+  --tx-ok: #4ade80;
+  --tx-ok-soft: rgba(74, 222, 128, .14);
+  --tx-warn: #fbbf24;
+  --tx-warn-soft: rgba(251, 191, 36, .14);
+  --tx-shadow: 0 6px 22px rgba(0, 0, 0, .4);
+  --tx-shadow-lg: 0 24px 60px rgba(0, 0, 0, .55);
 }
 
 .texa__mark { display: inline-flex; flex: none; }
@@ -1546,6 +1551,160 @@ button.texa__lesson.texa__lesson--actual { animation: texaCardPulse 2.2s var(--e
   0% { transform: translate(0, 0) rotate(0); opacity: 1; }
   100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   TEXA v2 — moderno, claro, azul. Overrides que ganan a lo anterior.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Barra de navegación (fija, clara, con blur) */
+.texa__nav {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: var(--sp-4);
+  padding: 12px clamp(16px, 4vw, 40px);
+  background: color-mix(in srgb, var(--tx-bg) 82%, transparent);
+  backdrop-filter: saturate(1.4) blur(14px);
+  -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  border-bottom: 1px solid var(--tx-border);
+}
+.texa__navleft { display: flex; align-items: center; gap: var(--sp-3); }
+.texa__brand { display: flex; align-items: center; gap: 8px; }
+.texa__brand span { font-size: 13px; font-weight: 800; letter-spacing: 1.2px; color: var(--tx-text); }
+.texa__salir {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--tx-border); background: var(--tx-el); color: var(--tx-text2);
+  font: inherit; font-size: 12.5px; font-weight: 700; padding: 7px 12px 7px 9px;
+  border-radius: var(--r-full); cursor: pointer; transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+.texa__salir:hover { color: var(--tx-accent); border-color: var(--tx-accent); background: var(--tx-accent-soft); }
+.texa__salir-ic { display: inline-flex; }
+.texa__salir-ic svg { width: 16px; height: 16px; }
+
+.texa__tabs {
+  position: static; transform: none; margin: 0 auto;
+  display: flex; gap: 2px; background: var(--tx-sel); border: 1px solid var(--tx-border);
+  border-radius: var(--r-full); padding: 4px;
+}
+.texa__tab {
+  display: inline-flex; align-items: center; gap: 8px; border: none; background: none; cursor: pointer;
+  color: var(--tx-text2); font: inherit; font-size: 13.5px; font-weight: 700;
+  padding: 8px 16px; border-radius: var(--r-full);
+  transition: color var(--t-fast), background var(--t-fast);
+}
+.texa__tab:hover { color: var(--tx-text); }
+.texa__tab.is-active { color: #fff; background: var(--tx-accent); box-shadow: 0 4px 12px color-mix(in srgb, var(--tx-accent) 45%, transparent); }
+.texa__tabic { display: inline-flex; }
+.texa__tabic svg { width: 17px; height: 17px; }
+
+.texa__ministats { position: static; transform: none; display: flex; gap: var(--sp-4); }
+.texa__ministat { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.05; }
+.texa__ministat strong { font-size: 15px; font-weight: 800; color: var(--tx-text); }
+.texa__ministat span { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--tx-text2); margin-top: 2px; }
+
+/* Contenedor de pantalla */
+.texa__view { padding: 0 0 var(--sp-10); max-width: none; }
+.texa__page { width: 100%; display: flex; flex-direction: column; gap: 0; }
+.texa__page > * { animation: none; }
+.texa__body { max-width: 1080px; margin-inline: auto; width: 100%; padding: var(--sp-3) clamp(16px, 4vw, 40px) 0; display: flex; flex-direction: column; gap: var(--sp-5); }
+
+/* Encabezado de pantalla (Vocabulario, Traducir, etc.) */
+.texa__phead {
+  max-width: 1080px; margin-inline: auto; width: 100%;
+  padding: clamp(28px, 5vw, 56px) clamp(16px, 4vw, 40px) var(--sp-5);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.texa__eyebrow { font-size: 12.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--tx-accent); }
+.texa__eyebrow--on { color: var(--tx-accent); }
+.texa__ptitle { margin: 0; font-size: clamp(30px, 4.4vw, 48px); font-weight: 850; letter-spacing: -.03em; line-height: 1.03; color: var(--tx-text); }
+.texa__psub { margin: 0; font-size: clamp(15px, 1.5vw, 18px); line-height: 1.55; color: var(--tx-text2); max-width: 60ch; }
+
+/* Hero landing de Inicio */
+.texa__hero2 { position: relative; overflow: hidden; }
+.texa__hero2-glow {
+  position: absolute; inset: -20% -10% auto -10%; height: 130%; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(46% 60% at 22% 8%, color-mix(in srgb, var(--tx-accent) 22%, transparent), transparent 70%),
+    radial-gradient(40% 55% at 82% 0%, color-mix(in srgb, var(--tx-accent-2) 24%, transparent), transparent 70%);
+  filter: blur(8px);
+}
+.texa__hero2-in {
+  position: relative; z-index: 1; max-width: 1080px; margin-inline: auto; width: 100%;
+  padding: clamp(48px, 8vw, 108px) clamp(16px, 4vw, 40px) clamp(30px, 4vw, 52px);
+  text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--sp-3);
+}
+.texa__hero2-title { margin: 6px 0 0; font-size: clamp(38px, 6vw, 76px); font-weight: 850; letter-spacing: -.035em; line-height: 1; color: var(--tx-text); }
+.texa__grad { background: linear-gradient(100deg, var(--tx-accent), var(--tx-accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.texa__hero2-sub { margin: var(--sp-3) 0 0; font-size: clamp(16px, 1.7vw, 20px); line-height: 1.55; color: var(--tx-text2); max-width: 54ch; }
+.texa__hero2-cta { display: flex; gap: var(--sp-3); flex-wrap: wrap; justify-content: center; margin-top: var(--sp-5); }
+.texa__cta {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: var(--tx-accent); color: #fff; border: none; border-radius: var(--r-full);
+  padding: 14px 26px; font: inherit; font-size: 15.5px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--tx-accent) 40%, transparent);
+  transition: transform var(--t-fast) var(--ease-spring), box-shadow var(--t-fast), filter var(--t-fast);
+}
+.texa__cta:hover { transform: translateY(-2px); filter: brightness(1.05); box-shadow: 0 18px 38px color-mix(in srgb, var(--tx-accent) 48%, transparent); }
+.texa__cta:active { transform: translateY(0) scale(.98); }
+.texa__cta--ghost { background: var(--tx-el); color: var(--tx-text); border: 1px solid var(--tx-border); box-shadow: var(--tx-shadow); }
+.texa__cta--ghost:hover { border-color: var(--tx-accent); color: var(--tx-accent); filter: none; }
+.texa__cta-ic { display: inline-flex; transition: transform var(--t-fast); }
+.texa__cta-ic svg { width: 18px; height: 18px; }
+.texa__cta:hover .texa__cta-ic { transform: translateX(4px); }
+
+/* Ticker (claro) */
+.texa__ticker {
+  position: relative; z-index: 1; max-width: 1160px; margin: var(--sp-4) auto 0;
+  overflow: hidden; padding: 12px 0; border-top: 1px solid var(--tx-border); border-bottom: 1px solid var(--tx-border);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.texa__tickitem { color: var(--tx-text2); font-size: 14px; font-weight: 700; }
+.texa__tickitem::after { color: var(--tx-accent); }
+
+/* Secciones de la landing y cuerpo */
+.texa__sec { max-width: 1080px; margin-inline: auto; width: 100%; padding: clamp(32px, 5vw, 64px) clamp(16px, 4vw, 40px) 0; }
+.texa__sechead { display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--sp-5); }
+.texa__sechead--center { align-items: center; text-align: center; }
+.texa__sectitle { margin: 0; font-size: clamp(24px, 3vw, 34px); font-weight: 800; letter-spacing: -.02em; color: var(--tx-text); }
+
+/* Tarjetas de progreso (stats) */
+.texa__statgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-3); }
+.texa__statcard {
+  text-align: left; border: 1px solid var(--tx-border); background: var(--tx-el); border-radius: var(--r-lg);
+  box-shadow: var(--tx-shadow); padding: var(--sp-4) var(--sp-5); display: flex; flex-direction: column; gap: 4px;
+  font: inherit; cursor: default; transition: transform var(--t-med) var(--ease-out), box-shadow var(--t-med), border-color var(--t-fast);
+}
+button.texa__statcard { cursor: pointer; }
+button.texa__statcard:hover { transform: translateY(-3px); border-color: var(--tx-accent); box-shadow: var(--tx-shadow-lg); }
+.texa__statcard strong { font-size: clamp(26px, 3vw, 36px); font-weight: 850; letter-spacing: -.02em; color: var(--tx-accent); line-height: 1; }
+.texa__statcard span { font-size: 13px; color: var(--tx-text2); }
+
+/* Tarjetas de acción (v2) */
+.texa__actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-4); }
+.texa__actioncard {
+  display: flex; align-items: center; gap: var(--sp-4); text-align: left; width: 100%;
+  background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-xl);
+  box-shadow: var(--tx-shadow); padding: var(--sp-5); cursor: pointer;
+  transition: transform var(--t-med) var(--ease-out), box-shadow var(--t-med), border-color var(--t-fast);
+}
+.texa__actioncard:hover { transform: translateY(-4px); border-color: var(--tx-accent); box-shadow: var(--tx-shadow-lg); }
+.texa__actionic {
+  flex: none; width: 52px; height: 52px; border-radius: var(--r-lg); display: grid; place-items: center;
+  color: #fff; background: linear-gradient(135deg, var(--tx-accent), var(--tx-accent-2));
+  transition: transform var(--t-med) var(--ease-spring);
+}
+.texa__actionic svg { width: 26px; height: 26px; }
+.texa__actioncard:hover .texa__actionic { transform: scale(1.06) rotate(-4deg); }
+.texa__actiontitle { font-size: 17px; font-weight: 750; color: var(--tx-text); line-height: 1.3; }
+.texa__arrow { font-size: 22px; color: var(--tx-text2); flex: none; transition: transform var(--t-med), color var(--t-fast); }
+.texa__actioncard:hover .texa__arrow { transform: translateX(5px); color: var(--tx-accent); }
+
+/* Showcase de sinónimos */
+.texa__showcase { padding-bottom: clamp(20px, 3vw, 40px); }
+.texa__nube { margin-top: var(--sp-3); }
+
+/* Revelado al hacer scroll */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease-out), transform .6s var(--ease-out); }
+.reveal.is-in { opacity: 1; transform: none; }
 
 /* Texa lo pidió con vida explícitamente: sus animaciones decorativas continuas
    siguen corriendo aunque el sistema tenga "reducir movimiento". El resto del

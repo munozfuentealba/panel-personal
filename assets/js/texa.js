@@ -118,10 +118,11 @@ const TABS = [
 
 /* ─── Piezas comunes ─────────────────────────────────────────────────── */
 
-// Título del hero (texto blanco sobre el azul), como en la app.
-const heroTitulo = (titulo, sub) => [
-  el('h2', {}, titulo),
-  sub ? el('p', {}, sub) : null,
+// Encabezado de pantalla (v2): título grande + subtítulo, texto oscuro.
+const heroTitulo = (titulo, sub, eyebrow) => [
+  eyebrow ? el('span', { class: 'texa__eyebrow' }, eyebrow) : null,
+  el('h1', { class: 'texa__ptitle' }, titulo),
+  sub ? el('p', { class: 'texa__psub' }, sub) : null,
 ];
 
 // Normaliza respuestas para comparar (sin tildes de apóstrofo, sin punto final).
@@ -225,50 +226,67 @@ export function texa() {
       { to: 'aprender', ic: 'birrete', eyebrow: `Aprender · Nivel ${nivelActual()}`, title: 'Tu recorrido de gramática', detail: 'Explicación + ejercicios, nivel por nivel' },
       { to: 'chat', ic: 'chat', eyebrow: 'Conversación', title: 'Practicá 10 minutos con la IA', detail: 'Charla libre, corrige sin cortar el flujo' },
     ];
+    const stats = [
+      { v: nivelActual(), l: 'Tu nivel', to: 'aprender' },
+      { v: `${estado.stats.racha}`, l: 'Días de racha' },
+      { v: `${estado.stats.vocabulario}`, l: 'Palabras', to: 'vocabulario' },
+      { v: `${estado.stats.hoyMin}`, l: 'Minutos hoy' },
+    ];
     return {
+      landing: true,
       hero: [
-        el('div', { class: 'texa__greet' }, [
-          el('span', { class: 'texa__greeteyebrow' }, 'Buen día'),
-          el('h2', {}, ['Diego ', el('span', { class: 'texa__wave', 'aria-hidden': 'true', html: svgIc(IC.sol) })]),
-          el('p', { class: 'texa__herosub' }, `Vas en nivel ${nivelActual()} y llevas una racha de ${estado.stats.racha} días. Sigamos.`),
-          el('button', { class: 'texa__cta', onclick: () => ir('aprender') }, [
-            el('span', {}, 'Seguir aprendiendo'),
-            el('span', { class: 'texa__cta-ic', html: svgIc(IC.flecha) }),
+        el('div', { class: 'texa__hero2-glow', 'aria-hidden': 'true' }),
+        el('div', { class: 'texa__hero2-in' }, [
+          el('span', { class: 'texa__eyebrow texa__eyebrow--on' }, 'Buen día, Diego'),
+          el('h1', { class: 'texa__hero2-title' }, ['Aprendé inglés ', el('span', { class: 'texa__grad' }, 'a tu ritmo'), '.']),
+          el('p', { class: 'texa__hero2-sub' }, `Vas en nivel ${nivelActual()} y llevás una racha de ${estado.stats.racha} días. Vocabulario, traducción, gramática y conversación — todo en un solo lugar.`),
+          el('div', { class: 'texa__hero2-cta' }, [
+            el('button', { class: 'texa__cta', onclick: () => ir('aprender') }, [
+              el('span', {}, 'Seguir aprendiendo'), el('span', { class: 'texa__cta-ic', html: svgIc(IC.flecha) }),
+            ]),
+            el('button', { class: 'texa__cta texa__cta--ghost', onclick: () => ir('vocabulario') }, 'Repasar vocabulario'),
           ]),
+        ]),
+        el('div', { class: 'texa__ticker', 'aria-hidden': 'true' }, [
+          el('div', { class: 'texa__tickrow' }, [...TICKER, ...TICKER].map((w) => el('span', { class: 'texa__tickitem' }, w))),
         ]),
       ],
       cuerpo: [
-        // Cinta de palabras que se desliza (movimiento siempre visible)
-        el('div', { class: 'texa__ticker', 'aria-hidden': 'true' }, [
-          el('div', { class: 'texa__tickrow' }, [...TICKER, ...TICKER].map((w) =>
-            el('span', { class: 'texa__tickitem' }, w))),
+        // Sección: tu progreso
+        el('section', { class: 'texa__sec' }, [
+          el('div', { class: 'texa__statgrid' }, stats.map((s) =>
+            el(s.to ? 'button' : 'div', { class: 'texa__statcard', ...(s.to ? { onclick: () => ir(s.to) } : {}) }, [
+              el('strong', {}, s.v), el('span', {}, s.l),
+            ]))),
         ]),
-        el('div', { class: 'texa__label' }, 'Continuar'),
-        el('div', { class: 'texa__actions' }, acciones.map((a) =>
-          el('button', { class: 'texa__actioncard', onclick: () => ir(a.to) }, [
-            el('span', { class: 'texa__actionic', html: svgIc(IC[a.ic]) }),
-            el('div', { class: 'texa__actioncard-main' }, [
-              el('span', { class: 'texa__eyebrow' }, a.eyebrow),
-              el('span', { class: 'texa__actiontitle' }, a.title),
-              el('span', { class: 'texa__muted' }, a.detail),
-            ]),
-            el('span', { class: 'texa__arrow' }, '→'),
-          ]))),
-        // Banda con vida: saludos que rotan + burbujas de sinónimos por nivel
-        el('div', { class: 'texa__vivos' }, [
-          el('div', { class: 'texa__vivostit' }, [
-            el('span', { class: 'texa__saludos', 'aria-hidden': 'true' }, SALUDOS.map((s, i) =>
-              el('span', { class: 'texa__saludo', style: { animationDelay: `${i * 1.9}s` } }, s))),
-            el('strong', {}, 'El inglés tiene un matiz para cada nivel.'),
+        // Sección: features
+        el('section', { class: 'texa__sec' }, [
+          el('div', { class: 'texa__sechead' }, [
+            el('span', { class: 'texa__eyebrow' }, 'Continuá donde quedaste'),
+            el('h2', { class: 'texa__sectitle' }, 'Todo para tu inglés'),
+          ]),
+          el('div', { class: 'texa__actions' }, acciones.map((a) =>
+            el('button', { class: 'texa__actioncard', onclick: () => ir(a.to) }, [
+              el('span', { class: 'texa__actionic', html: svgIc(IC[a.ic]) }),
+              el('div', { class: 'texa__actioncard-main' }, [
+                el('span', { class: 'texa__eyebrow' }, a.eyebrow),
+                el('span', { class: 'texa__actiontitle' }, a.title),
+                el('span', { class: 'texa__muted' }, a.detail),
+              ]),
+              el('span', { class: 'texa__arrow' }, '→'),
+            ]))),
+        ]),
+        // Sección: showcase de sinónimos
+        el('section', { class: 'texa__sec texa__showcase' }, [
+          el('div', { class: 'texa__sechead texa__sechead--center' }, [
+            el('span', { class: 'texa__eyebrow' }, 'Matices'),
+            el('h2', { class: 'texa__sectitle' }, 'La misma idea, distintos niveles'),
           ]),
           el('div', { class: 'texa__nube' }, SINONIMOS.map((p, i) =>
             el('span', {
               class: `texa__bub texa__bub--${p.c}`,
               style: { animationDelay: `${(i % 6) * 0.45}s`, animationDuration: `${4 + (i % 3) * 0.7}s` },
-            }, [
-              el('span', { class: 'texa__bublvl' }, p.lvl),
-              el('span', {}, p.w),
-            ]))),
+            }, [el('span', { class: 'texa__bublvl' }, p.lvl), el('span', {}, p.w)]))),
         ]),
       ],
     };
@@ -611,35 +629,37 @@ export function texa() {
 
   const PANTALLAS = { inicio: pInicio, vocabulario: pVocabulario, traducir: pTraducir, aprender: pAprender, chat: pChat };
 
-  /* Hero azul (como en la app): marca + pestañas arriba, título/​stats debajo */
+  /* Barra de navegación superior (v2, fondo claro y fija) */
   const tabs = TABS.map((t) => el('button', {
     class: `texa__tab${t.id === tab ? ' is-active' : ''}`, dataset: { tab: t.id },
     'aria-label': t.label, onclick: () => ir(t.id),
   }, [txIcon(t.ic), el('span', {}, t.label)]));
-  const herobody = el('div', { class: 'texa__herobody' });
   const ministats = el('div', { class: 'texa__ministats' });
-  const hero = el('div', { class: 'texa__hero' }, [
-    el('span', { class: 'texa__motif', 'aria-hidden': 'true' }),
-    el('div', { class: 'texa__herofx', 'aria-hidden': 'true' }, HERO_ICONS.map((x, i) =>
-      el('span', {
-        class: 'texa__hemoji',
-        style: { left: x.l, top: x.t, animationDelay: `${i * 0.5}s`, animationDuration: `${5 + (i % 3)}s` },
-        html: svgIc(IC[x.i]),
-      }))),
-    el('div', { class: 'texa__herotop' }, [
-      el('div', { class: 'texa__heroleft' }, [
-        el('button', {
-          class: 'texa__salir', title: 'Volver al panel', 'aria-label': 'Volver al panel',
-          onclick: () => { location.hash = '#/resumen'; },
-        }, [el('span', { class: 'texa__salir-ic', html: svgIc(IC.volver) }), el('span', {}, 'Panel')]),
-        el('div', { class: 'texa__brand' }, [marca(20), el('span', {}, 'TEXA')]),
-      ]),
-      el('nav', { class: 'texa__tabs', 'aria-label': 'Secciones de Texa' }, tabs),
-      ministats,
+  const nav = el('header', { class: 'texa__nav' }, [
+    el('div', { class: 'texa__navleft' }, [
+      el('button', {
+        class: 'texa__salir', title: 'Volver al panel', 'aria-label': 'Volver al panel',
+        onclick: () => { location.hash = '#/resumen'; },
+      }, [el('span', { class: 'texa__salir-ic', html: svgIc(IC.volver) }), el('span', {}, 'Panel')]),
+      el('div', { class: 'texa__brand' }, [marca(22), el('span', {}, 'TEXA')]),
     ]),
-    herobody,
+    el('nav', { class: 'texa__tabs', 'aria-label': 'Secciones de Texa' }, tabs),
+    ministats,
   ]);
   const vista = el('div', { class: 'texa__view' });
+
+  // Revelado al hacer scroll (vibra de página web)
+  let io = null;
+  if (typeof IntersectionObserver !== 'undefined') {
+    io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+    }), { threshold: 0.06, rootMargin: '0px 0px -5% 0px' });
+  }
+  function observarReveal() {
+    const nodos = vista.querySelectorAll('.reveal:not(.is-in)');
+    if (!io) { nodos.forEach((n) => n.classList.add('is-in')); return; }
+    nodos.forEach((n) => io.observe(n));
+  }
 
   function pintarMinistats() {
     const s = estado.stats;
@@ -651,17 +671,22 @@ export function texa() {
   }
 
   function marcarTab() {
-    hero.querySelectorAll('.texa__tab').forEach((b) => b.classList.toggle('is-active', b.dataset.tab === tab));
+    nav.querySelectorAll('.texa__tab').forEach((b) => b.classList.toggle('is-active', b.dataset.tab === tab));
   }
   function ir(t) {
     tab = t;
     const s = PANTALLAS[t]();
-    herobody.replaceChildren(...s.hero.filter(Boolean));
-    vista.replaceChildren(el('div', { class: `texa__page${s.chat ? ' texa__page--chat' : ''}` }, s.cuerpo));
+    const header = el(s.landing ? 'section' : 'header', { class: `${s.landing ? 'texa__hero2' : 'texa__phead'} reveal` }, s.hero.filter(Boolean));
+    const cuerpo = s.cuerpo.filter(Boolean);
+    cuerpo.forEach((n) => n.classList && n.classList.add('reveal'));
+    const body = s.landing ? cuerpo : [el('div', { class: 'texa__body' }, cuerpo)];
+    vista.replaceChildren(el('div', { class: `texa__page${s.chat ? ' texa__page--chat' : ''}` }, [header, ...body]));
     marcarTab();
     pintarMinistats();
+    requestAnimationFrame(observarReveal);
+    window.scrollTo({ top: 0 });
   }
 
   ir(tab);
-  return [el('div', { class: 'texa' }, [hero, vista])];
+  return [el('div', { class: 'texa' }, [nav, vista])];
 }
