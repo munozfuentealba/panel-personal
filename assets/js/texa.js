@@ -10,6 +10,7 @@
 
 import { el } from './utils.js';
 import { CURRICULO, TODAS_LECCIONES, tieneContenido } from './texa-curriculo.js';
+import { DICCIONARIO, buscarSignificado } from './texa-diccionario.js';
 
 /* ─── Datos semilla (los mismos de la app) ──────────────────────────── */
 
@@ -73,6 +74,8 @@ const IC = {
   sol: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.3M12 19.2v2.3M2.5 12h2.3M19.2 12h2.3M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/>',
   volver: '<path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/>',
   flecha: '<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>',
+  mas: '<path d="M12 5v14M5 12h14"/>',
+  check2: '<path d="M4.5 12.5l5 5 10-11"/>',
 };
 const svgIc = (paths, cls = '') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
 
@@ -292,51 +295,107 @@ export function texa() {
     };
   };
 
-  /* Pantalla: Vocabulario */
+  /* Pantalla: Vocabulario (mis palabras + diccionario EN-ES con A-Z) */
   const pVocabulario = () => {
+    let modo = 'mias';   // 'mias' | 'dic'
     let query = '';
-    const lista = el('div', { class: 'texa__grid' });
-    const conteo = el('div', { class: 'texa__label' });
-    const pintar = () => {
+    let letra = 'a';
+    const cont = el('div', { class: 'texa__section' });
+    const ABC = 'abcdefghijklmnopqrstuvwxyz'.split('');
+
+    const existe = (en) => estado.words.some((w) => w.en.toLowerCase() === String(en).trim().toLowerCase());
+    const guardarPalabra = (en, es) => {
+      en = String(en).trim(); if (!en) return 'vacio';
+      if (existe(en)) return 'dup';
+      es = String(es || '').trim() || buscarSignificado(en) || 'Traducción pendiente';
+      estado.words.unshift({ en, es, stage: 'nueva' });
+      estado.stats.vocabulario += 1;
+      guardar();
+      pintarMinistats();
+      return 'ok';
+    };
+
+    // ── Vista: mis palabras ──
+    const vistaMias = () => {
+      const inEn = el('input', { class: 'texa__input', placeholder: 'Palabra en inglés…', 'aria-label': 'Palabra en inglés' });
+      const inEs = el('input', { class: 'texa__input', placeholder: 'Significado en español (opcional)', 'aria-label': 'Significado' });
+      const aviso = el('span', { class: 'texa__muted texa__addnote' });
+      const add = () => {
+        const r = guardarPalabra(inEn.value, inEs.value);
+        if (r === 'ok') { inEn.value = ''; inEs.value = ''; pintar(); inEn.focus(); }
+        else if (r === 'dup') { aviso.textContent = 'Esa palabra ya está en tu vocabulario.'; }
+      };
+      inEn.addEventListener('keydown', (e) => { if (e.key === 'Enter') inEs.focus(); });
+      inEs.addEventListener('keydown', (e) => { if (e.key === 'Enter') add(); });
+      inEn.addEventListener('input', () => { aviso.textContent = ''; });
       const q = query.trim().toLowerCase();
       const filt = estado.words.filter((w) => !q || w.en.toLowerCase().includes(q) || w.es.toLowerCase().includes(q));
       const due = filt.filter((w) => w.stage !== 'dominada').length;
-      conteo.textContent = `Para repasar hoy · ${due}`;
-      lista.replaceChildren(...(filt.length ? filt.map((w) => el('div', { class: 'texa__wordrow' }, [
-        el('div', { class: 'texa__wordtext' }, [
-          el('strong', {}, w.en),
-          el('span', { class: 'texa__muted' }, w.es),
+      return [
+        el('div', { class: 'texa__addcard' }, [
+          el('div', { class: 'texa__addfields' }, [inEn, inEs]),
+          el('button', { class: 'texa__btn', onclick: add }, [el('span', { class: 'texa__salir-ic', html: svgIc(IC.mas) }), 'Guardar']),
         ]),
-        el('span', { class: `texa__stage texa__stage--${w.stage}` }, STAGE_LABEL[w.stage]),
-      ])) : [el('p', { class: 'texa__muted' }, 'No encontramos palabras que coincidan.')]));
+        aviso,
+        el('input', { class: 'texa__search', placeholder: 'Buscar en tus palabras', value: query, oninput: (e) => { query = e.target.value; pintar(); } }),
+        el('div', { class: 'texa__label' }, `Para repasar hoy · ${due}`),
+        el('div', { class: 'texa__grid' }, filt.length ? filt.map((w) => el('div', { class: 'texa__wordrow' }, [
+          el('div', { class: 'texa__wordtext' }, [el('strong', {}, w.en), el('span', { class: 'texa__muted' }, w.es)]),
+          el('span', { class: `texa__stage texa__stage--${w.stage}` }, STAGE_LABEL[w.stage]),
+        ])) : [el('p', { class: 'texa__muted' }, 'Todavía no guardás palabras. Agregá una arriba o buscá en el diccionario.')]),
+      ];
     };
-    const nueva = el('input', { class: 'texa__input', placeholder: 'Guardar una palabra nueva…', 'aria-label': 'Palabra nueva' });
-    const agregar = () => {
-      const v = nueva.value.trim();
-      if (!v) return;
-      estado.words.unshift({ en: v, es: 'Traducción pendiente', stage: 'nueva' });
-      estado.stats.vocabulario += 1;
-      nueva.value = '';
-      guardar();
-      pintar();
+
+    // ── Vista: diccionario ──
+    const vistaDic = () => {
+      const q = query.trim().toLowerCase();
+      const entradas = q
+        ? DICCIONARIO.filter((d) => d.en.toLowerCase().includes(q) || d.es.toLowerCase().includes(q))
+        : DICCIONARIO.filter((d) => d.en[0].toLowerCase() === letra);
+      return [
+        el('input', { class: 'texa__search', placeholder: 'Buscar en el diccionario (inglés o español)', value: query, oninput: (e) => { query = e.target.value; pintar(); } }),
+        el('div', { class: 'texa__abc' }, ABC.map((L) => {
+          const hay = DICCIONARIO.some((d) => d.en[0].toLowerCase() === L);
+          return el('button', {
+            class: `texa__letra${letra === L && !q ? ' is-active' : ''}`, disabled: !hay,
+            onclick: () => { letra = L; query = ''; pintar(); },
+          }, L.toUpperCase());
+        })),
+        el('div', { class: 'texa__label' }, q ? `${entradas.length} resultados` : `Palabras con «${letra.toUpperCase()}» · ${entradas.length}`),
+        el('div', { class: 'texa__grid' }, entradas.length ? entradas.map((d) => {
+          const ya = existe(d.en);
+          const btn = el('button', {
+            class: `texa__dicadd${ya ? ' is-saved' : ''}`, 'aria-label': 'Guardar en mi vocabulario',
+            title: ya ? 'Ya está en tu vocabulario' : 'Guardar en mi vocabulario',
+            onclick: (e) => {
+              if (existe(d.en)) return;
+              guardarPalabra(d.en, d.es);
+              e.currentTarget.classList.add('is-saved');
+              e.currentTarget.replaceChildren(el('span', { html: svgIc(IC.check2) }));
+            },
+          }, [el('span', { html: svgIc(ya ? IC.check2 : IC.mas) })]);
+          return el('div', { class: 'texa__dicrow' }, [
+            el('div', { class: 'texa__wordtext' }, [el('strong', {}, d.en), el('span', { class: 'texa__muted' }, d.es)]),
+            btn,
+          ]);
+        }) : [el('p', { class: 'texa__muted' }, 'Sin resultados. Probá otra búsqueda.')]),
+      ];
     };
-    nueva.addEventListener('keydown', (e) => { if (e.key === 'Enter') agregar(); });
+
+    function pintar() {
+      cont.replaceChildren(
+        el('div', { class: 'texa__segmented texa__segmented--v' }, [
+          el('button', { class: `texa__segment${modo === 'mias' ? ' is-active' : ''}`, onclick: () => { modo = 'mias'; query = ''; pintar(); } }, 'Mis palabras'),
+          el('button', { class: `texa__segment${modo === 'dic' ? ' is-active' : ''}`, onclick: () => { modo = 'dic'; query = ''; pintar(); } }, 'Diccionario'),
+        ]),
+        ...(modo === 'dic' ? vistaDic() : vistaMias()),
+      );
+    }
     pintar();
+
     return {
-      hero: heroTitulo('Vocabulario', 'Guardá cualquier palabra y te la recordamos cada día hasta que la aprendas.'),
-      cuerpo: [
-        el('div', { class: 'texa__toolbar' }, [
-          el('div', { class: 'texa__addcard' }, [
-            nueva,
-            el('button', { class: 'texa__btn', onclick: agregar }, 'Guardar'),
-          ]),
-          el('input', {
-            class: 'texa__search', placeholder: 'Buscar en tu vocabulario', 'aria-label': 'Buscar',
-            oninput: (e) => { query = e.target.value; pintar(); },
-          }),
-        ]),
-        el('div', { class: 'texa__section' }, [conteo, lista]),
-      ],
+      hero: heroTitulo('Vocabulario', 'Guardá palabras con su significado, o buscá en el diccionario inglés-español.'),
+      cuerpo: [cont],
     };
   };
 

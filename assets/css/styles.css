@@ -1706,6 +1706,52 @@ button.texa__statcard:hover { transform: translateY(-3px); border-color: var(--t
 .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease-out), transform .6s var(--ease-out); }
 .reveal.is-in { opacity: 1; transform: none; }
 
+/* Vocabulario v2: alta con significado + diccionario A-Z */
+.texa__segmented--v { max-width: 340px; }
+.texa__addcard {
+  display: flex; align-items: stretch; gap: var(--sp-2);
+  background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-lg);
+  box-shadow: var(--tx-shadow); padding: 8px;
+}
+.texa__addfields { flex: 1; display: flex; gap: 8px; min-width: 0; }
+.texa__addfields .texa__input {
+  flex: 1; min-width: 0; border: 1px solid var(--tx-border); background: var(--tx-sel);
+  color: var(--tx-text); font: inherit; font-size: 15px; padding: 11px 14px; border-radius: var(--r-md);
+}
+.texa__addfields .texa__input:focus { outline: none; border-color: var(--tx-accent); }
+.texa__addcard .texa__btn { display: inline-flex; align-items: center; gap: 6px; padding: 0 18px; }
+.texa__addcard .texa__salir-ic svg { width: 16px; height: 16px; }
+.texa__addnote { display: block; min-height: 16px; margin: -4px 2px 0; color: var(--tx-warn); font-size: 13px; }
+
+.texa__abc { display: flex; flex-wrap: wrap; gap: 6px; }
+.texa__letra {
+  width: 36px; height: 36px; border: 1px solid var(--tx-border); background: var(--tx-el);
+  color: var(--tx-text2); border-radius: var(--r-md); font: inherit; font-size: 13px; font-weight: 800;
+  cursor: pointer; transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+.texa__letra:hover:not(:disabled) { color: var(--tx-accent); border-color: var(--tx-accent); }
+.texa__letra.is-active { background: var(--tx-accent); border-color: transparent; color: #fff; }
+.texa__letra:disabled { opacity: .3; cursor: default; }
+
+.texa__dicrow {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2);
+  background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-md);
+  box-shadow: var(--tx-shadow); padding: 12px 14px;
+}
+.texa__dicadd {
+  flex: none; width: 38px; height: 38px; border-radius: var(--r-md); border: 1px solid var(--tx-border);
+  background: var(--tx-el); color: var(--tx-accent); display: grid; place-items: center; cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+}
+.texa__dicadd svg { width: 18px; height: 18px; }
+.texa__dicadd:hover { background: var(--tx-accent-soft); border-color: var(--tx-accent); }
+.texa__dicadd.is-saved { background: var(--tx-ok-soft); border-color: transparent; color: var(--tx-ok); cursor: default; }
+
+@media (max-width: 620px) {
+  .texa__addcard { flex-direction: column; }
+  .texa__addfields { flex-direction: column; }
+}
+
 /* Texa lo pidió con vida explícitamente: sus animaciones decorativas continuas
    siguen corriendo aunque el sistema tenga "reducir movimiento". El resto del
    panel sí respeta esa preferencia. */
