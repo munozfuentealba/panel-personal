@@ -1382,15 +1382,10 @@ button.texa__lesson:hover { transform: translateY(-1px); border-color: var(--tx-
 @keyframes texaFloat { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-16px) rotate(3deg); } }
 
 /* Saludo con mano que saluda */
-.texa__wave { display: inline-block; transform-origin: 70% 80%; animation: texaWave 2.4s ease-in-out infinite; }
-@keyframes texaWave {
-  0%, 60%, 100% { transform: rotate(0); }
-  10% { transform: rotate(16deg); }
-  20% { transform: rotate(-10deg); }
-  30% { transform: rotate(16deg); }
-  40% { transform: rotate(-6deg); }
-  50% { transform: rotate(12deg); }
-}
+/* Sol junto al saludo, gira suave */
+.texa__wave { display: inline-flex; vertical-align: -0.08em; color: #ffd15c; animation: texaSpin 16s linear infinite; }
+.texa__wave svg { width: 0.82em; height: 0.82em; stroke-width: 2; }
+@keyframes texaSpin { to { transform: rotate(360deg); } }
 
 /* Cinta de palabras que se desliza */
 .texa__ticker {
@@ -1409,7 +1404,8 @@ button.texa__lesson:hover { transform: translateY(-1px); border-color: var(--tx-
 
 /* Emojis de idiomas flotando en el fondo del hero */
 .texa__herofx { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-.texa__hemoji { position: absolute; font-size: clamp(19px, 2vw, 27px); opacity: .55; animation: texaFloat 5s var(--ease-in-out) infinite; will-change: transform; }
+.texa__hemoji { position: absolute; color: rgba(255, 255, 255, .5); opacity: 1; animation: texaFloat 5s var(--ease-in-out) infinite; will-change: transform; }
+.texa__hemoji svg { width: clamp(24px, 2.4vw, 34px); height: auto; display: block; }
 
 /* Número de "Tu nivel" con leve rebote */
 .texa__nivelnow { animation: texaLevel 3s var(--ease-in-out) infinite; }
@@ -1474,7 +1470,7 @@ button.texa__lesson.texa__lesson--actual { animation: texaCardPulse 2.2s var(--e
    panel sí respeta esa preferencia. */
 @media (prefers-reduced-motion: reduce) {
   .texa__tickrow { animation: texaTicker 26s linear infinite !important; }
-  .texa__wave { animation: texaWave 2.4s ease-in-out infinite !important; }
+  .texa__wave { animation: texaSpin 16s linear infinite !important; }
   .texa__bub { animation: texaFloat 4.5s ease-in-out infinite !important; }
   .texa__motif { animation: texaMotif 11s ease-in-out infinite !important; }
   .texa__saludo { animation: texaSaludo 13.3s linear infinite !important; }

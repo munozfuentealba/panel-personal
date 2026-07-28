@@ -62,17 +62,29 @@ const SINONIMOS = [
 // Saludos que rotan en el hero (toque de "idiomas").
 const SALUDOS = ['Hello', 'Hola', 'Bonjour', 'Ciao', 'Hallo', 'Olá', 'こんにちは'];
 
-// Emojis de idiomas que flotan en el fondo del hero (calienta la sección).
-const HERO_EMOJI = [
-  { e: '📚', l: '9%', t: '58%' }, { e: '✏️', l: '25%', t: '28%' }, { e: '💬', l: '45%', t: '66%' },
-  { e: '🌍', l: '63%', t: '24%' }, { e: '🔤', l: '80%', t: '60%' }, { e: '🎓', l: '91%', t: '32%' },
+// Íconos vectoriales (line-art). Se usan como decoración y en el saludo.
+const IC = {
+  libro: '<path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H12v16H5.5A1.5 1.5 0 0 1 4 18.5Z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H12v16h6.5a1.5 1.5 0 0 0 1.5-1.5Z"/>',
+  lapiz: '<path d="M4 20h4L18.5 9.5a2.83 2.83 0 0 0-4-4L4 16v4Z"/><path d="M13.5 6.5l4 4"/>',
+  chat: '<path d="M20 11.5a7.5 7 0 0 1-10.9 6.3L4 19l1.2-4A7 7 0 0 1 4.5 11.5a7.5 7 0 0 1 15.5 0Z"/>',
+  globo: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.4 2.6 15.6 0 18M12 3c-2.6 2.4-2.6 15.6 0 18"/>',
+  birrete: '<path d="M12 5 3 9l9 4 9-4-9-4Z"/><path d="M6 11v4c0 1.2 2.7 2.6 6 2.6s6-1.4 6-2.6v-4"/>',
+  chispa: '<path d="M12 3l1.7 4.8L18.5 9l-4.8 1.2L12 15l-1.7-4.8L5.5 9l4.8-1.2Z"/>',
+  sol: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.3M12 19.2v2.3M2.5 12h2.3M19.2 12h2.3M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/>',
+};
+const svgIc = (paths, cls = '') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+
+// Íconos de idiomas que flotan en el fondo del hero (calienta la sección).
+const HERO_ICONS = [
+  { i: 'libro', l: '9%', t: '58%' }, { i: 'lapiz', l: '25%', t: '28%' }, { i: 'chat', l: '45%', t: '66%' },
+  { i: 'globo', l: '63%', t: '24%' }, { i: 'chispa', l: '80%', t: '60%' }, { i: 'birrete', l: '91%', t: '32%' },
 ];
 
 // Cinta de palabras/frases que se desliza (movimiento bien visible).
 const TICKER = [
-  'Hello 👋', 'grammar', 'vocabulary', 'fluency', 'phrasal verbs', 'However,…',
-  'nevertheless', 'a piece of cake 🍰', 'break the ice 🧊', 'Hola → Hello',
-  'I’ve been learning', 'once upon a time', 'practice makes perfect ✨', 'small talk',
+  'Hello', 'grammar', 'vocabulary', 'fluency', 'phrasal verbs', 'However,…',
+  'nevertheless', 'a piece of cake', 'break the ice', 'Hola → Hello',
+  'I’ve been learning', 'once upon a time', 'practice makes perfect', 'small talk',
 ];
 
 /* ─── Marca e íconos ─────────────────────────────────────────────────── */
@@ -220,7 +232,7 @@ export function texa() {
       hero: [
         el('div', { class: 'texa__greet' }, [
           el('span', { class: 'texa__greeteyebrow' }, 'Buen día'),
-          el('h2', {}, ['Diego ', el('span', { class: 'texa__wave', 'aria-hidden': 'true' }, '👋')]),
+          el('h2', {}, ['Diego ', el('span', { class: 'texa__wave', 'aria-hidden': 'true', html: svgIc(IC.sol) })]),
         ]),
         el('div', { class: 'texa__hstats' }, stats.map((s) =>
           el('div', { class: 'texa__hstat' }, [
@@ -609,11 +621,12 @@ export function texa() {
   const herobody = el('div', { class: 'texa__herobody' });
   const hero = el('div', { class: 'texa__hero' }, [
     el('span', { class: 'texa__motif', 'aria-hidden': 'true' }),
-    el('div', { class: 'texa__herofx', 'aria-hidden': 'true' }, HERO_EMOJI.map((x, i) =>
+    el('div', { class: 'texa__herofx', 'aria-hidden': 'true' }, HERO_ICONS.map((x, i) =>
       el('span', {
         class: 'texa__hemoji',
         style: { left: x.l, top: x.t, animationDelay: `${i * 0.5}s`, animationDuration: `${5 + (i % 3)}s` },
-      }, x.e))),
+        html: svgIc(IC[x.i]),
+      }))),
     el('div', { class: 'texa__herotop' }, [
       el('div', { class: 'texa__brand' }, [marca(20), el('span', {}, 'TEXA')]),
       el('nav', { class: 'texa__tabs', 'aria-label': 'Secciones de Texa' }, tabs),
