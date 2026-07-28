@@ -1116,6 +1116,13 @@ textarea.input { resize: vertical; min-height: 76px; }
 .texa__tabic { display: inline-flex; }
 .texa__tabic svg { width: 18px; height: 18px; display: block; }
 
+/* Mini-stats: arriba a la derecha, pequeños */
+.texa__ministats { position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: flex; gap: var(--sp-4); }
+.texa__ministat { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.05; }
+.texa__ministat strong { font-size: 16px; font-weight: 800; color: #fff; letter-spacing: -.01em; }
+.texa__ministat span { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: rgba(255, 255, 255, .68); margin-top: 3px; }
+@media (max-width: 940px) { .texa__ministats { display: none; } }
+
 /* Cuerpo del hero: título/​saludo/​stats en blanco */
 .texa__herobody { position: relative; z-index: 1; margin-top: var(--sp-5); }
 .texa__herobody h2 { margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -.02em; color: #fff; }

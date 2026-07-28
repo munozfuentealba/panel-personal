@@ -223,22 +223,12 @@ export function texa() {
       { to: 'aprender', eyebrow: `Aprender · Nivel ${nivelActual()}`, title: 'Tu recorrido de gramática', detail: 'Explicación + ejercicios, nivel por nivel' },
       { to: 'chat', eyebrow: 'Conversación', title: 'Practicá 10 minutos con la IA', detail: 'Charla libre, corrige sin cortar el flujo' },
     ];
-    const stats = [
-      { value: estado.stats.racha, unit: 'días de racha' },
-      { value: estado.stats.vocabulario, unit: 'palabras guardadas' },
-      { value: estado.stats.hoyMin, unit: 'minutos hoy' },
-    ];
     return {
       hero: [
         el('div', { class: 'texa__greet' }, [
           el('span', { class: 'texa__greeteyebrow' }, 'Buen día'),
           el('h2', {}, ['Diego ', el('span', { class: 'texa__wave', 'aria-hidden': 'true', html: svgIc(IC.sol) })]),
         ]),
-        el('div', { class: 'texa__hstats' }, stats.map((s) =>
-          el('div', { class: 'texa__hstat' }, [
-            el('strong', {}, String(s.value)),
-            el('span', {}, s.unit),
-          ]))),
       ],
       cuerpo: [
         // Cinta de palabras que se desliza (movimiento siempre visible)
@@ -619,6 +609,7 @@ export function texa() {
     'aria-label': t.label, onclick: () => ir(t.id),
   }, [txIcon(t.ic), el('span', {}, t.label)]));
   const herobody = el('div', { class: 'texa__herobody' });
+  const ministats = el('div', { class: 'texa__ministats' });
   const hero = el('div', { class: 'texa__hero' }, [
     el('span', { class: 'texa__motif', 'aria-hidden': 'true' }),
     el('div', { class: 'texa__herofx', 'aria-hidden': 'true' }, HERO_ICONS.map((x, i) =>
@@ -630,10 +621,20 @@ export function texa() {
     el('div', { class: 'texa__herotop' }, [
       el('div', { class: 'texa__brand' }, [marca(20), el('span', {}, 'TEXA')]),
       el('nav', { class: 'texa__tabs', 'aria-label': 'Secciones de Texa' }, tabs),
+      ministats,
     ]),
     herobody,
   ]);
   const vista = el('div', { class: 'texa__view' });
+
+  function pintarMinistats() {
+    const s = estado.stats;
+    ministats.replaceChildren(...[
+      [s.racha, 'racha'], [s.vocabulario, 'palabras'], [s.hoyMin, 'min'],
+    ].map(([v, l]) => el('div', { class: 'texa__ministat' }, [
+      el('strong', {}, String(v)), el('span', {}, l),
+    ])));
+  }
 
   function marcarTab() {
     hero.querySelectorAll('.texa__tab').forEach((b) => b.classList.toggle('is-active', b.dataset.tab === tab));
@@ -644,6 +645,7 @@ export function texa() {
     herobody.replaceChildren(...s.hero.filter(Boolean));
     vista.replaceChildren(el('div', { class: `texa__page${s.chat ? ' texa__page--chat' : ''}` }, s.cuerpo));
     marcarTab();
+    pintarMinistats();
   }
 
   ir(tab);
