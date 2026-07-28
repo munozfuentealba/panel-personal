@@ -72,6 +72,7 @@ const IC = {
   chispa: '<path d="M12 3l1.7 4.8L18.5 9l-4.8 1.2L12 15l-1.7-4.8L5.5 9l4.8-1.2Z"/>',
   sol: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.3M12 19.2v2.3M2.5 12h2.3M19.2 12h2.3M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/>',
   volver: '<path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/>',
+  flecha: '<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>',
 };
 const svgIc = (paths, cls = '') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
 
@@ -219,16 +220,21 @@ export function texa() {
   /* Pantalla: Inicio */
   const pInicio = () => {
     const acciones = [
-      { to: 'vocabulario', eyebrow: 'Vocabulario', title: `${estado.words.filter((w) => w.stage !== 'dominada').length} palabras para repasar hoy`, detail: 'Repaso espaciado de lo que guardaste' },
-      { to: 'traducir', eyebrow: 'Traducción', title: 'Frase del día para traducir', detail: '“It slipped my mind completely.”' },
-      { to: 'aprender', eyebrow: `Aprender · Nivel ${nivelActual()}`, title: 'Tu recorrido de gramática', detail: 'Explicación + ejercicios, nivel por nivel' },
-      { to: 'chat', eyebrow: 'Conversación', title: 'Practicá 10 minutos con la IA', detail: 'Charla libre, corrige sin cortar el flujo' },
+      { to: 'vocabulario', ic: 'libro', eyebrow: 'Vocabulario', title: `${estado.words.filter((w) => w.stage !== 'dominada').length} palabras para repasar hoy`, detail: 'Repaso espaciado de lo que guardaste' },
+      { to: 'traducir', ic: 'globo', eyebrow: 'Traducción', title: 'Frase del día para traducir', detail: '“It slipped my mind completely.”' },
+      { to: 'aprender', ic: 'birrete', eyebrow: `Aprender · Nivel ${nivelActual()}`, title: 'Tu recorrido de gramática', detail: 'Explicación + ejercicios, nivel por nivel' },
+      { to: 'chat', ic: 'chat', eyebrow: 'Conversación', title: 'Practicá 10 minutos con la IA', detail: 'Charla libre, corrige sin cortar el flujo' },
     ];
     return {
       hero: [
         el('div', { class: 'texa__greet' }, [
           el('span', { class: 'texa__greeteyebrow' }, 'Buen día'),
           el('h2', {}, ['Diego ', el('span', { class: 'texa__wave', 'aria-hidden': 'true', html: svgIc(IC.sol) })]),
+          el('p', { class: 'texa__herosub' }, `Vas en nivel ${nivelActual()} y llevas una racha de ${estado.stats.racha} días. Sigamos.`),
+          el('button', { class: 'texa__cta', onclick: () => ir('aprender') }, [
+            el('span', {}, 'Seguir aprendiendo'),
+            el('span', { class: 'texa__cta-ic', html: svgIc(IC.flecha) }),
+          ]),
         ]),
       ],
       cuerpo: [
@@ -240,6 +246,7 @@ export function texa() {
         el('div', { class: 'texa__label' }, 'Continuar'),
         el('div', { class: 'texa__actions' }, acciones.map((a) =>
           el('button', { class: 'texa__actioncard', onclick: () => ir(a.to) }, [
+            el('span', { class: 'texa__actionic', html: svgIc(IC[a.ic]) }),
             el('div', { class: 'texa__actioncard-main' }, [
               el('span', { class: 'texa__eyebrow' }, a.eyebrow),
               el('span', { class: 'texa__actiontitle' }, a.title),
