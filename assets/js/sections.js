@@ -1028,17 +1028,26 @@ export function trabajo(ctx) {
     return cont;
   };
 
+  const miniStat = (valor, etiqueta, sub) => el('div', { class: 'todo-stat' }, [
+    el('div', { class: 'todo-stat__v' }, String(valor)),
+    el('div', { class: 'todo-stat__l' }, etiqueta),
+    sub ? el('div', { class: 'todo-stat__s' }, sub) : null,
+  ]);
+
   return [
     encabezado('i-trabajo', 'To Do', 'Tareas, prioridades y calendario del mes.'),
 
-    el('div', { class: 'grid' }, [
-      card('Pendientes', [metrica(pend.length, `${pend.filter((x) => x.prio === 'alta').length} de prioridad alta`)]),
-      card('Atrasadas', [metrica(vencidas.length, vencidas.length ? 'Requieren atención' : 'Todo al día')]),
-      card('Completadas', [metrica(hechas.length, `${t.tareas.length ? Math.round((hechas.length / t.tareas.length) * 100) : 0} % del total`)]),
-      card('Horas de foco', [metrica(`${horas.toString().replace('.', ',')} h`, 'Esta semana')]),
+    el('div', { class: 'grid grid--wide' }, [
+      card('Calendario', [calendario()]),
+      card('Resumen del mes', [
+        el('div', { class: 'todo-stats' }, [
+          miniStat(pend.length, 'Pendientes', `${pend.filter((x) => x.prio === 'alta').length} de prioridad alta`),
+          miniStat(vencidas.length, 'Atrasadas', vencidas.length ? 'Requieren atención' : 'Todo al día'),
+          miniStat(hechas.length, 'Completadas', `${t.tareas.length ? Math.round((hechas.length / t.tareas.length) * 100) : 0} % del total`),
+          miniStat(`${horas.toString().replace('.', ',')} h`, 'Horas de foco', 'Esta semana'),
+        ]),
+      ]),
     ]),
-
-    card('Calendario', [calendario()]),
 
     el('div', { class: 'grid grid--wide' }, [
       card('Tareas', [
