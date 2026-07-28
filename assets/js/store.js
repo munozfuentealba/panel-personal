@@ -229,12 +229,12 @@ const SEED = {
 
   trabajo: {
     tareas: [
-      { id: 't1', texto: 'Cerrar propuesta del Cliente C', prio: 'alta', hecha: false, vence: '2026-07-17' },
-      { id: 't2', texto: 'Revisar mezcla del jingle radial', prio: 'alta', hecha: false, vence: '2026-07-16' },
-      { id: 't3', texto: 'Enviar factura del mes', prio: 'media', hecha: false, vence: '2026-07-20' },
-      { id: 't4', texto: 'Actualizar portafolio con últimos trabajos', prio: 'baja', hecha: false, vence: '2026-07-30' },
-      { id: 't5', texto: 'Reunión de seguimiento con Cliente A', prio: 'media', hecha: true, vence: '2026-07-14' },
-      { id: 't6', texto: 'Respaldar sesiones del estudio', prio: 'baja', hecha: true, vence: '2026-07-13' },
+      { id: 't1', texto: 'Cerrar propuesta del Cliente C', para: 'Radio Crea', prio: 'alta', hecha: false, vence: '2026-07-17' },
+      { id: 't2', texto: 'Revisar mezcla del jingle radial', para: 'Radio Crea', prio: 'alta', hecha: false, vence: '2026-07-16' },
+      { id: 't3', texto: 'Enviar factura del mes', para: 'Personal', prio: 'media', hecha: false, vence: '2026-07-20' },
+      { id: 't4', texto: 'Preparar material de clases', para: 'Colegio Bosquemar', prio: 'baja', hecha: false, vence: '2026-07-30' },
+      { id: 't5', texto: 'Coordinar ensayo de alabanza', para: 'Iglesia', prio: 'media', hecha: true, vence: '2026-07-14' },
+      { id: 't6', texto: 'Respaldar sesiones del estudio', para: 'Gabriel', prio: 'baja', hecha: true, vence: '2026-07-13' },
     ],
     foco: [
       { d: 'Lun', h: 5 }, { d: 'Mar', h: 6.5 }, { d: 'Mié', h: 4 }, { d: 'Jue', h: 7 },

@@ -315,54 +315,76 @@ export function texa() {
       return 'ok';
     };
 
+    const rowWord = (w) => el('div', { class: 'texa__wordrow' }, [
+      el('div', { class: 'texa__wordtext' }, [el('strong', {}, w.en), el('span', { class: 'texa__muted' }, w.es)]),
+      el('span', { class: `texa__stage texa__stage--${w.stage}` }, STAGE_LABEL[w.stage]),
+    ]);
+
     // ── Vista: mis palabras ──
+    // El buscador y el formulario son elementos persistentes; al escribir solo
+    // se re-renderiza la lista (pintarLista), nunca el <input> → el foco se conserva.
     const vistaMias = () => {
       const inEn = el('input', { class: 'texa__input', placeholder: 'Palabra en inglés…', 'aria-label': 'Palabra en inglés' });
       const inEs = el('input', { class: 'texa__input', placeholder: 'Significado en español (opcional)', 'aria-label': 'Significado' });
       const aviso = el('span', { class: 'texa__muted texa__addnote' });
+      const conteo = el('div', { class: 'texa__label' });
+      const lista = el('div', { class: 'texa__grid texa__grid--live' });
+      const search = el('input', { class: 'texa__search', placeholder: 'Buscar en tus palabras', value: query });
+
+      const pintarLista = () => {
+        const q = query.trim().toLowerCase();
+        const filt = estado.words.filter((w) => !q || w.en.toLowerCase().includes(q) || w.es.toLowerCase().includes(q));
+        conteo.textContent = `Para repasar hoy · ${filt.filter((w) => w.stage !== 'dominada').length}`;
+        lista.replaceChildren(...(filt.length
+          ? filt.map(rowWord)
+          : [el('p', { class: 'texa__muted' }, estado.words.length
+              ? 'No encontramos palabras que coincidan con tu búsqueda.'
+              : 'Todavía no guardás palabras. Agregá una arriba o buscá en el diccionario.')]));
+      };
       const add = () => {
         const r = guardarPalabra(inEn.value, inEs.value);
-        if (r === 'ok') { inEn.value = ''; inEs.value = ''; pintar(); inEn.focus(); }
+        if (r === 'ok') { inEn.value = ''; inEs.value = ''; aviso.textContent = ''; pintarLista(); inEn.focus(); }
         else if (r === 'dup') { aviso.textContent = 'Esa palabra ya está en tu vocabulario.'; }
       };
       inEn.addEventListener('keydown', (e) => { if (e.key === 'Enter') inEs.focus(); });
       inEs.addEventListener('keydown', (e) => { if (e.key === 'Enter') add(); });
       inEn.addEventListener('input', () => { aviso.textContent = ''; });
-      const q = query.trim().toLowerCase();
-      const filt = estado.words.filter((w) => !q || w.en.toLowerCase().includes(q) || w.es.toLowerCase().includes(q));
-      const due = filt.filter((w) => w.stage !== 'dominada').length;
+      search.addEventListener('input', (e) => { query = e.target.value; pintarLista(); });
+
+      pintarLista();
       return [
         el('div', { class: 'texa__addcard' }, [
           el('div', { class: 'texa__addfields' }, [inEn, inEs]),
           el('button', { class: 'texa__btn', onclick: add }, [el('span', { class: 'texa__salir-ic', html: svgIc(IC.mas) }), 'Guardar']),
         ]),
-        aviso,
-        el('input', { class: 'texa__search', placeholder: 'Buscar en tus palabras', value: query, oninput: (e) => { query = e.target.value; pintar(); } }),
-        el('div', { class: 'texa__label' }, `Para repasar hoy · ${due}`),
-        el('div', { class: 'texa__grid' }, filt.length ? filt.map((w) => el('div', { class: 'texa__wordrow' }, [
-          el('div', { class: 'texa__wordtext' }, [el('strong', {}, w.en), el('span', { class: 'texa__muted' }, w.es)]),
-          el('span', { class: `texa__stage texa__stage--${w.stage}` }, STAGE_LABEL[w.stage]),
-        ])) : [el('p', { class: 'texa__muted' }, 'Todavía no guardás palabras. Agregá una arriba o buscá en el diccionario.')]),
+        aviso, search, conteo, lista,
       ];
     };
 
     // ── Vista: diccionario ──
     const vistaDic = () => {
-      const q = query.trim().toLowerCase();
-      const entradas = q
-        ? DICCIONARIO.filter((d) => d.en.toLowerCase().includes(q) || d.es.toLowerCase().includes(q))
-        : DICCIONARIO.filter((d) => d.en[0].toLowerCase() === letra);
-      return [
-        el('input', { class: 'texa__search', placeholder: 'Buscar en el diccionario (inglés o español)', value: query, oninput: (e) => { query = e.target.value; pintar(); } }),
-        el('div', { class: 'texa__abc' }, ABC.map((L) => {
+      const conteo = el('div', { class: 'texa__label' });
+      const lista = el('div', { class: 'texa__grid texa__grid--live' });
+      const abcRow = el('div', { class: 'texa__abc' });
+      const search = el('input', { class: 'texa__search', placeholder: 'Buscar en el diccionario (inglés o español)', value: query });
+
+      function pintarAbc() {
+        const activa = !query.trim();
+        abcRow.replaceChildren(...ABC.map((L) => {
           const hay = DICCIONARIO.some((d) => d.en[0].toLowerCase() === L);
           return el('button', {
-            class: `texa__letra${letra === L && !q ? ' is-active' : ''}`, disabled: !hay,
-            onclick: () => { letra = L; query = ''; pintar(); },
+            class: `texa__letra${activa && letra === L ? ' is-active' : ''}`, disabled: !hay,
+            onclick: () => { letra = L; query = ''; search.value = ''; pintarAbc(); pintarLista(); },
           }, L.toUpperCase());
-        })),
-        el('div', { class: 'texa__label' }, q ? `${entradas.length} resultados` : `Palabras con «${letra.toUpperCase()}» · ${entradas.length}`),
-        el('div', { class: 'texa__grid' }, entradas.length ? entradas.map((d) => {
+        }));
+      }
+      function pintarLista() {
+        const q = query.trim().toLowerCase();
+        const entradas = q
+          ? DICCIONARIO.filter((d) => d.en.toLowerCase().includes(q) || d.es.toLowerCase().includes(q))
+          : DICCIONARIO.filter((d) => d.en[0].toLowerCase() === letra);
+        conteo.textContent = q ? `${entradas.length} resultado${entradas.length === 1 ? '' : 's'}` : `Palabras con «${letra.toUpperCase()}» · ${entradas.length}`;
+        lista.replaceChildren(...(entradas.length ? entradas.map((d) => {
           const ya = existe(d.en);
           const btn = el('button', {
             class: `texa__dicadd${ya ? ' is-saved' : ''}`, 'aria-label': 'Guardar en mi vocabulario',
@@ -378,8 +400,13 @@ export function texa() {
             el('div', { class: 'texa__wordtext' }, [el('strong', {}, d.en), el('span', { class: 'texa__muted' }, d.es)]),
             btn,
           ]);
-        }) : [el('p', { class: 'texa__muted' }, 'Sin resultados. Probá otra búsqueda.')]),
-      ];
+        }) : [el('p', { class: 'texa__muted' }, 'Sin resultados. Probá otra búsqueda.')]));
+      }
+      search.addEventListener('input', (e) => { query = e.target.value; pintarAbc(); pintarLista(); });
+
+      pintarAbc();
+      pintarLista();
+      return [search, abcRow, conteo, lista];
     };
 
     function pintar() {

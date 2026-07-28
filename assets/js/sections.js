@@ -1077,6 +1077,7 @@ export function trabajo(ctx) {
       el('div', { class: 'list__meta' }, `Vence ${relativo(x.vence)} · ${fecha(x.vence)}`),
     ]),
     !x.hecha && x.vence < hoyISO() ? el('span', { class: 'delta delta--down' }, 'Atrasada') : null,
+    x.para ? el('span', { class: 'tag' }, x.para) : null,
     el('span', { class: `tag ${tonoPrio[x.prio]}` }, x.prio),
     botonIcono('i-basura', 'Eliminar tarea', () => {
       t.tareas = t.tareas.filter((y) => y.id !== x.id);
@@ -1112,6 +1113,7 @@ export function trabajo(ctx) {
         card('Nueva tarea', [
           formSimple(ctx, [
             { name: 'texto', label: 'Tarea', placeholder: 'Enviar la factura del mes', required: true },
+            { name: 'para', label: 'Para', tipo: 'select', opciones: ['Gabriel', 'Radio Crea', 'Iglesia', 'Colegio Bosquemar', 'Colegio Puerto Montt', 'Personal'], value: 'Personal' },
             { name: 'prio', label: 'Prioridad', tipo: 'select', opciones: ['alta', 'media', 'baja'], value: 'media' },
             { name: 'vence', label: 'Vence', type: 'date', value: hoyISO() },
           ], (d) => { t.tareas.push({ id: uid(), ...d, hecha: false }); }),

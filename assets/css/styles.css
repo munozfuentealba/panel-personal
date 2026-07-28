@@ -1524,6 +1524,9 @@ button.texa__lesson.texa__lesson--actual { animation: texaCardPulse 2.2s var(--e
 .texa__grid > *:nth-child(8) { animation-delay: .30s; }
 .texa__grid > *:nth-child(9) { animation-delay: .34s; }
 .texa__grid > *:nth-child(n+10) { animation-delay: .38s; }
+/* Listas que se filtran en vivo (vocabulario/diccionario): sin animación de
+   entrada por fila para que buscar no genere parpadeo en cada tecla. */
+.texa__grid--live > * { animation: none; }
 @keyframes texaRise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
 /* Barra de progreso que crece al entrar */
