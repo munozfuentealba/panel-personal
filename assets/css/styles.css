@@ -1024,6 +1024,14 @@ textarea.input { resize: vertical; min-height: 76px; }
 /* Texa usa TODA el área de contenido: sin tope de ancho y sin padding del .view */
 .view:has(> .texa) { max-width: none; padding: 0; }
 
+/* Modo pantalla completa: los proyectos ocultan el chrome del dashboard */
+.shell.is-full .sidebar,
+.shell.is-full .scrim,
+.shell.is-full .topbar,
+.shell.is-full .aviso-mes { display: none !important; }
+.shell.is-full .view { padding: 0; max-width: none; }
+.shell.is-full .texa { min-height: 100vh; }
+
 .texa {
   --tx-bg: #f3ebdc;
   --tx-el: #ffffff;
@@ -1094,8 +1102,19 @@ textarea.input { resize: vertical; min-height: 76px; }
   display: flex; align-items: center; justify-content: center;
   min-height: 44px;
 }
-.texa__brand { position: absolute; left: 0; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 7px; }
+.texa__heroleft { position: absolute; left: 0; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 12px; }
+.texa__brand { display: flex; align-items: center; gap: 7px; }
 .texa__brand span { font-size: 12px; font-weight: 800; letter-spacing: 1.5px; color: rgba(255,255,255,.9); }
+.texa__salir {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid rgba(255, 255, 255, .22); background: rgba(255, 255, 255, .12);
+  color: #fff; font: inherit; font-size: 12.5px; font-weight: 700;
+  padding: 7px 12px 7px 9px; border-radius: var(--r-full); cursor: pointer;
+  transition: background var(--t-fast);
+}
+.texa__salir:hover { background: rgba(255, 255, 255, .22); }
+.texa__salir-ic { display: inline-flex; }
+.texa__salir-ic svg { width: 16px; height: 16px; }
 /* Barra de pestañas: centrada y notoria (estilo segmentado) */
 .texa__tabs {
   display: flex; gap: 3px;
@@ -1346,10 +1365,11 @@ button.texa__lesson:hover { transform: translateY(-1px); border-color: var(--tx-
   .texa__hstats { grid-template-columns: 1fr; }
   .texa__actions, .texa__grid, .texa__cols, .texa__toolbar, .texa__ejemplos { grid-template-columns: 1fr; }
   .texa__feedwrap { position: static; }
-  /* La marca deja de ser absoluta para no chocar con las pestañas centradas */
-  .texa__herotop { flex-wrap: wrap; gap: var(--sp-2); }
-  .texa__brand { position: static; transform: none; }
+  /* El grupo izquierdo deja de ser absoluto para no chocar con las pestañas */
+  .texa__herotop { flex-wrap: wrap; gap: var(--sp-2); justify-content: flex-start; }
+  .texa__heroleft { position: static; transform: none; }
   .texa__tabs { margin-left: auto; }
+  .texa__salir span:not(.texa__salir-ic) { display: none; }
   .texa__tab span { display: none; }
   .texa__tab { padding: 9px 13px; }
 }

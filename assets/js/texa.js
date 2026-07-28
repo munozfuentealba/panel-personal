@@ -71,6 +71,7 @@ const IC = {
   birrete: '<path d="M12 5 3 9l9 4 9-4-9-4Z"/><path d="M6 11v4c0 1.2 2.7 2.6 6 2.6s6-1.4 6-2.6v-4"/>',
   chispa: '<path d="M12 3l1.7 4.8L18.5 9l-4.8 1.2L12 15l-1.7-4.8L5.5 9l4.8-1.2Z"/>',
   sol: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.3M12 19.2v2.3M2.5 12h2.3M19.2 12h2.3M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/>',
+  volver: '<path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/>',
 };
 const svgIc = (paths, cls = '') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
 
@@ -619,7 +620,13 @@ export function texa() {
         html: svgIc(IC[x.i]),
       }))),
     el('div', { class: 'texa__herotop' }, [
-      el('div', { class: 'texa__brand' }, [marca(20), el('span', {}, 'TEXA')]),
+      el('div', { class: 'texa__heroleft' }, [
+        el('button', {
+          class: 'texa__salir', title: 'Volver al panel', 'aria-label': 'Volver al panel',
+          onclick: () => { location.hash = '#/resumen'; },
+        }, [el('span', { class: 'texa__salir-ic', html: svgIc(IC.volver) }), el('span', {}, 'Panel')]),
+        el('div', { class: 'texa__brand' }, [marca(20), el('span', {}, 'TEXA')]),
+      ]),
       el('nav', { class: 'texa__tabs', 'aria-label': 'Secciones de Texa' }, tabs),
       ministats,
     ]),

@@ -21,7 +21,7 @@ const SECCIONES = [
   { id: 'familia',    nombre: 'Familia',             icono: 'i-familia',   grupo: 'Áreas',  sub: 'Planes, fechas importantes e intenciones',    render: S.familia,    color: 'var(--c-familia)' },
   { id: 'trabajo',    nombre: 'Trabajo',             icono: 'i-trabajo',   grupo: 'Áreas',  sub: 'Tareas, prioridades y horas de foco',         render: S.trabajo,    color: 'var(--c-trabajo)' },
 
-  { id: 'texa',       nombre: 'Texa',                icono: 'i-texa',      grupo: 'Proyectos', sub: 'Tu app de inglés · Inicio, vocabulario, traducir, aprender y chat', render: texa, color: 'var(--c-texa)' },
+  { id: 'texa',       nombre: 'Texa',                icono: 'i-texa',      grupo: 'Proyectos', sub: 'Tu app de inglés · Inicio, vocabulario, traducir, aprender y chat', render: texa, color: 'var(--c-texa)', pantallaCompleta: true },
 
   { id: 'ajustes',    nombre: 'Ajustes',             icono: 'i-resumen',   grupo: 'Sistema', sub: 'Copia de seguridad y restablecer',           render: S.ajustes,    color: 'var(--text-3)' },
 ];
@@ -188,6 +188,8 @@ function pintar(sec, { animar = true } = {}) {
 async function navegar() {
   const id = location.hash.replace(/^#\/?/, '') || 'resumen';
   const sec = porId(id);
+  // Los proyectos se abren a pantalla completa (sin el chrome del dashboard).
+  document.querySelector('.shell').classList.toggle('is-full', !!sec.pantallaCompleta);
   if (actual?.id === sec.id) return;
 
   const primera = actual === null;
