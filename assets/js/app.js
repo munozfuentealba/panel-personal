@@ -13,7 +13,7 @@ const SECCIONES = [
   { id: 'resumen',    nombre: 'Resumen',            icono: 'i-resumen',   grupo: 'Panel',   sub: 'Todo lo importante de un vistazo',            render: S.resumen,    color: 'var(--accent)' },
   { id: 'clima',      nombre: 'Clima',              icono: 'i-sol-nube',  grupo: 'Panel',   sub: 'Osorno y Puerto Montt · pronóstico a 7 días',  render: S.seccionClima, color: '#0ea5e9' },
 
-  { id: 'trabajo',    nombre: 'To Do',               icono: 'i-trabajo',   grupo: 'Áreas',  sub: 'Tareas, prioridades y horas de foco',         render: S.trabajo,    color: 'var(--c-trabajo)' },
+  { id: 'trabajo',    nombre: 'To Do',               icono: 'i-trabajo',   grupo: 'Áreas',  sub: 'Tareas editables y calendario del mes',       render: S.trabajo,    color: 'var(--c-trabajo)' },
   { id: 'finanzas',   nombre: 'Finanzas Personales', icono: 'i-finanzas',  grupo: 'Áreas',  sub: 'Ingresos, gastos, presupuestos y ahorro',      render: S.finanzas,   color: 'var(--c-finanzas)' },
   { id: 'instagram',  nombre: 'Red Social',          icono: 'i-instagram', grupo: 'Áreas',  sub: 'Instagram @munoz.fuentealba · seguimiento',    render: S.instagram,  color: 'var(--c-instagram)' },
   { id: 'musica',     nombre: 'Producción Musical',  icono: 'i-musica',    grupo: 'Áreas',  sub: 'Proyectos, horas de estudio e ideas',         render: S.musica,     color: 'var(--c-musica)' },

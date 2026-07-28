@@ -894,44 +894,138 @@ export function musica(ctx) {
    To Do (área "trabajo")
    ══════════════════════════════════════════════════════════════════ */
 
+const DESTINATARIOS = ['Gabriel', 'Radio Crea', 'Iglesia', 'Colegio Bosquemar', 'Colegio Puerto Montt', 'Personal'];
+const TONO_PRIO = { alta: 'tag--warn', media: 'tag--info', baja: '' };
+const MESES_CAL = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+// Estado local del área (persiste entre re-render dentro de la sesión).
+let calRef = null;       // { anio, mes(0-11) } del mes visible en el calendario
+let editandoId = null;   // id de la tarea que se está editando en línea
+
 export function trabajo(ctx) {
   const t = datos.trabajo;
   const pend = t.tareas.filter((x) => !x.hecha);
   const hechas = t.tareas.filter((x) => x.hecha);
   const vencidas = pend.filter((x) => x.vence < hoyISO());
   const horas = t.foco.reduce((s, d) => s + d.h, 0);
-  const tonoPrio = { alta: 'tag--warn', media: 'tag--info', baja: '' };
 
-  const fila = (x) => el('div', { class: 'list__item' }, [
-    el('button', {
-      class: 'icon-btn',
-      style: {
-        width: '24px', height: '24px', borderRadius: '7px', flex: 'none',
-        border: `1.5px solid ${x.hecha ? 'var(--c-trabajo)' : 'var(--border-strong)'}`,
-        background: x.hecha ? 'var(--c-trabajo)' : 'transparent',
-        color: x.hecha ? '#fff' : 'transparent',
-      },
-      'aria-label': x.hecha ? `Marcar como pendiente: ${x.texto}` : `Marcar como hecha: ${x.texto}`,
-      onclick: () => { x.hecha = !x.hecha; guardar(); ctx.recargar(); },
-    }, [icon('i-check', 'icon')]),
-    el('div', { class: 'list__main' }, [
-      el('div', {
-        class: 'list__title',
-        style: x.hecha ? { textDecoration: 'line-through', color: 'var(--text-3)' } : {},
-      }, x.texto),
-      el('div', { class: 'list__meta' }, `Vence ${relativo(x.vence)} · ${fecha(x.vence)}`),
-    ]),
-    !x.hecha && x.vence < hoyISO() ? el('span', { class: 'delta delta--down' }, 'Atrasada') : null,
-    x.para ? el('span', { class: 'tag' }, x.para) : null,
-    el('span', { class: `tag ${tonoPrio[x.prio]}` }, x.prio),
-    botonIcono('i-basura', 'Eliminar tarea', () => {
-      t.tareas = t.tareas.filter((y) => y.id !== x.id);
-      guardar(); ctx.recargar();
-    }),
-  ]);
+  // Editor en línea de una tarea (aparece en lugar de la fila normal).
+  const filaEditor = (x) => {
+    const inTexto = el('input', { class: 'input', value: x.texto, 'aria-label': 'Tarea' });
+    const inPara = el('select', { class: 'input', 'aria-label': 'Para' },
+      DESTINATARIOS.map((o) => el('option', { value: o, selected: o === x.para }, o)));
+    const inPrio = el('select', { class: 'input', 'aria-label': 'Prioridad' },
+      ['alta', 'media', 'baja'].map((o) => el('option', { value: o, selected: o === x.prio }, o)));
+    const inVence = el('input', { class: 'input', type: 'date', value: x.vence, 'aria-label': 'Vence' });
+    const guardarEdit = () => {
+      const txt = inTexto.value.trim();
+      if (!txt) { inTexto.focus(); return; }
+      Object.assign(x, { texto: txt, para: inPara.value, prio: inPrio.value, vence: inVence.value });
+      editandoId = null; guardar(); toast('Tarea actualizada.'); ctx.recargar();
+    };
+    const cancelar = () => { editandoId = null; ctx.recargar(); };
+    inTexto.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') guardarEdit();
+      else if (e.key === 'Escape') cancelar();
+    });
+    requestAnimationFrame(() => { inTexto.focus(); inTexto.select(); });
+    return el('div', { class: 'list__item tarea-editor' }, [
+      el('div', { class: 'tarea-editor__campos' }, [inTexto, inPara, inPrio, inVence]),
+      el('div', { class: 'tarea-editor__acc' }, [
+        el('button', { class: 'btn btn--primary btn--sm', onclick: guardarEdit }, [icon('i-check'), 'Guardar']),
+        el('button', { class: 'btn btn--ghost btn--sm', title: 'Cancelar', 'aria-label': 'Cancelar', onclick: cancelar }, [icon('i-cerrar')]),
+      ]),
+    ]);
+  };
+
+  const fila = (x) => {
+    if (x.id === editandoId) return filaEditor(x);
+    return el('div', { class: 'list__item' }, [
+      el('button', {
+        class: 'icon-btn',
+        style: {
+          width: '24px', height: '24px', borderRadius: '7px', flex: 'none',
+          border: `1.5px solid ${x.hecha ? 'var(--c-trabajo)' : 'var(--border-strong)'}`,
+          background: x.hecha ? 'var(--c-trabajo)' : 'transparent',
+          color: x.hecha ? '#fff' : 'transparent',
+        },
+        'aria-label': x.hecha ? `Marcar como pendiente: ${x.texto}` : `Marcar como hecha: ${x.texto}`,
+        onclick: () => { x.hecha = !x.hecha; guardar(); ctx.recargar(); },
+      }, [icon('i-check', 'icon')]),
+      el('div', { class: 'list__main' }, [
+        el('div', {
+          class: 'list__title',
+          style: x.hecha ? { textDecoration: 'line-through', color: 'var(--text-3)' } : {},
+        }, x.texto),
+        el('div', { class: 'list__meta' }, `Vence ${relativo(x.vence)} · ${fecha(x.vence)}`),
+      ]),
+      !x.hecha && x.vence < hoyISO() ? el('span', { class: 'delta delta--down' }, 'Atrasada') : null,
+      x.para ? el('span', { class: 'tag' }, x.para) : null,
+      el('span', { class: `tag ${TONO_PRIO[x.prio]}` }, x.prio),
+      botonIcono('i-editar', 'Editar tarea', () => { editandoId = x.id; ctx.recargar(); }),
+      botonIcono('i-basura', 'Eliminar tarea', () => {
+        t.tareas = t.tareas.filter((y) => y.id !== x.id);
+        if (editandoId === x.id) editandoId = null;
+        guardar(); ctx.recargar();
+      }),
+    ]);
+  };
+
+  // Calendario mensual: navega por mes y muestra las tareas en su día de vencimiento.
+  const calendario = () => {
+    const hoy = new Date();
+    if (!calRef) calRef = { anio: hoy.getFullYear(), mes: hoy.getMonth() };
+    const cont = el('div', { class: 'cal' });
+    const WD = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+    const paso = (delta) => {
+      let m = calRef.mes + delta, a = calRef.anio;
+      if (m < 0) { m = 11; a -= 1; } else if (m > 11) { m = 0; a += 1; }
+      return { anio: a, mes: m };
+    };
+    const pintar = () => {
+      const { anio, mes } = calRef;
+      const offset = (new Date(anio, mes, 1).getDay() + 6) % 7; // 0 = lunes
+      const dias = new Date(anio, mes + 1, 0).getDate();
+      const hoyStr = hoyISO();
+      const porDia = {};
+      for (const x of t.tareas) {
+        const p = x.vence.split('-').map(Number);
+        if (p[0] === anio && p[1] === mes + 1) (porDia[p[2]] ??= []).push(x);
+      }
+      cont.replaceChildren(
+        el('div', { class: 'cal__bar' }, [
+          el('div', { class: 'cal__mes' }, `${MESES_CAL[mes]} ${anio}`),
+          el('div', { class: 'cal__nav' }, [
+            el('button', { class: 'btn btn--ghost btn--sm', title: 'Mes anterior', 'aria-label': 'Mes anterior', onclick: () => { calRef = paso(-1); pintar(); } }, '‹'),
+            el('button', { class: 'btn btn--ghost btn--sm', onclick: () => { calRef = { anio: hoy.getFullYear(), mes: hoy.getMonth() }; pintar(); } }, 'Hoy'),
+            el('button', { class: 'btn btn--ghost btn--sm', title: 'Mes siguiente', 'aria-label': 'Mes siguiente', onclick: () => { calRef = paso(1); pintar(); } }, '›'),
+          ]),
+        ]),
+        el('div', { class: 'cal__grid' }, [
+          ...WD.map((d) => el('div', { class: 'cal__wd' }, d)),
+          ...Array.from({ length: offset }, () => el('div', { class: 'cal__cell cal__cell--out' })),
+          ...Array.from({ length: dias }, (_, i) => {
+            const d = i + 1;
+            const iso = `${anio}-${String(mes + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            const evs = porDia[d] || [];
+            return el('div', { class: `cal__cell${iso === hoyStr ? ' is-today' : ''}` }, [
+              el('span', { class: 'cal__dn' }, String(d)),
+              ...evs.slice(0, 3).map((x) => el('button', {
+                class: `cal__ev cal__ev--${x.prio}${x.hecha ? ' is-done' : ''}`,
+                title: `${x.texto}${x.para ? ` · ${x.para}` : ''}`,
+                onclick: () => { editandoId = x.id; ctx.recargar(); },
+              }, x.texto)),
+              evs.length > 3 ? el('span', { class: 'cal__more' }, `+${evs.length - 3}`) : null,
+            ]);
+          }),
+        ]),
+      );
+    };
+    pintar();
+    return cont;
+  };
 
   return [
-    encabezado('i-trabajo', 'To Do', 'Tareas, prioridades y horas de foco.'),
+    encabezado('i-trabajo', 'To Do', 'Tareas, prioridades y calendario del mes.'),
 
     el('div', { class: 'grid' }, [
       card('Pendientes', [metrica(pend.length, `${pend.filter((x) => x.prio === 'alta').length} de prioridad alta`)]),
@@ -940,13 +1034,15 @@ export function trabajo(ctx) {
       card('Horas de foco', [metrica(`${horas.toString().replace('.', ',')} h`, 'Esta semana')]),
     ]),
 
+    card('Calendario', [calendario()]),
+
     el('div', { class: 'grid grid--wide' }, [
       card('Tareas', [
         pend.length ? el('div', { class: 'list' }, pend
           .sort((a, b) => a.vence.localeCompare(b.vence))
           .map(fila)) : listaVacia('Sin pendientes. Buen trabajo.'),
         hechas.length
-          ? el('details', { style: { marginTop: '12px' } }, [
+          ? el('details', { open: hechas.some((h) => h.id === editandoId), style: { marginTop: '12px' } }, [
               el('summary', {
                 style: { cursor: 'pointer', fontSize: '13px', color: 'var(--text-3)', padding: '6px 0' },
               }, `Completadas (${hechas.length})`),
@@ -958,7 +1054,7 @@ export function trabajo(ctx) {
         card('Nueva tarea', [
           formSimple(ctx, [
             { name: 'texto', label: 'Tarea', placeholder: 'Enviar la factura del mes', required: true },
-            { name: 'para', label: 'Para', tipo: 'select', opciones: ['Gabriel', 'Radio Crea', 'Iglesia', 'Colegio Bosquemar', 'Colegio Puerto Montt', 'Personal'], value: 'Personal' },
+            { name: 'para', label: 'Para', tipo: 'select', opciones: DESTINATARIOS, value: 'Personal' },
             { name: 'prio', label: 'Prioridad', tipo: 'select', opciones: ['alta', 'media', 'baja'], value: 'media' },
             { name: 'vence', label: 'Vence', type: 'date', value: hoyISO() },
           ], (d) => { t.tareas.push({ id: uid(), ...d, hecha: false }); }),
