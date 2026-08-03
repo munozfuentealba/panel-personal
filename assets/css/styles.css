@@ -1317,6 +1317,13 @@ textarea.input { resize: vertical; min-height: 76px; }
 .texa__segment.is-active { background: var(--tx-el); color: var(--tx-text); box-shadow: var(--tx-shadow); }
 
 /* Verbos: tabla de regulares e irregulares */
+.texa__vintro {
+  display: flex; flex-direction: column; gap: 5px;
+  background: var(--tx-accent-soft); border: 1px solid color-mix(in srgb, var(--tx-accent) 22%, transparent);
+  border-radius: var(--r-lg); padding: var(--sp-4);
+}
+.texa__vintrop { margin: 0; font-size: 14.5px; line-height: 1.6; color: var(--tx-text); }
+.texa__vintrop strong { color: var(--tx-accent); font-weight: 700; }
 .texa__verbscroll { overflow-x: auto; }
 .texa__verbtable { display: flex; flex-direction: column; gap: 6px; min-width: 540px; }
 .texa__verbhead, .texa__verbrow { display: grid; gap: var(--sp-3); align-items: center; }

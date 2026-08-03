@@ -521,6 +521,14 @@ export function texa() {
     const coincide = (r, q) => r.v.toLowerCase().includes(q) || r.es.toLowerCase().includes(q)
       || (r.pasado || r.ed || '').toLowerCase().includes(q) || (r.participio || '').toLowerCase().includes(q);
 
+    // Breve introducción "para qué sirven" arriba de cada lista.
+    const intro = (md) => el('div', { class: 'texa__vintro' }, [
+      el('span', { class: 'texa__eyebrow' }, '¿Para qué sirven?'),
+      el('p', { class: 'texa__vintrop' }, texto(md)),
+    ]);
+    const INTRO_IRR = 'Los verbos **irregulares** no siguen una regla fija: su pasado y su participio cambian de forma y hay que aprenderlos de memoria. Los usás en el **pasado simple** (I **went** home) y en los tiempos perfectos, con el participio (I have **gone**). Por eso te damos las tres formas: base, pasado y participio.';
+    const INTRO_REG = 'Los verbos **regulares** son los más fáciles: forman el pasado y el participio agregando **-ed** (work → work**ed**). Esa misma forma sirve para el **pasado simple** (I work**ed** yesterday) y para los tiempos perfectos (I have work**ed**), así que solo tenés que recordar una.';
+
     // ── Irregulares (base / pasado / participio / español) ──
     const vistaIrregulares = () => {
       const conteo = el('div', { class: 'texa__label' });
@@ -545,7 +553,7 @@ export function texa() {
       };
       search.addEventListener('input', (e) => { query = e.target.value; pintarLista(); });
       pintarLista();
-      return [search, conteo, el('div', { class: 'texa__verbscroll' }, [lista])];
+      return [intro(INTRO_IRR), search, conteo, el('div', { class: 'texa__verbscroll' }, [lista])];
     };
 
     // ── Regulares (base / pasado -ed / español) ──
@@ -571,7 +579,7 @@ export function texa() {
       };
       search.addEventListener('input', (e) => { query = e.target.value; pintarLista(); });
       pintarLista();
-      return [search, conteo, el('div', { class: 'texa__verbscroll' }, [lista])];
+      return [intro(INTRO_REG), search, conteo, el('div', { class: 'texa__verbscroll' }, [lista])];
     };
 
     function pintar() {
