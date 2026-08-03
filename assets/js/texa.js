@@ -11,6 +11,7 @@
 import { el } from './utils.js';
 import { CURRICULO, TODAS_LECCIONES, tieneContenido } from './texa-curriculo.js';
 import { DICCIONARIO, buscarSignificado } from './texa-diccionario.js';
+import { IRREGULARES, REGULARES } from './texa-verbos.js';
 
 /* ─── Datos semilla (los mismos de la app) ──────────────────────────── */
 
@@ -145,6 +146,7 @@ const IC = {
   intercambiar: '<path d="M7 8h13"/><path d="M16 4l4 4-4 4"/><path d="M17 16H4"/><path d="M8 12l-4 4 4 4"/>',
   copiar: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
   borrar: '<path d="M6 6l12 12M18 6 6 18"/>',
+  sonido: '<path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M16 9a3 3 0 0 1 0 6"/><path d="M18.5 6.5a6.5 6.5 0 0 1 0 11"/>',
 };
 const svgIc = (paths, cls = '') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
 
@@ -183,6 +185,7 @@ const txIcon = (paths) => el('span', {
 const TABS = [
   { id: 'inicio', label: 'Inicio', ic: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/>' },
   { id: 'vocabulario', label: 'Vocabulario', ic: '<path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H12v16H5.5A1.5 1.5 0 0 1 4 18.5Z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H12v16h6.5a1.5 1.5 0 0 0 1.5-1.5Z"/>' },
+  { id: 'verbos', label: 'Verbos', ic: '<path d="M8 6h12"/><path d="M8 12h12"/><path d="M8 18h9"/><path d="M4 6h.01"/><path d="M4 12h.01"/><path d="M4 18h.01"/>' },
   { id: 'traducir', label: 'Traducir', ic: '<path d="M4 6h9"/><path d="M8.5 6c0 5-2.5 8-5.5 9.5"/><path d="M6 9.5c.2 2.8 3 4.8 6 5.5"/><path d="M13 20l4-9 4 9"/><path d="M14.4 17h5.2"/>' },
   { id: 'aprender', label: 'Aprender', ic: '<path d="M12 5 3 9l9 4 9-4-9-4Z"/><path d="M6 11v4c0 1.2 2.7 2.6 6 2.6s6-1.4 6-2.6v-4"/>' },
   { id: 'chat', label: 'Chat', ic: '<path d="M20 11.5a7.5 7 0 0 1-10.9 6.3L4 19l1.2-4A7 7 0 0 1 4.5 11.5a7.5 7 0 0 1 15.5 0Z"/>' },
@@ -491,6 +494,98 @@ export function texa() {
 
     return {
       hero: heroTitulo('Vocabulario', 'Guardá palabras con su significado, o buscá en el diccionario inglés-español.'),
+      cuerpo: [cont],
+    };
+  };
+
+  /* Pantalla: Verbos (regulares e irregulares con traducción) */
+  const pVerbos = () => {
+    let modo = 'irregulares'; // 'irregulares' | 'regulares'
+    let query = '';
+    const cont = el('div', { class: 'texa__section' });
+
+    const hablar = (texto) => {
+      try {
+        if (!window.speechSynthesis) return;
+        const u = new SpeechSynthesisUtterance(texto.replace(/ \/ /g, ', '));
+        u.lang = 'en-US';
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(u);
+      } catch { /* sin síntesis de voz */ }
+    };
+    const btnSonido = (texto) => el('button', {
+      class: 'texa__vsound', title: 'Escuchar pronunciación', 'aria-label': `Escuchar ${texto}`,
+      onclick: () => hablar(texto), html: svgIc(IC.sonido),
+    });
+
+    const coincide = (r, q) => r.v.toLowerCase().includes(q) || r.es.toLowerCase().includes(q)
+      || (r.pasado || r.ed || '').toLowerCase().includes(q) || (r.participio || '').toLowerCase().includes(q);
+
+    // ── Irregulares (base / pasado / participio / español) ──
+    const vistaIrregulares = () => {
+      const conteo = el('div', { class: 'texa__label' });
+      const lista = el('div', { class: 'texa__verbtable' });
+      const search = el('input', { class: 'texa__search', placeholder: 'Buscar verbo o traducción…', value: query });
+      const pintarLista = () => {
+        const q = query.trim().toLowerCase();
+        const rows = q ? IRREGULARES.filter((r) => coincide(r, q)) : IRREGULARES;
+        conteo.textContent = `${rows.length} verbo${rows.length === 1 ? '' : 's'} irregular${rows.length === 1 ? '' : 'es'}`;
+        lista.replaceChildren(
+          el('div', { class: 'texa__verbhead texa__verbhead--irr' }, [
+            el('span', {}, 'Base'), el('span', {}, 'Pasado'), el('span', {}, 'Participio'), el('span', {}, 'Español'), el('span', {}),
+          ]),
+          ...(rows.length ? rows.map((r) => el('div', { class: 'texa__verbrow texa__verbrow--irr' }, [
+            el('strong', { class: 'texa__vbase' }, r.v),
+            el('span', { class: 'texa__vform' }, r.pasado),
+            el('span', { class: 'texa__vform' }, r.participio),
+            el('span', { class: 'texa__ves' }, r.es),
+            btnSonido(`${r.v}. ${r.pasado}. ${r.participio}`),
+          ])) : [el('p', { class: 'texa__muted' }, 'Sin resultados. Probá otra búsqueda.')]),
+        );
+      };
+      search.addEventListener('input', (e) => { query = e.target.value; pintarLista(); });
+      pintarLista();
+      return [search, conteo, el('div', { class: 'texa__verbscroll' }, [lista])];
+    };
+
+    // ── Regulares (base / pasado -ed / español) ──
+    const vistaRegulares = () => {
+      const conteo = el('div', { class: 'texa__label' });
+      const lista = el('div', { class: 'texa__verbtable' });
+      const search = el('input', { class: 'texa__search', placeholder: 'Buscar verbo o traducción…', value: query });
+      const pintarLista = () => {
+        const q = query.trim().toLowerCase();
+        const rows = q ? REGULARES.filter((r) => coincide(r, q)) : REGULARES;
+        conteo.textContent = `${rows.length} verbo${rows.length === 1 ? '' : 's'} regular${rows.length === 1 ? '' : 'es'}`;
+        lista.replaceChildren(
+          el('div', { class: 'texa__verbhead texa__verbhead--reg' }, [
+            el('span', {}, 'Base'), el('span', {}, 'Pasado / Participio (-ed)'), el('span', {}, 'Español'), el('span', {}),
+          ]),
+          ...(rows.length ? rows.map((r) => el('div', { class: 'texa__verbrow texa__verbrow--reg' }, [
+            el('strong', { class: 'texa__vbase' }, r.v),
+            el('span', { class: 'texa__vform' }, r.ed),
+            el('span', { class: 'texa__ves' }, r.es),
+            btnSonido(`${r.v}. ${r.ed}`),
+          ])) : [el('p', { class: 'texa__muted' }, 'Sin resultados. Probá otra búsqueda.')]),
+        );
+      };
+      search.addEventListener('input', (e) => { query = e.target.value; pintarLista(); });
+      pintarLista();
+      return [search, conteo, el('div', { class: 'texa__verbscroll' }, [lista])];
+    };
+
+    function pintar() {
+      cont.replaceChildren(
+        el('div', { class: 'texa__segmented' }, [
+          el('button', { class: `texa__segment${modo === 'irregulares' ? ' is-active' : ''}`, onclick: () => { modo = 'irregulares'; query = ''; pintar(); } }, `Irregulares (${IRREGULARES.length})`),
+          el('button', { class: `texa__segment${modo === 'regulares' ? ' is-active' : ''}`, onclick: () => { modo = 'regulares'; query = ''; pintar(); } }, `Regulares (${REGULARES.length})`),
+        ]),
+        ...(modo === 'regulares' ? vistaRegulares() : vistaIrregulares()),
+      );
+    }
+    pintar();
+    return {
+      hero: heroTitulo('Verbos', 'Verbos regulares e irregulares con su traducción. Tocá el altavoz para escuchar la pronunciación.'),
       cuerpo: [cont],
     };
   };
@@ -924,7 +1019,7 @@ export function texa() {
     };
   };
 
-  const PANTALLAS = { inicio: pInicio, vocabulario: pVocabulario, traducir: pTraducir, aprender: pAprender, chat: pChat };
+  const PANTALLAS = { inicio: pInicio, vocabulario: pVocabulario, verbos: pVerbos, traducir: pTraducir, aprender: pAprender, chat: pChat };
 
   /* Barra de navegación superior (v2, fondo claro y fija) */
   const tabs = TABS.map((t) => el('button', {

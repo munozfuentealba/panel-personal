@@ -1316,6 +1316,25 @@ textarea.input { resize: vertical; min-height: 76px; }
 .texa__segment { flex: 1; border: none; background: none; color: var(--tx-text2); font: inherit; font-size: 13.5px; font-weight: 700; padding: 9px; border-radius: var(--r-sm); cursor: pointer; }
 .texa__segment.is-active { background: var(--tx-el); color: var(--tx-text); box-shadow: var(--tx-shadow); }
 
+/* Verbos: tabla de regulares e irregulares */
+.texa__verbscroll { overflow-x: auto; }
+.texa__verbtable { display: flex; flex-direction: column; gap: 6px; min-width: 540px; }
+.texa__verbhead, .texa__verbrow { display: grid; gap: var(--sp-3); align-items: center; }
+.texa__verbhead--irr, .texa__verbrow--irr { grid-template-columns: 1.1fr 1.1fr 1.1fr 1.5fr 36px; }
+.texa__verbhead--reg, .texa__verbrow--reg { grid-template-columns: 1.1fr 1.5fr 1.5fr 36px; }
+.texa__verbhead { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--tx-text2); padding: 4px 14px 0; }
+.texa__verbrow { padding: 10px 14px; background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-md); }
+.texa__vbase { color: var(--tx-accent); font-weight: 700; font-size: 15px; }
+.texa__vform { font-size: 14.5px; color: var(--tx-text); }
+.texa__ves { font-size: 13.5px; color: var(--tx-text2); }
+.texa__vsound {
+  width: 32px; height: 32px; flex: none; border: none; background: var(--tx-sel); color: var(--tx-text2);
+  border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+  transition: background var(--t-fast) var(--ease-out), color var(--t-fast) var(--ease-out);
+}
+.texa__vsound:hover { background: var(--tx-accent-soft); color: var(--tx-accent); }
+.texa__vsound svg { width: 16px; height: 16px; }
+
 /* Traducir: traductor estilo Google Translate */
 .texa__trad { display: flex; flex-direction: column; gap: var(--sp-4); }
 .texa__tbar { display: flex; align-items: center; gap: var(--sp-3); }
