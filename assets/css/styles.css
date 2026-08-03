@@ -1480,6 +1480,33 @@ button.texa__lesson:hover { transform: translateY(-1px); border-color: var(--tx-
 .texa__chatinput { flex: 1; border: none; background: none; color: var(--tx-text); font: inherit; font-size: 15px; padding: 8px; }
 .texa__chatinput:focus { outline: none; }
 
+/* Chat: conectar la IA (proxy) */
+.texa__chattop { display: flex; justify-content: flex-end; }
+.texa__cfgbtn {
+  border: 1px solid var(--tx-border); background: var(--tx-el); color: var(--tx-text2);
+  font: inherit; font-size: 12.5px; font-weight: 600; padding: 6px 12px; border-radius: var(--r-full); cursor: pointer;
+  transition: color var(--t-fast) var(--ease-out), border-color var(--t-fast) var(--ease-out);
+}
+.texa__cfgbtn:hover { color: var(--tx-text); }
+.texa__cfgbtn.is-on { color: var(--tx-ok); border-color: color-mix(in srgb, var(--tx-ok) 40%, var(--tx-border)); }
+.texa__cfg {
+  display: flex; flex-direction: column; gap: 8px;
+  background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-md); box-shadow: var(--tx-shadow); padding: var(--sp-3);
+}
+.texa__cfglbl { font-size: 13px; color: var(--tx-text2); }
+.texa__cfgline { display: flex; gap: var(--sp-2); }
+.texa__cfginput {
+  flex: 1; border: 1px solid var(--tx-border); background: var(--tx-bg); color: var(--tx-text);
+  font: inherit; font-size: 14px; padding: 9px 12px; border-radius: var(--r-md);
+}
+.texa__cfginput:focus { outline: none; border-color: var(--tx-accent); }
+.texa__cfgsave {
+  flex: none; border: none; background: var(--tx-accent); color: var(--tx-on-accent);
+  font: inherit; font-size: 14px; font-weight: 600; padding: 9px 16px; border-radius: var(--r-md); cursor: pointer;
+}
+.texa__cfghelp { font-size: 12.5px; color: var(--tx-accent); text-decoration: none; }
+.texa__cfghelp:hover { text-decoration: underline; }
+
 @media (max-width: 760px) {
   .texa__hero { padding-left: var(--sp-4); padding-right: var(--sp-4); }
   .texa__view { padding: var(--sp-4); }

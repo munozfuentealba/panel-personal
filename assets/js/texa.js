@@ -78,11 +78,40 @@ async function traducirTexto(texto, from, to, signal) {
   if (!t || /^MYMEMORY WARNING/i.test(t)) throw new Error('Respaldo de traducción no disponible.');
   return decodeEntidades(t);
 }
-const AI_REPLIES = [
-  { text: 'Nice! What made that your favorite part?', tip: 'Tip: para acciones terminadas en el pasado usá el pasado simple — “I went”, no “I go”.' },
-  { text: 'That sounds fun. Do you usually do that on weekends?', tip: null },
-  { text: 'Got it. How did that make you feel?', tip: null },
-];
+/* ─── Chat: IA real vía proxy (clave oculta) + respaldo local ───────── */
+const PROXY_KEY = 'texa.proxy';
+const getProxy = () => { try { return localStorage.getItem(PROXY_KEY) || ''; } catch { return ''; } };
+const setProxy = (u) => { try { u ? localStorage.setItem(PROXY_KEY, u) : localStorage.removeItem(PROXY_KEY); } catch { /* sin storage */ } };
+
+/** Llama al proxy con TODO el historial para que el modelo mantenga el contexto. */
+async function chatIA(proxy, historial, signal) {
+  const r = await fetch(proxy, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages: historial.map((m) => ({ from: m.from, text: m.text })) }),
+    signal,
+  });
+  if (!r.ok) throw new Error(`proxy ${r.status}`);
+  const j = await r.json();
+  if (j.error) throw new Error(j.error);
+  return { text: (j.reply || '').trim() || '…', tip: (j.tip || '').trim() || null };
+}
+
+/** Respaldo local: sin IA, pero al menos reacciona a lo que escribe el usuario. */
+function respuestaLocal(texto) {
+  const t = texto.toLowerCase();
+  if (/\b(how are you|how'?s it going|how are things|you doing|what'?s up|how do you do)\b/.test(t))
+    return { text: "I'm doing great, thanks! And you — how's your day going?", tip: null };
+  if (/\b(hi|hello|hey|good morning|good afternoon|good evening)\b/.test(t))
+    return { text: 'Hey Diego! Good to see you. What would you like to talk about?', tip: null };
+  if (/\b(thanks|thank you|thx|cheers)\b/.test(t))
+    return { text: "You're welcome! Is there anything else you'd like to practice?", tip: null };
+  if (/\b(bye|goodbye|see you|good night|see ya|later)\b/.test(t))
+    return { text: "See you soon, Diego! Keep practicing — you're doing great.", tip: null };
+  if (/\?\s*$/.test(texto.trim()))
+    return { text: 'Good question! What do you think about it yourself?', tip: null };
+  return { text: 'Nice! Tell me a bit more about that.', tip: null };
+}
 
 // Burbujas de sinónimos por nivel (decoración animada de Inicio).
 const SINONIMOS = [
@@ -759,8 +788,10 @@ export function texa() {
 
   /* Pantalla: Chat */
   const pChat = () => {
-    let replyIndex = 0;
     let listening = false;
+    let escribiendo = false;
+    let proxy = getProxy();
+
     const mensajes = el('div', { class: 'texa__messages' });
     const pintarMensajes = () => {
       mensajes.replaceChildren(...estado.chat.map((m) =>
@@ -770,23 +801,18 @@ export function texa() {
         ])));
       mensajes.scrollTop = mensajes.scrollHeight;
     };
+
     const input = el('input', { class: 'texa__chatinput', placeholder: 'Escribí o hablá en inglés…', 'aria-label': 'Mensaje' });
-    const mic = el('button', { class: 'texa__mic', 'aria-label': 'Micrófono', onclick: () => {
-      listening = !listening;
-      mic.classList.toggle('is-on', listening);
-      input.placeholder = listening ? 'Escuchando…' : 'Escribí o hablá en inglés…';
-    } }, [txIcon('<path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Z"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/>')]);
-    let escribiendo = false;
+
+    // ── Enviar (declarado antes que el micrófono, que lo usa al terminar de hablar) ──
     const enviar = () => {
       const v = input.value.trim();
       if (!v || escribiendo) return;
-      const reply = AI_REPLIES[replyIndex % AI_REPLIES.length];
-      replyIndex += 1;
       estado.chat.push({ from: 'user', text: v, tip: null });
       input.value = '';
       guardar();
       pintarMensajes();
-      // Indicador "escribiendo…" antes de la respuesta
+
       escribiendo = true;
       const typing = el('div', { class: 'texa__bubblerow texa__bubblerow--ai' }, [
         el('div', { class: 'texa__bubble texa__bubble--ai texa__typing' }, [
@@ -795,21 +821,101 @@ export function texa() {
       ]);
       mensajes.append(typing);
       mensajes.scrollTop = mensajes.scrollHeight;
-      setTimeout(() => {
+
+      const responder = (r) => {
         escribiendo = false;
-        estado.chat.push({ from: 'ai', text: reply.text, tip: reply.tip });
+        estado.chat.push({ from: 'ai', text: r.text, tip: r.tip || null });
         guardar();
         pintarMensajes();
-      }, 850);
+      };
+
+      if (proxy) {
+        // IA real: mandamos todo el historial para que mantenga el contexto.
+        chatIA(proxy, estado.chat)
+          .then(responder)
+          .catch(() => responder({ ...respuestaLocal(v), tip: 'Sin conexión con la IA — respuesta local.' }));
+      } else {
+        setTimeout(() => responder(respuestaLocal(v)), 500);
+      }
     };
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') enviar(); });
+
+    // ── Micrófono real (Web Speech API) ──
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    const mic = el('button', {
+      class: 'texa__mic', 'aria-label': 'Hablar en inglés',
+      title: SR ? 'Hablar en inglés' : 'Tu navegador no soporta el dictado por voz',
+    }, [txIcon('<path d="M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3Z"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/>')]);
+    const detenerMic = () => {
+      listening = false;
+      mic.classList.remove('is-on');
+      input.placeholder = 'Escribí o hablá en inglés…';
+    };
+    if (SR) {
+      recognition = new SR();
+      recognition.lang = 'en-US';
+      recognition.interimResults = true;
+      recognition.continuous = false;
+      recognition.onresult = (e) => {
+        let txt = '';
+        for (const res of e.results) txt += res[0].transcript;
+        input.value = txt;
+        if (e.results[e.results.length - 1].isFinal) {
+          detenerMic();
+          if (txt.trim()) setTimeout(enviar, 150); // envía solo al terminar de hablar
+        }
+      };
+      recognition.onerror = detenerMic;
+      recognition.onend = () => { if (listening) detenerMic(); };
+    }
+    mic.addEventListener('click', () => {
+      if (!recognition) { input.placeholder = 'Tu navegador no soporta el dictado por voz'; return; }
+      if (listening) { recognition.stop(); detenerMic(); return; }
+      listening = true;
+      mic.classList.add('is-on');
+      input.placeholder = 'Escuchando… hablá en inglés';
+      try { recognition.start(); } catch { detenerMic(); }
+    });
+
     const enviarBtn = el('button', { class: 'texa__send', 'aria-label': 'Enviar', onclick: enviar },
       [txIcon('<path d="M12 20V5"/><path d="M6 11l6-6 6 6"/>')]);
+
+    // ── Config del proxy de IA (⚙) ──
+    const cfgInput = el('input', { class: 'texa__cfginput', placeholder: 'https://tu-worker.workers.dev', value: proxy, 'aria-label': 'URL del proxy de IA' });
+    const cfgBtn = el('button', { class: 'texa__cfgbtn', title: 'Conectar la IA del chat' });
+    const actualizarBadge = () => {
+      cfgBtn.classList.toggle('is-on', !!proxy);
+      cfgBtn.textContent = proxy ? '● IA conectada' : '○ Conectar IA';
+    };
+    const guardarCfg = () => {
+      proxy = cfgInput.value.trim();
+      setProxy(proxy);
+      cfgRow.hidden = true;
+      actualizarBadge();
+    };
+    const cfgRow = el('div', { class: 'texa__cfg', hidden: true }, [
+      el('label', { class: 'texa__cfglbl' }, 'Pegá la URL de tu proxy (Cloudflare Worker):'),
+      el('div', { class: 'texa__cfgline' }, [
+        cfgInput,
+        el('button', { class: 'texa__cfgsave', onclick: guardarCfg }, 'Guardar'),
+      ]),
+      el('a', { class: 'texa__cfghelp', href: 'https://github.com/munozfuentealba/panel-personal/blob/main/chat-proxy/README.md', target: '_blank', rel: 'noopener' }, '¿Cómo conectar la IA? (instrucciones)'),
+    ]);
+    cfgInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') guardarCfg(); });
+    cfgBtn.addEventListener('click', () => {
+      cfgRow.hidden = !cfgRow.hidden;
+      if (!cfgRow.hidden) cfgInput.focus();
+    });
+    actualizarBadge();
+
     pintarMensajes();
     return {
       hero: heroTitulo('Chat con IA', 'Conversación libre en inglés. Corrige sin cortarte el ritmo.'),
       cuerpo: [
         el('div', { class: 'texa__chatwrap' }, [
+          el('div', { class: 'texa__chattop' }, [cfgBtn]),
+          cfgRow,
           mensajes,
           el('div', { class: 'texa__inputbar' }, [mic, input, enviarBtn]),
         ]),
