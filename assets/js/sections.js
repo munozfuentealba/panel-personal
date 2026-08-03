@@ -905,7 +905,7 @@ export function trabajo(ctx) {
   const t = datos.trabajo;
   const pend = t.tareas.filter((x) => !x.hecha);
   const hechas = t.tareas.filter((x) => x.hecha);
-  const vencidas = pend.filter((x) => x.vence < hoyISO());
+  const vencidas = pend.filter((x) => x.vence && x.vence < hoyISO());
   const horas = t.foco.reduce((s, d) => s + d.h, 0);
 
   // Editor en línea de una tarea (aparece en lugar de la fila normal).
@@ -915,12 +915,25 @@ export function trabajo(ctx) {
       DESTINATARIOS.map((o) => el('option', { value: o, selected: o === x.para }, o)));
     const inPrio = el('select', { class: 'input', 'aria-label': 'Prioridad' },
       ['alta', 'media', 'baja'].map((o) => el('option', { value: o, selected: o === x.prio }, o)));
-    const inVence = el('input', { class: 'input', type: 'date', value: x.vence, 'aria-label': 'Vence' });
+    const inVence = el('input', { class: 'input', type: 'date', value: x.vence || '', 'aria-label': 'Vence' });
     const inHora = el('input', { class: 'input', type: 'time', value: x.hora || '', 'aria-label': 'Hora' });
+    const chkSin = el('input', { type: 'checkbox', checked: !x.vence });
+    const aplicarSin = () => {
+      inVence.disabled = chkSin.checked;
+      inHora.disabled = chkSin.checked;
+      inVence.style.opacity = chkSin.checked ? '.45' : '';
+      inHora.style.opacity = chkSin.checked ? '.45' : '';
+    };
+    chkSin.addEventListener('change', aplicarSin);
+    aplicarSin();
     const guardarEdit = () => {
       const txt = inTexto.value.trim();
       if (!txt) { inTexto.focus(); return; }
-      Object.assign(x, { texto: txt, para: inPara.value, prio: inPrio.value, vence: inVence.value, hora: inHora.value || '' });
+      const sinFecha = chkSin.checked;
+      Object.assign(x, {
+        texto: txt, para: inPara.value, prio: inPrio.value,
+        vence: sinFecha ? '' : inVence.value, hora: sinFecha ? '' : (inHora.value || ''),
+      });
       editandoId = null; guardar(); toast('Tarea actualizada.'); ctx.recargar();
     };
     const cancelar = () => { editandoId = null; ctx.recargar(); };
@@ -931,6 +944,7 @@ export function trabajo(ctx) {
     requestAnimationFrame(() => { inTexto.focus(); inTexto.select(); });
     return el('div', { class: 'list__item tarea-editor' }, [
       el('div', { class: 'tarea-editor__campos' }, [inTexto, inPara, inPrio, inVence, inHora]),
+      el('label', { class: 'tarea-editor__sin' }, [chkSin, el('span', {}, 'Sin fecha (tarea indefinida)')]),
       el('div', { class: 'tarea-editor__acc' }, [
         el('button', { class: 'btn btn--primary btn--sm', onclick: guardarEdit }, [icon('i-check'), 'Guardar']),
         el('button', { class: 'btn btn--ghost btn--sm', title: 'Cancelar', 'aria-label': 'Cancelar', onclick: cancelar }, [icon('i-cerrar')]),
@@ -957,9 +971,11 @@ export function trabajo(ctx) {
           class: 'list__title',
           style: x.hecha ? { textDecoration: 'line-through', color: 'var(--text-3)' } : {},
         }, x.texto),
-        el('div', { class: 'list__meta' }, `Vence ${relativo(x.vence)} · ${fecha(x.vence)}${x.hora ? ` · ${x.hora}` : ''}`),
+        el('div', { class: 'list__meta' }, x.vence
+          ? `Vence ${relativo(x.vence)} · ${fecha(x.vence)}${x.hora ? ` · ${x.hora}` : ''}`
+          : 'Sin fecha definida'),
       ]),
-      !x.hecha && x.vence < hoyISO() ? el('span', { class: 'delta delta--down' }, 'Atrasada') : null,
+      !x.hecha && x.vence && x.vence < hoyISO() ? el('span', { class: 'delta delta--down' }, 'Atrasada') : null,
       x.para ? el('span', { class: 'tag' }, x.para) : null,
       el('span', { class: `tag ${TONO_PRIO[x.prio]}` }, x.prio),
       botonIcono('i-editar', 'Editar tarea', () => { editandoId = x.id; ctx.recargar(); }),
@@ -989,6 +1005,7 @@ export function trabajo(ctx) {
       const hoyStr = hoyISO();
       const porDia = {};
       for (const x of t.tareas) {
+        if (!x.vence) continue; // las tareas sin fecha no van al calendario
         const p = x.vence.split('-').map(Number);
         if (p[0] === anio && p[1] === mes + 1) (porDia[p[2]] ??= []).push(x);
       }
@@ -1034,26 +1051,42 @@ export function trabajo(ctx) {
     sub ? el('div', { class: 'todo-stat__s' }, sub) : null,
   ]);
 
+  // Orden: por fecha+hora; las tareas sin fecha ('~' ordena después) van al final.
+  const ordenar = (a, b) => ((a.vence || '~') + (a.hora || '')).localeCompare((b.vence || '~') + (b.hora || ''));
+
   return [
     encabezado('i-trabajo', 'To Do', 'Tareas, prioridades y calendario del mes.'),
 
     el('div', { class: 'grid grid--wide' }, [
       card('Calendario', [calendario()]),
-      card('Resumen del mes', [
-        el('div', { class: 'todo-stats' }, [
-          miniStat(pend.length, 'Pendientes', `${pend.filter((x) => x.prio === 'alta').length} de prioridad alta`),
-          miniStat(vencidas.length, 'Atrasadas', vencidas.length ? 'Requieren atención' : 'Todo al día'),
-          miniStat(hechas.length, 'Completadas', `${t.tareas.length ? Math.round((hechas.length / t.tareas.length) * 100) : 0} % del total`),
-          miniStat(`${horas.toString().replace('.', ',')} h`, 'Horas de foco', 'Esta semana'),
+      el('div', { class: 'todo-col' }, [
+        card('Resumen del mes', [
+          el('div', { class: 'todo-stats' }, [
+            miniStat(pend.length, 'Pendientes', `${pend.filter((x) => x.prio === 'alta').length} de prioridad alta`),
+            miniStat(vencidas.length, 'Atrasadas', vencidas.length ? 'Requieren atención' : 'Todo al día'),
+            miniStat(hechas.length, 'Completadas', `${t.tareas.length ? Math.round((hechas.length / t.tareas.length) * 100) : 0} % del total`),
+            miniStat(`${horas.toString().replace('.', ',')} h`, 'Horas de foco', 'Esta semana'),
+          ]),
+        ]),
+        card('Nueva tarea', [
+          formSimple(ctx, [
+            { name: 'texto', label: 'Tarea', placeholder: 'Enviar la factura del mes', required: true },
+            { name: 'para', label: 'Para', tipo: 'select', opciones: DESTINATARIOS, value: 'Personal' },
+            { name: 'prio', label: 'Prioridad', tipo: 'select', opciones: ['alta', 'media', 'baja'], value: 'media' },
+            { name: 'vence', label: 'Vence', type: 'date', value: hoyISO() },
+            { name: 'hora', label: 'Hora (opcional)', type: 'time' },
+            { name: 'sinFecha', label: 'Sin fecha (tarea indefinida)', tipo: 'check', deshabilita: ['vence', 'hora'] },
+          ], (d) => {
+            t.tareas.push({ id: uid(), texto: d.texto, para: d.para, prio: d.prio, vence: d.vence || '', hora: d.hora || '', hecha: false });
+          }),
         ]),
       ]),
     ]),
 
     el('div', { class: 'grid grid--wide' }, [
       card('Tareas', [
-        pend.length ? el('div', { class: 'list' }, pend
-          .sort((a, b) => (a.vence + (a.hora || '')).localeCompare(b.vence + (b.hora || '')))
-          .map(fila)) : listaVacia('Sin pendientes. Buen trabajo.'),
+        pend.length ? el('div', { class: 'list' }, pend.slice().sort(ordenar).map(fila))
+          : listaVacia('Sin pendientes. Buen trabajo.'),
         hechas.length
           ? el('details', { open: hechas.some((h) => h.id === editandoId), style: { marginTop: '12px' } }, [
               el('summary', {
@@ -1063,19 +1096,8 @@ export function trabajo(ctx) {
             ])
           : null,
       ]),
-      el('div', { style: { display: 'flex', flexDirection: 'column', gap: '20px' } }, [
-        card('Nueva tarea', [
-          formSimple(ctx, [
-            { name: 'texto', label: 'Tarea', placeholder: 'Enviar la factura del mes', required: true },
-            { name: 'para', label: 'Para', tipo: 'select', opciones: DESTINATARIOS, value: 'Personal' },
-            { name: 'prio', label: 'Prioridad', tipo: 'select', opciones: ['alta', 'media', 'baja'], value: 'media' },
-            { name: 'vence', label: 'Vence', type: 'date', value: hoyISO() },
-            { name: 'hora', label: 'Hora (opcional)', type: 'time' },
-          ], (d) => { t.tareas.push({ id: uid(), ...d, hecha: false }); }),
-        ]),
-        card('Horas de foco por día', [
-          grafico(t.foco.map((d) => ({ label: d.d, a: d.h })), { formato: (h) => `${h} h`, alto: 120 }),
-        ]),
+      card('Horas de foco por día', [
+        grafico(t.foco.map((d) => ({ label: d.d, a: d.h })), { formato: (h) => `${h} h`, alto: 120 }),
       ]),
     ]),
   ];
@@ -1297,7 +1319,52 @@ function campo(id, name, label, value, type = 'text') {
  * persiste y re-renderiza la sección.
  */
 function formSimple(ctx, campos, alGuardar, textoBoton = 'Agregar') {
-  const form = el('form', { class: 'card__body', onsubmit: (e) => {
+  const controles = {};
+  const grid = el('div', { class: 'form-grid' }, campos.map((c) => {
+    const id = `f-${c.name}-${uid()}`;
+    // Checkbox (ocupa toda la fila; puede deshabilitar otros campos).
+    if (c.tipo === 'check') {
+      const box = el('input', { type: 'checkbox', id, name: c.name, class: 'field-check__box' });
+      controles[c.name] = box;
+      return el('label', { class: 'field field-check', for: id, style: { gridColumn: '1 / -1' } }, [box, el('span', {}, c.label)]);
+    }
+    let control;
+    if (c.tipo === 'select') {
+      control = el('select', { class: 'input', id, name: c.name },
+        c.opciones.map((o) => el('option', { value: o, selected: o === c.value }, o)));
+    } else if (c.tipo === 'textarea') {
+      control = el('textarea', { class: 'input', id, name: c.name, placeholder: c.placeholder ?? '', required: !!c.required });
+    } else {
+      control = el('input', {
+        class: 'input', id, name: c.name,
+        type: c.type ?? 'text',
+        value: c.value ?? '',
+        placeholder: c.placeholder ?? '',
+        required: !!c.required,
+        ...(c.type === 'number' ? { min: '0', step: '1' } : {}),
+      });
+    }
+    controles[c.name] = control;
+    return el('div', { class: 'field', style: c.tipo === 'textarea' ? { gridColumn: '1 / -1' } : {} }, [
+      el('label', { for: id }, c.label),
+      control,
+    ]);
+  }));
+  // Un checkbox con `deshabilita: [...]` apaga esos campos cuando está marcado.
+  // (Los inputs deshabilitados no entran en FormData → quedan vacíos al guardar.)
+  campos.filter((c) => c.tipo === 'check' && Array.isArray(c.deshabilita)).forEach((c) => {
+    const box = controles[c.name];
+    const aplicar = () => c.deshabilita.forEach((n) => {
+      const t = controles[n];
+      if (!t) return;
+      t.disabled = box.checked;
+      const campo = t.closest('.field');
+      if (campo) campo.classList.toggle('is-disabled', box.checked);
+    });
+    box.addEventListener('change', aplicar);
+    aplicar();
+  });
+  return el('form', { class: 'card__body', onsubmit: (e) => {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(e.target));
     for (const [k, v] of Object.entries(d)) if (typeof v === 'string') d[k] = v.trim();
@@ -1306,30 +1373,7 @@ function formSimple(ctx, campos, alGuardar, textoBoton = 'Agregar') {
     toast('Guardado.');
     ctx.recargar();
   } }, [
-    el('div', { class: 'form-grid' }, campos.map((c) => {
-      const id = `f-${c.name}-${uid()}`;
-      let control;
-      if (c.tipo === 'select') {
-        control = el('select', { class: 'input', id, name: c.name },
-          c.opciones.map((o) => el('option', { value: o, selected: o === c.value }, o)));
-      } else if (c.tipo === 'textarea') {
-        control = el('textarea', { class: 'input', id, name: c.name, placeholder: c.placeholder ?? '', required: !!c.required });
-      } else {
-        control = el('input', {
-          class: 'input', id, name: c.name,
-          type: c.type ?? 'text',
-          value: c.value ?? '',
-          placeholder: c.placeholder ?? '',
-          required: !!c.required,
-          ...(c.type === 'number' ? { min: '0', step: '1' } : {}),
-        });
-      }
-      return el('div', { class: 'field', style: c.tipo === 'textarea' ? { gridColumn: '1 / -1' } : {} }, [
-        el('label', { for: id }, c.label),
-        control,
-      ]);
-    })),
+    grid,
     el('div', {}, [el('button', { class: 'btn btn--primary', type: 'submit' }, [icon('i-mas'), textoBoton])]),
   ]);
-  return form;
 }

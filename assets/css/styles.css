@@ -763,6 +763,10 @@ textarea.input { resize: vertical; min-height: 76px; }
 .cal__ev-h { font-weight: 700; margin-right: 4px; }
 .cal__more { font-size: 10px; color: var(--text-3); padding-left: 4px; }
 
+/* Columna derecha de To Do: apila las tarjetas y las ajusta a su contenido
+   (así "Resumen del mes" no se estira dejando espacio vacío). */
+.todo-col { display: flex; flex-direction: column; gap: var(--sp-4); align-self: start; }
+
 /* Mini-métricas compactas (columna derecha de To Do) */
 .todo-stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-2); }
 .todo-stat { padding: var(--sp-3); border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--surface-2); }
@@ -775,6 +779,15 @@ textarea.input { resize: vertical; min-height: 76px; }
 .tarea-editor__campos { display: grid; grid-template-columns: 2fr 1.2fr 0.9fr 1.1fr 0.85fr; gap: var(--sp-2); width: 100%; }
 .tarea-editor__campos .input { font-size: 13px; padding: 7px var(--sp-2); }
 .tarea-editor__acc { display: flex; gap: var(--sp-2); }
+.tarea-editor__sin { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-2); cursor: pointer; }
+.tarea-editor__sin input { width: 16px; height: 16px; accent-color: var(--c-trabajo); cursor: pointer; }
+
+/* Checkbox dentro de formSimple (p. ej. "Sin fecha") */
+.field-check { flex-direction: row; align-items: center; gap: 9px; cursor: pointer; font-size: 14px; color: var(--text-2); }
+.field-check__box { width: 17px; height: 17px; flex: none; accent-color: var(--accent); cursor: pointer; }
+.field.is-disabled { opacity: .45; }
+.field.is-disabled .input { cursor: not-allowed; }
+
 @media (max-width: 720px) {
   .tarea-editor__campos { grid-template-columns: 1fr 1fr; }
   .cal__cell { min-height: 60px; }
