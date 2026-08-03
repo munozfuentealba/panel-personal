@@ -910,7 +910,7 @@ export function trabajo(ctx) {
 
   // Editor en línea de una tarea (aparece en lugar de la fila normal).
   const filaEditor = (x) => {
-    const inTexto = el('input', { class: 'input', value: x.texto, 'aria-label': 'Tarea' });
+    const inTexto = el('input', { class: 'input', value: x.texto, 'aria-label': 'Tarea', autocomplete: 'off', autocapitalize: 'off', spellcheck: false });
     const inPara = el('select', { class: 'input', 'aria-label': 'Para' },
       DESTINATARIOS.map((o) => el('option', { value: o, selected: o === x.para }, o)));
     const inPrio = el('select', { class: 'input', 'aria-label': 'Prioridad' },
@@ -1333,7 +1333,7 @@ function formSimple(ctx, campos, alGuardar, textoBoton = 'Agregar') {
       control = el('select', { class: 'input', id, name: c.name },
         c.opciones.map((o) => el('option', { value: o, selected: o === c.value }, o)));
     } else if (c.tipo === 'textarea') {
-      control = el('textarea', { class: 'input', id, name: c.name, placeholder: c.placeholder ?? '', required: !!c.required });
+      control = el('textarea', { class: 'input', id, name: c.name, placeholder: c.placeholder ?? '', required: !!c.required, autocomplete: 'off' });
     } else {
       control = el('input', {
         class: 'input', id, name: c.name,
@@ -1341,6 +1341,7 @@ function formSimple(ctx, campos, alGuardar, textoBoton = 'Agregar') {
         value: c.value ?? '',
         placeholder: c.placeholder ?? '',
         required: !!c.required,
+        autocomplete: 'off', autocapitalize: 'off', spellcheck: false,
         ...(c.type === 'number' ? { min: '0', step: '1' } : {}),
       });
     }
@@ -1364,7 +1365,7 @@ function formSimple(ctx, campos, alGuardar, textoBoton = 'Agregar') {
     box.addEventListener('change', aplicar);
     aplicar();
   });
-  return el('form', { class: 'card__body', onsubmit: (e) => {
+  return el('form', { class: 'card__body', autocomplete: 'off', onsubmit: (e) => {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(e.target));
     for (const [k, v] of Object.entries(d)) if (typeof v === 'string') d[k] = v.trim();
