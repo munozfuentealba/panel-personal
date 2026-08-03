@@ -1125,11 +1125,11 @@ export function inventario(ctx) {
   const lista = el('div', { class: 'inv-list' });
   const conteo = el('div', { class: 'inv-count' });
   const chips = el('div', { class: 'inv-chips' });
-  const search = el('input', { class: 'input inv-search', placeholder: 'Buscar por nombre o nota…', 'aria-label': 'Buscar artículo', autocomplete: 'off', spellcheck: false });
+  const search = el('input', { class: 'input inv-search', placeholder: 'Buscar por nombre, descripción o nota…', 'aria-label': 'Buscar artículo', autocomplete: 'off', spellcheck: false });
 
   const filtra = () => items.filter((it) =>
     (invFiltro === 'Todas' || it.categoria === invFiltro)
-    && (!query || sinAcentos(it.nombre).includes(query) || sinAcentos(it.nota || '').includes(query)));
+    && (!query || sinAcentos(it.nombre).includes(query) || sinAcentos(it.descripcion || '').includes(query) || sinAcentos(it.nota || '').includes(query)));
 
   // Editor en línea de un artículo.
   const filaEditor = (it) => {
@@ -1138,10 +1138,11 @@ export function inventario(ctx) {
     const inCant = el('input', { class: 'input', type: 'number', min: '1', value: it.cantidad, 'aria-label': 'Cantidad' });
     const inEstado = el('select', { class: 'input', 'aria-label': 'Estado' }, INV_ESTADOS.map((o) => el('option', { value: o, selected: o === it.estado }, o)));
     const inNota = el('input', { class: 'input', value: it.nota || '', placeholder: 'Nota', 'aria-label': 'Nota', autocomplete: 'off', spellcheck: false });
+    const inDesc = el('textarea', { class: 'input inv-editor__desc', value: it.descripcion || '', placeholder: 'Descripción', 'aria-label': 'Descripción', rows: 2, autocomplete: 'off' });
     const guardarEd = () => {
       const n = inNombre.value.trim();
       if (!n) { inNombre.focus(); return; }
-      Object.assign(it, { nombre: n, categoria: inCat.value, cantidad: Math.max(1, Number(inCant.value) || 1), estado: inEstado.value, nota: inNota.value.trim() });
+      Object.assign(it, { nombre: n, categoria: inCat.value, cantidad: Math.max(1, Number(inCant.value) || 1), estado: inEstado.value, descripcion: inDesc.value.trim(), nota: inNota.value.trim() });
       invEditId = null; guardar(); toast('Artículo actualizado.'); ctx.recargar();
     };
     const cancelar = () => { invEditId = null; ctx.recargar(); };
@@ -1149,6 +1150,7 @@ export function inventario(ctx) {
     requestAnimationFrame(() => { inNombre.focus(); inNombre.select(); });
     return el('div', { class: 'inv-item inv-editor' }, [
       el('div', { class: 'inv-editor__campos' }, [inNombre, inCat, inCant, inEstado, inNota]),
+      inDesc,
       el('div', { class: 'inv-editor__acc' }, [
         el('button', { class: 'btn btn--primary btn--sm', onclick: guardarEd }, [icon('i-check'), 'Guardar']),
         el('button', { class: 'btn btn--ghost btn--sm', title: 'Cancelar', 'aria-label': 'Cancelar', onclick: cancelar }, [icon('i-cerrar')]),
@@ -1163,6 +1165,7 @@ export function inventario(ctx) {
       el('span', { class: 'inv-dot', style: { background: color } }),
       el('div', { class: 'inv-main' }, [
         el('div', { class: 'inv-name' }, it.nombre),
+        it.descripcion ? el('div', { class: 'inv-desc' }, it.descripcion) : null,
         el('div', { class: 'inv-meta' }, [
           el('span', { class: 'inv-cat', style: { color } }, it.categoria),
           it.nota ? el('span', {}, `· ${it.nota}`) : null,
@@ -1214,7 +1217,6 @@ export function inventario(ctx) {
     el('div', { class: 'grid' }, [
       card('Artículos', [metrica(items.length, 'registrados')]),
       card('Unidades totales', [metrica(totalUnidades, 'sumando cantidades')]),
-      card('Categorías', [metrica(INV_CATS.length, INV_CATS.join(' · '))]),
     ]),
 
     el('div', { class: 'grid grid--wide' }, [
@@ -1225,9 +1227,10 @@ export function inventario(ctx) {
           { name: 'categoria', label: 'Categoría', tipo: 'select', opciones: INV_CATS, value: 'Personal' },
           { name: 'cantidad', label: 'Cantidad', type: 'number', value: 1 },
           { name: 'estado', label: 'Estado', tipo: 'select', opciones: INV_ESTADOS, value: 'Bueno' },
+          { name: 'descripcion', label: 'Descripción (opcional)', tipo: 'textarea', placeholder: 'Qué es, características, para qué lo usás…' },
           { name: 'nota', label: 'Nota (opcional)', placeholder: 'N° de serie, accesorios…' },
         ], (d) => {
-          inv.items.push({ id: uid(), nombre: d.nombre, categoria: d.categoria, cantidad: Math.max(1, Number(d.cantidad) || 1), estado: d.estado, nota: d.nota || '' });
+          inv.items.push({ id: uid(), nombre: d.nombre, categoria: d.categoria, cantidad: Math.max(1, Number(d.cantidad) || 1), estado: d.estado, descripcion: d.descripcion || '', nota: d.nota || '' });
         }),
       ]),
     ]),

@@ -789,12 +789,14 @@ textarea.input { resize: vertical; min-height: 76px; }
 .inv-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
 .inv-main { flex: 1; min-width: 0; }
 .inv-name { font-size: 14.5px; font-weight: 600; color: var(--text); }
-.inv-meta { font-size: 12.5px; color: var(--text-3); display: flex; gap: 6px; flex-wrap: wrap; margin-top: 1px; }
+.inv-desc { font-size: 13px; color: var(--text-2); line-height: 1.45; margin-top: 2px; }
+.inv-meta { font-size: 12.5px; color: var(--text-3); display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
 .inv-cat { font-weight: 600; }
 .inv-qty { font-size: 13px; font-weight: 700; color: var(--text-2); background: var(--surface-hover); padding: 2px 8px; border-radius: var(--r-sm); flex: none; }
 .inv-editor { flex-direction: column; align-items: stretch; gap: var(--sp-2); }
 .inv-editor__campos { display: grid; grid-template-columns: 1.7fr 1.1fr .7fr 1.1fr 1.4fr; gap: var(--sp-2); }
 .inv-editor__campos .input { font-size: 13px; padding: 7px var(--sp-2); }
+.inv-editor__desc { font-size: 13px; padding: 7px var(--sp-2); min-height: 48px; resize: vertical; }
 .inv-editor__acc { display: flex; gap: var(--sp-2); }
 @media (max-width: 720px) { .inv-editor__campos { grid-template-columns: 1fr 1fr; } }
 

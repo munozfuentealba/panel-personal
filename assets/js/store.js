@@ -244,15 +244,15 @@ const SEED = {
 
   inventario: {
     items: [
-      { id: 'inv1', nombre: 'MacBook Air', categoria: 'Personal', cantidad: 1, estado: 'Bueno', nota: '' },
-      { id: 'inv2', nombre: 'iPhone 14', categoria: 'Personal', cantidad: 1, estado: 'Bueno', nota: '' },
-      { id: 'inv3', nombre: 'Cámara Sony A7 III', categoria: 'Audio Visual', cantidad: 1, estado: 'Bueno', nota: 'Lente 28-70mm' },
-      { id: 'inv4', nombre: 'Trípode Manfrotto', categoria: 'Audio Visual', cantidad: 1, estado: 'Usado', nota: '' },
-      { id: 'inv5', nombre: 'Luz LED Godox', categoria: 'Audio Visual', cantidad: 2, estado: 'Nuevo', nota: '' },
-      { id: 'inv6', nombre: 'Interfaz Focusrite Scarlett', categoria: 'Estudio', cantidad: 1, estado: 'Bueno', nota: '2i2' },
-      { id: 'inv7', nombre: 'Micrófono Rode NT1', categoria: 'Estudio', cantidad: 1, estado: 'Bueno', nota: '' },
-      { id: 'inv8', nombre: 'Monitores KRK Rokit 5', categoria: 'Estudio', cantidad: 2, estado: 'Bueno', nota: '' },
-      { id: 'inv9', nombre: 'Teclado MIDI M-Audio', categoria: 'Estudio', cantidad: 1, estado: 'Usado', nota: '49 teclas' },
+      { id: 'inv1', nombre: 'MacBook Air', categoria: 'Personal', cantidad: 1, estado: 'Bueno', descripcion: 'Notebook principal para trabajo y edición.', nota: '' },
+      { id: 'inv2', nombre: 'iPhone 14', categoria: 'Personal', cantidad: 1, estado: 'Bueno', descripcion: 'Teléfono personal, también para grabar en terreno.', nota: '' },
+      { id: 'inv3', nombre: 'Cámara Sony A7 III', categoria: 'Audio Visual', cantidad: 1, estado: 'Bueno', descripcion: 'Cámara mirrorless full-frame para fotos y video.', nota: 'Lente 28-70mm' },
+      { id: 'inv4', nombre: 'Trípode Manfrotto', categoria: 'Audio Visual', cantidad: 1, estado: 'Usado', descripcion: 'Trípode de video con cabezal fluido.', nota: '' },
+      { id: 'inv5', nombre: 'Luz LED Godox', categoria: 'Audio Visual', cantidad: 2, estado: 'Nuevo', descripcion: 'Paneles LED bicolor para iluminación de set.', nota: '' },
+      { id: 'inv6', nombre: 'Interfaz Focusrite Scarlett', categoria: 'Estudio', cantidad: 1, estado: 'Bueno', descripcion: 'Interfaz de audio USB de 2 entradas.', nota: '2i2' },
+      { id: 'inv7', nombre: 'Micrófono Rode NT1', categoria: 'Estudio', cantidad: 1, estado: 'Bueno', descripcion: 'Micrófono condensador de estudio para voces.', nota: '' },
+      { id: 'inv8', nombre: 'Monitores KRK Rokit 5', categoria: 'Estudio', cantidad: 2, estado: 'Bueno', descripcion: 'Par de monitores de estudio para mezcla.', nota: '' },
+      { id: 'inv9', nombre: 'Teclado MIDI M-Audio', categoria: 'Estudio', cantidad: 1, estado: 'Usado', descripcion: 'Controlador MIDI para producción musical.', nota: '49 teclas' },
     ],
   },
 };
