@@ -42,25 +42,41 @@ const IDIOMAS = [
   { code: 'it', label: 'Italiano' },
 ];
 
+// Decodifica entidades HTML (&#39;, &quot;, &amp;…) que MyMemory a veces
+// devuelve, para que apóstrofos, comillas y símbolos salgan bien.
+function decodeEntidades(s) {
+  const ta = document.createElement('textarea');
+  ta.innerHTML = s;
+  return ta.value;
+}
+
 /**
  * Traduce usando el motor gratuito de Google (sin API key) y, si falla,
  * cae en MyMemory como respaldo. Ambos son gratis y sin clave.
  */
 async function traducirTexto(texto, from, to, signal) {
   const q = encodeURIComponent(texto);
+  // Motor principal: Google. Los segmentos por oración se unen con '' porque
+  // cada uno ya trae su espacio final; así comas y puntos quedan correctos.
   try {
     const r = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&q=${q}`, { signal });
     if (r.ok) {
       const j = await r.json();
-      const t = (j?.[0] || []).map((s) => s[0]).join('');
-      if (t) return t;
+      const t = (j?.[0] || []).map((s) => (s && s[0]) || '').join('');
+      if (t.trim()) return t;
     }
   } catch (e) {
     if (e.name === 'AbortError') throw e;
   }
+  // Respaldo: MyMemory. Solo es válido con responseStatus 200 (puede venir como
+  // número o string); si no, sus mensajes de error llegan dentro de
+  // translatedText y no hay que mostrarlos como si fueran una traducción.
   const r = await fetch(`https://api.mymemory.translated.net/get?q=${q}&langpair=${from}|${to}`, { signal });
   const j = await r.json();
-  return j?.responseData?.translatedText || '';
+  if (Number(j?.responseStatus) !== 200) throw new Error('Respaldo de traducción no disponible.');
+  const t = j?.responseData?.translatedText || '';
+  if (!t || /^MYMEMORY WARNING/i.test(t)) throw new Error('Respaldo de traducción no disponible.');
+  return decodeEntidades(t);
 }
 const AI_REPLIES = [
   { text: 'Nice! What made that your favorite part?', tip: 'Tip: para acciones terminadas en el pasado usá el pasado simple — “I went”, no “I go”.' },
@@ -477,6 +493,7 @@ export function texa() {
         if (controlador) controlador.abort();
         salida.textContent = 'Traducción';
         salida.classList.add('texa__tout--vacio');
+        salida.classList.remove('texa__tout--error');
         estado_.textContent = '';
         btnCopiar.disabled = true;
         return;
@@ -496,8 +513,11 @@ export function texa() {
         })
         .catch((e) => {
           if (e.name === 'AbortError' || id !== pedido) return;
-          estado_.textContent = 'No se pudo traducir. Revisá tu conexión e intentá de nuevo.';
+          salida.textContent = 'No se pudo traducir. Revisá tu conexión e intentá de nuevo.';
+          salida.classList.remove('texa__tout--vacio');
           salida.classList.add('texa__tout--error');
+          estado_.textContent = '';
+          btnCopiar.disabled = true;
         });
     };
     const debounce = () => { clearTimeout(temporizador); temporizador = setTimeout(lanzar, 420); };
@@ -527,8 +547,10 @@ export function texa() {
     const swap = () => {
       [from, to] = [to, from];
       selFrom.value = from; selTo.value = to;
-      const traducido = salida.classList.contains('texa__tout--vacio') ? '' : salida.textContent;
-      if (traducido) entrada.value = traducido;
+      // Solo trasladamos al campo de entrada una traducción real (ni el
+      // placeholder vacío ni un mensaje de error).
+      const util = !salida.classList.contains('texa__tout--vacio') && !salida.classList.contains('texa__tout--error');
+      if (util && salida.textContent.trim()) entrada.value = salida.textContent;
       contador.textContent = `${entrada.value.length} / 5000`;
       lanzar();
     };
