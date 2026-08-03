@@ -241,6 +241,20 @@ const SEED = {
       { d: 'Vie', h: 5.5 }, { d: 'Sáb', h: 2 }, { d: 'Dom', h: 0 },
     ],
   },
+
+  inventario: {
+    items: [
+      { id: 'inv1', nombre: 'MacBook Air', categoria: 'Personal', cantidad: 1, estado: 'Bueno', nota: '' },
+      { id: 'inv2', nombre: 'iPhone 14', categoria: 'Personal', cantidad: 1, estado: 'Bueno', nota: '' },
+      { id: 'inv3', nombre: 'Cámara Sony A7 III', categoria: 'Audio Visual', cantidad: 1, estado: 'Bueno', nota: 'Lente 28-70mm' },
+      { id: 'inv4', nombre: 'Trípode Manfrotto', categoria: 'Audio Visual', cantidad: 1, estado: 'Usado', nota: '' },
+      { id: 'inv5', nombre: 'Luz LED Godox', categoria: 'Audio Visual', cantidad: 2, estado: 'Nuevo', nota: '' },
+      { id: 'inv6', nombre: 'Interfaz Focusrite Scarlett', categoria: 'Estudio', cantidad: 1, estado: 'Bueno', nota: '2i2' },
+      { id: 'inv7', nombre: 'Micrófono Rode NT1', categoria: 'Estudio', cantidad: 1, estado: 'Bueno', nota: '' },
+      { id: 'inv8', nombre: 'Monitores KRK Rokit 5', categoria: 'Estudio', cantidad: 2, estado: 'Bueno', nota: '' },
+      { id: 'inv9', nombre: 'Teclado MIDI M-Audio', categoria: 'Estudio', cantidad: 1, estado: 'Usado', nota: '49 teclas' },
+    ],
+  },
 };
 
 /* ─── Persistencia ────────────────────────────────────────────────── */

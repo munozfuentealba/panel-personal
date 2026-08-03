@@ -1104,6 +1104,137 @@ export function trabajo(ctx) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
+   Inventario
+   ══════════════════════════════════════════════════════════════════ */
+
+const INV_CATS = ['Personal', 'Audio Visual', 'Estudio'];
+const INV_COLOR = { Personal: '#0d9488', 'Audio Visual': '#8b5cf6', Estudio: '#f59e0b' };
+const INV_ESTADOS = ['Nuevo', 'Bueno', 'Usado', 'A reparar'];
+const TONO_ESTADO = { Nuevo: 'tag--ok', Bueno: 'tag--info', Usado: '', 'A reparar': 'tag--warn' };
+// Normaliza para buscar sin distinguir mayúsculas ni acentos (micro = micró…).
+const sinAcentos = (s) => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+// Estado local que sobrevive a los re-render de la sección.
+let invFiltro = 'Todas';
+let invEditId = null;
+
+export function inventario(ctx) {
+  const inv = datos.inventario;
+  const items = inv.items;
+  let query = '';
+
+  const lista = el('div', { class: 'inv-list' });
+  const conteo = el('div', { class: 'inv-count' });
+  const chips = el('div', { class: 'inv-chips' });
+  const search = el('input', { class: 'input inv-search', placeholder: 'Buscar por nombre o nota…', 'aria-label': 'Buscar artículo', autocomplete: 'off', spellcheck: false });
+
+  const filtra = () => items.filter((it) =>
+    (invFiltro === 'Todas' || it.categoria === invFiltro)
+    && (!query || sinAcentos(it.nombre).includes(query) || sinAcentos(it.nota || '').includes(query)));
+
+  // Editor en línea de un artículo.
+  const filaEditor = (it) => {
+    const inNombre = el('input', { class: 'input', value: it.nombre, 'aria-label': 'Artículo', autocomplete: 'off', spellcheck: false });
+    const inCat = el('select', { class: 'input', 'aria-label': 'Categoría' }, INV_CATS.map((o) => el('option', { value: o, selected: o === it.categoria }, o)));
+    const inCant = el('input', { class: 'input', type: 'number', min: '1', value: it.cantidad, 'aria-label': 'Cantidad' });
+    const inEstado = el('select', { class: 'input', 'aria-label': 'Estado' }, INV_ESTADOS.map((o) => el('option', { value: o, selected: o === it.estado }, o)));
+    const inNota = el('input', { class: 'input', value: it.nota || '', placeholder: 'Nota', 'aria-label': 'Nota', autocomplete: 'off', spellcheck: false });
+    const guardarEd = () => {
+      const n = inNombre.value.trim();
+      if (!n) { inNombre.focus(); return; }
+      Object.assign(it, { nombre: n, categoria: inCat.value, cantidad: Math.max(1, Number(inCant.value) || 1), estado: inEstado.value, nota: inNota.value.trim() });
+      invEditId = null; guardar(); toast('Artículo actualizado.'); ctx.recargar();
+    };
+    const cancelar = () => { invEditId = null; ctx.recargar(); };
+    inNombre.addEventListener('keydown', (e) => { if (e.key === 'Enter') guardarEd(); else if (e.key === 'Escape') cancelar(); });
+    requestAnimationFrame(() => { inNombre.focus(); inNombre.select(); });
+    return el('div', { class: 'inv-item inv-editor' }, [
+      el('div', { class: 'inv-editor__campos' }, [inNombre, inCat, inCant, inEstado, inNota]),
+      el('div', { class: 'inv-editor__acc' }, [
+        el('button', { class: 'btn btn--primary btn--sm', onclick: guardarEd }, [icon('i-check'), 'Guardar']),
+        el('button', { class: 'btn btn--ghost btn--sm', title: 'Cancelar', 'aria-label': 'Cancelar', onclick: cancelar }, [icon('i-cerrar')]),
+      ]),
+    ]);
+  };
+
+  const fila = (it) => {
+    if (it.id === invEditId) return filaEditor(it);
+    const color = INV_COLOR[it.categoria] || 'var(--text-3)';
+    return el('div', { class: 'inv-item' }, [
+      el('span', { class: 'inv-dot', style: { background: color } }),
+      el('div', { class: 'inv-main' }, [
+        el('div', { class: 'inv-name' }, it.nombre),
+        el('div', { class: 'inv-meta' }, [
+          el('span', { class: 'inv-cat', style: { color } }, it.categoria),
+          it.nota ? el('span', {}, `· ${it.nota}`) : null,
+        ]),
+      ]),
+      Number(it.cantidad) > 1 ? el('span', { class: 'inv-qty' }, `×${it.cantidad}`) : null,
+      it.estado ? el('span', { class: `tag ${TONO_ESTADO[it.estado] || ''}` }, it.estado) : null,
+      botonIcono('i-editar', 'Editar artículo', () => { invEditId = it.id; ctx.recargar(); }),
+      botonIcono('i-basura', 'Eliminar artículo', () => {
+        inv.items = inv.items.filter((y) => y.id !== it.id);
+        if (invEditId === it.id) invEditId = null;
+        guardar(); ctx.recargar();
+      }),
+    ]);
+  };
+
+  const pintarChips = () => {
+    const chip = (nombre, n) => {
+      const activo = invFiltro === nombre;
+      const c = nombre === 'Todas' ? 'var(--accent)' : INV_COLOR[nombre];
+      return el('button', {
+        class: `inv-chip${activo ? ' is-active' : ''}`,
+        style: activo ? { background: c, borderColor: 'transparent', color: '#fff' } : {},
+        onclick: () => { invFiltro = nombre; pintarChips(); pintarLista(); },
+      }, [el('span', {}, nombre), el('span', { class: 'inv-chip__n' }, String(n))]);
+    };
+    chips.replaceChildren(
+      chip('Todas', items.length),
+      ...INV_CATS.map((c) => chip(c, items.filter((it) => it.categoria === c).length)),
+    );
+  };
+
+  const pintarLista = () => {
+    const f = filtra().slice().sort((a, b) => a.nombre.localeCompare(b.nombre));
+    conteo.textContent = `${f.length} ${f.length === 1 ? 'artículo' : 'artículos'}${invFiltro !== 'Todas' ? ` · ${invFiltro}` : ''}`;
+    lista.replaceChildren(...(f.length ? f.map(fila)
+      : [listaVacia(query || invFiltro !== 'Todas' ? 'No hay artículos que coincidan.' : 'Todavía no hay artículos. Agregá uno al lado.')]));
+  };
+  search.addEventListener('input', (e) => { query = sinAcentos(e.target.value.trim()); pintarLista(); });
+
+  pintarChips();
+  pintarLista();
+
+  const totalUnidades = items.reduce((s, it) => s + (Number(it.cantidad) || 1), 0);
+
+  return [
+    encabezado('i-inventario', 'Inventario', 'Todo tu equipo y cosas, organizados y buscables por categoría.'),
+
+    el('div', { class: 'grid' }, [
+      card('Artículos', [metrica(items.length, 'registrados')]),
+      card('Unidades totales', [metrica(totalUnidades, 'sumando cantidades')]),
+      card('Categorías', [metrica(INV_CATS.length, INV_CATS.join(' · '))]),
+    ]),
+
+    el('div', { class: 'grid grid--wide' }, [
+      card('Lista', [chips, search, conteo, lista]),
+      card('Nuevo artículo', [
+        formSimple(ctx, [
+          { name: 'nombre', label: 'Artículo', placeholder: 'Cámara Sony A7 III', required: true },
+          { name: 'categoria', label: 'Categoría', tipo: 'select', opciones: INV_CATS, value: 'Personal' },
+          { name: 'cantidad', label: 'Cantidad', type: 'number', value: 1 },
+          { name: 'estado', label: 'Estado', tipo: 'select', opciones: INV_ESTADOS, value: 'Bueno' },
+          { name: 'nota', label: 'Nota (opcional)', placeholder: 'N° de serie, accesorios…' },
+        ], (d) => {
+          inv.items.push({ id: uid(), nombre: d.nombre, categoria: d.categoria, cantidad: Math.max(1, Number(d.cantidad) || 1), estado: d.estado, nota: d.nota || '' });
+        }),
+      ]),
+    ]),
+  ];
+}
+
+/* ══════════════════════════════════════════════════════════════════
    Ajustes
    ══════════════════════════════════════════════════════════════════ */
 

@@ -18,6 +18,7 @@ const SECCIONES = [
   { id: 'instagram',  nombre: 'Red Social',          icono: 'i-instagram', grupo: 'Áreas',  sub: 'Instagram @munoz.fuentealba · seguimiento',    render: S.instagram,  color: 'var(--c-instagram)' },
   { id: 'musica',     nombre: 'Producción Musical',  icono: 'i-musica',    grupo: 'Áreas',  sub: 'Proyectos, horas de estudio e ideas',         render: S.musica,     color: 'var(--c-musica)' },
   { id: 'empresa',    nombre: 'Empresa',             icono: 'i-empresa',   grupo: 'Áreas',  sub: 'Facturación, pipeline y proyectos',           render: S.empresa,    color: 'var(--c-empresa)' },
+  { id: 'inventario', nombre: 'Inventario',          icono: 'i-inventario', grupo: 'Áreas', sub: 'Tu equipo y cosas, con buscador por categoría', render: S.inventario, color: 'var(--c-inventario)' },
 
   { id: 'texa',       nombre: 'Texa',                icono: 'i-texa',      grupo: 'Proyectos', sub: 'Tu app de inglés · Inicio, vocabulario, traducir, aprender y chat', render: texa, color: 'var(--c-texa)', pantallaCompleta: true },
 
