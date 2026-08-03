@@ -32,15 +32,36 @@ const SEED = {
 };
 
 const STAGE_LABEL = { nueva: 'Nueva', aprendiendo: 'Aprendiendo', dominada: 'Dominada' };
-const PROMPTS = {
-  'es-en': { source: 'Se me pasó completamente avisarte.', suggested: 'It completely slipped my mind to let you know.' },
-  'en-es': { source: 'I could really use a second pair of eyes on this.', suggested: 'Me vendría bien que alguien más lo revise.' },
-};
-const FEEDBACK = [
-  { tone: 'nuance', text: '“Slipped my mind” suena más natural acá que una traducción literal de “se me pasó”.' },
-  { tone: 'ok', text: 'Tiempo verbal y orden de palabras: correcto.' },
-  { tone: 'nuance', text: 'El registro coincide con el original — casual pero cuidado.' },
+// Idiomas del traductor (códigos ISO que entienden Google/MyMemory).
+const IDIOMAS = [
+  { code: 'es', label: 'Español' },
+  { code: 'en', label: 'Inglés' },
+  { code: 'pt', label: 'Portugués' },
+  { code: 'fr', label: 'Francés' },
+  { code: 'de', label: 'Alemán' },
+  { code: 'it', label: 'Italiano' },
 ];
+
+/**
+ * Traduce usando el motor gratuito de Google (sin API key) y, si falla,
+ * cae en MyMemory como respaldo. Ambos son gratis y sin clave.
+ */
+async function traducirTexto(texto, from, to, signal) {
+  const q = encodeURIComponent(texto);
+  try {
+    const r = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&q=${q}`, { signal });
+    if (r.ok) {
+      const j = await r.json();
+      const t = (j?.[0] || []).map((s) => s[0]).join('');
+      if (t) return t;
+    }
+  } catch (e) {
+    if (e.name === 'AbortError') throw e;
+  }
+  const r = await fetch(`https://api.mymemory.translated.net/get?q=${q}&langpair=${from}|${to}`, { signal });
+  const j = await r.json();
+  return j?.responseData?.translatedText || '';
+}
 const AI_REPLIES = [
   { text: 'Nice! What made that your favorite part?', tip: 'Tip: para acciones terminadas en el pasado usá el pasado simple — “I went”, no “I go”.' },
   { text: 'That sounds fun. Do you usually do that on weekends?', tip: null },
@@ -76,6 +97,9 @@ const IC = {
   flecha: '<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>',
   mas: '<path d="M12 5v14M5 12h14"/>',
   check2: '<path d="M4.5 12.5l5 5 10-11"/>',
+  intercambiar: '<path d="M7 8h13"/><path d="M16 4l4 4-4 4"/><path d="M17 16H4"/><path d="M8 12l-4 4 4 4"/>',
+  copiar: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+  borrar: '<path d="M6 6l12 12M18 6 6 18"/>',
 };
 const svgIc = (paths, cls = '') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
 
@@ -428,52 +452,111 @@ export function texa() {
 
   /* Pantalla: Traducir */
   const pTraducir = () => {
-    let dir = 'es-en';
-    const cols = el('div', { class: 'texa__cols' });
-    const pintar = () => {
-      const p = PROMPTS[dir];
-      const attempt = el('textarea', { class: 'texa__textarea', placeholder: 'Escribí tu traducción acá…', 'aria-label': 'Tu traducción' });
-      const feedback = el('div', { class: 'texa__feedwrap' }, [
-        el('div', { class: 'texa__feedhint' }, [
-          el('span', { class: 'texa__eyebrow' }, 'Corrección'),
-          el('p', { class: 'texa__muted' }, 'Escribí tu traducción y presioná “Corregir”. Acá aparecen la versión sugerida y las notas de matiz.'),
-        ]),
-      ]);
-      const corregir = el('button', { class: 'texa__btn texa__btn--block', onclick: () => {
-        if (!attempt.value.trim()) return;
-        feedback.replaceChildren(el('div', { class: 'texa__feedback' }, [
-          el('span', { class: 'texa__eyebrow' }, 'Traducción sugerida'),
-          el('p', { class: 'texa__suggested' }, p.suggested),
-          el('div', { class: 'texa__notes' }, FEEDBACK.map((n) =>
-            el('div', { class: 'texa__note' }, [
-              el('span', { class: `texa__notedot texa__notedot--${n.tone === 'ok' ? 'ok' : 'warn'}` }),
-              el('span', {}, n.text),
-            ]))),
-        ]));
-      } }, 'Corregir');
-      cols.replaceChildren(
-        el('div', { class: 'texa__col' }, [
-          el('div', { class: 'texa__segmented' }, [
-            el('button', { class: `texa__segment${dir === 'es-en' ? ' is-active' : ''}`, onclick: () => { dir = 'es-en'; pintar(); } }, 'ES → EN'),
-            el('button', { class: `texa__segment${dir === 'en-es' ? ' is-active' : ''}`, onclick: () => { dir = 'en-es'; pintar(); } }, 'EN → ES'),
-          ]),
-          el('div', { class: 'texa__sourcecard' }, [
-            el('span', { class: 'texa__muted' }, dir === 'es-en' ? 'Texto en español' : 'Text in English'),
-            el('p', { class: 'texa__source' }, p.source),
-          ]),
-          el('div', { class: 'texa__section' }, [
-            el('span', { class: 'texa__muted' }, 'Tu traducción'),
-            attempt,
-            corregir,
-          ]),
-        ]),
-        el('div', { class: 'texa__col' }, [feedback]),
-      );
+    let from = 'es';
+    let to = 'en';
+    let pedido = 0;          // token para descartar respuestas viejas
+    let controlador = null;  // AbortController en curso
+    let temporizador = null; // debounce del auto-traducir
+
+    const opciones = (sel) => IDIOMAS.map((i) => el('option', { value: i.code, selected: i.code === sel }, i.label));
+    const selFrom = el('select', { class: 'texa__lang', 'aria-label': 'Idioma de origen' }, opciones(from));
+    const selTo = el('select', { class: 'texa__lang', 'aria-label': 'Idioma de destino' }, opciones(to));
+
+    const entrada = el('textarea', { class: 'texa__tinput', placeholder: 'Escribe para traducir…', 'aria-label': 'Texto a traducir', rows: 6, maxlength: 5000 });
+    const salida = el('div', { class: 'texa__tout texa__tout--vacio' }, 'Traducción');
+    const estado_ = el('div', { class: 'texa__tstatus' });
+    const contador = el('span', { class: 'texa__tcount' }, '0 / 5000');
+    const btnLimpiar = el('button', { class: 'texa__ticon', title: 'Borrar texto', 'aria-label': 'Borrar texto', html: svgIc(IC.borrar) });
+    const btnCopiar = el('button', { class: 'texa__ticon', title: 'Copiar traducción', 'aria-label': 'Copiar traducción', disabled: true, html: svgIc(IC.copiar) });
+
+    const lanzar = () => {
+      const texto = entrada.value.trim();
+      contador.textContent = `${entrada.value.length} / 5000`;
+      if (!texto) {
+        pedido += 1; // invalida cualquier respuesta en vuelo
+        if (controlador) controlador.abort();
+        salida.textContent = 'Traducción';
+        salida.classList.add('texa__tout--vacio');
+        estado_.textContent = '';
+        btnCopiar.disabled = true;
+        return;
+      }
+      const id = ++pedido;
+      estado_.textContent = 'Traduciendo…';
+      salida.classList.remove('texa__tout--error');
+      if (controlador) controlador.abort();
+      controlador = new AbortController();
+      traducirTexto(texto, from, to, controlador.signal)
+        .then((t) => {
+          if (id !== pedido) return;
+          salida.textContent = t || '—';
+          salida.classList.toggle('texa__tout--vacio', !t);
+          estado_.textContent = '';
+          btnCopiar.disabled = !t;
+        })
+        .catch((e) => {
+          if (e.name === 'AbortError' || id !== pedido) return;
+          estado_.textContent = 'No se pudo traducir. Revisá tu conexión e intentá de nuevo.';
+          salida.classList.add('texa__tout--error');
+        });
     };
-    pintar();
+    const debounce = () => { clearTimeout(temporizador); temporizador = setTimeout(lanzar, 420); };
+
+    entrada.addEventListener('input', () => { contador.textContent = `${entrada.value.length} / 5000`; debounce(); });
+    selFrom.addEventListener('change', () => {
+      const nuevo = selFrom.value;
+      if (nuevo === to) { to = from; selTo.value = to; } // evita origen = destino
+      from = nuevo; lanzar();
+    });
+    selTo.addEventListener('change', () => {
+      const nuevo = selTo.value;
+      if (nuevo === from) { from = to; selFrom.value = from; }
+      to = nuevo; lanzar();
+    });
+    btnLimpiar.addEventListener('click', () => { entrada.value = ''; lanzar(); entrada.focus(); });
+    btnCopiar.addEventListener('click', async () => {
+      if (btnCopiar.disabled) return;
+      try {
+        await navigator.clipboard.writeText(salida.textContent);
+        const antes = estado_.textContent;
+        estado_.textContent = 'Copiado';
+        setTimeout(() => { if (estado_.textContent === 'Copiado') estado_.textContent = antes; }, 1400);
+      } catch { /* clipboard no disponible */ }
+    });
+
+    const swap = () => {
+      [from, to] = [to, from];
+      selFrom.value = from; selTo.value = to;
+      const traducido = salida.classList.contains('texa__tout--vacio') ? '' : salida.textContent;
+      if (traducido) entrada.value = traducido;
+      contador.textContent = `${entrada.value.length} / 5000`;
+      lanzar();
+    };
+    const btnSwap = el('button', { class: 'texa__swap', title: 'Intercambiar idiomas', 'aria-label': 'Intercambiar idiomas', onclick: swap, html: svgIc(IC.intercambiar) });
+
+    const cuerpo = el('div', { class: 'texa__trad' }, [
+      el('div', { class: 'texa__tbar' }, [
+        el('div', { class: 'texa__langwrap' }, [selFrom]),
+        btnSwap,
+        el('div', { class: 'texa__langwrap' }, [selTo]),
+      ]),
+      el('div', { class: 'texa__tgrid' }, [
+        el('div', { class: 'texa__tpane' }, [
+          entrada,
+          el('div', { class: 'texa__tfoot' }, [btnLimpiar, contador]),
+        ]),
+        el('div', { class: 'texa__tpane texa__tpane--out' }, [
+          salida,
+          el('div', { class: 'texa__tfoot' }, [estado_, btnCopiar]),
+        ]),
+      ]),
+      el('p', { class: 'texa__muted texa__tnote' }, 'Traducción por el motor gratuito de Google. Se traduce solo mientras escribís.'),
+    ]);
+
+    requestAnimationFrame(() => entrada.focus());
     return {
-      hero: heroTitulo('Traducir', 'Traducís vos, la IA corrige matices y registro — no al revés.'),
-      cuerpo: [cols],
+      hero: heroTitulo('Traducir', 'Escribí en un idioma y velo al instante en el otro.'),
+      cuerpo: [cuerpo],
     };
   };
 

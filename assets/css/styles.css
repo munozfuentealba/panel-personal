@@ -1311,28 +1311,53 @@ textarea.input { resize: vertical; min-height: 76px; }
 .texa__stage--aprendiendo { color: var(--tx-warn); background: var(--tx-warn-soft); }
 .texa__stage--dominada { color: var(--tx-ok); background: var(--tx-ok-soft); }
 
-/* Traducir: dos columnas */
-.texa__cols { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); align-items: start; }
-.texa__col { display: flex; flex-direction: column; gap: var(--sp-3); }
+/* Segmentado (usado en Vocabulario) */
 .texa__segmented { display: flex; gap: 4px; background: var(--tx-sel); border-radius: var(--r-md); padding: 4px; }
 .texa__segment { flex: 1; border: none; background: none; color: var(--tx-text2); font: inherit; font-size: 13.5px; font-weight: 700; padding: 9px; border-radius: var(--r-sm); cursor: pointer; }
 .texa__segment.is-active { background: var(--tx-el); color: var(--tx-text); box-shadow: var(--tx-shadow); }
-.texa__sourcecard { background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-lg); box-shadow: var(--tx-shadow); padding: var(--sp-4); display: flex; flex-direction: column; gap: 8px; }
-.texa__source { margin: 0; font-size: 19px; line-height: 1.4; font-weight: 600; color: var(--tx-text); }
-.texa__textarea {
-  border: 1px solid var(--tx-border); background: var(--tx-el); color: var(--tx-text);
-  border-radius: var(--r-md); padding: 12px; min-height: 120px; font: inherit; font-size: 15px; resize: vertical;
+
+/* Traducir: traductor estilo Google Translate */
+.texa__trad { display: flex; flex-direction: column; gap: var(--sp-4); }
+.texa__tbar { display: flex; align-items: center; gap: var(--sp-3); }
+.texa__langwrap { flex: 1; }
+.texa__lang {
+  width: 100%; border: 1px solid var(--tx-border); background: var(--tx-el); color: var(--tx-text);
+  font: inherit; font-size: 15px; font-weight: 600; padding: 11px 14px; border-radius: var(--r-md); cursor: pointer;
 }
-.texa__textarea:focus { outline: none; border-color: var(--tx-accent); }
-.texa__feedwrap { position: sticky; top: 84px; }
-.texa__feedhint { background: var(--tx-el); border: 1px dashed var(--tx-border); border-radius: var(--r-lg); padding: var(--sp-4); display: flex; flex-direction: column; gap: 6px; }
-.texa__feedback { background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-lg); box-shadow: var(--tx-shadow); padding: var(--sp-4); display: flex; flex-direction: column; gap: 12px; }
-.texa__suggested { margin: 0; font-size: 18px; line-height: 1.4; font-weight: 600; color: var(--tx-text); }
-.texa__notes { display: flex; flex-direction: column; gap: 9px; }
-.texa__note { display: flex; gap: 9px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: var(--tx-text); }
-.texa__notedot { width: 6px; height: 6px; border-radius: 50%; margin-top: 8px; flex: none; }
-.texa__notedot--ok { background: var(--tx-ok); }
-.texa__notedot--warn { background: var(--tx-warn); }
+.texa__lang:focus { outline: none; border-color: var(--tx-accent); }
+.texa__swap {
+  flex: none; width: 44px; height: 44px; display: grid; place-items: center;
+  border: 1px solid var(--tx-border); background: var(--tx-el); color: var(--tx-accent);
+  border-radius: 50%; cursor: pointer; transition: background var(--t-fast) var(--ease-out), transform var(--t-med) var(--ease-out);
+}
+.texa__swap:hover { background: var(--tx-sel); transform: rotate(180deg); }
+.texa__swap svg { width: 20px; height: 20px; }
+.texa__tgrid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); }
+.texa__tpane {
+  display: flex; flex-direction: column; min-height: 240px;
+  background: var(--tx-el); border: 1px solid var(--tx-border); border-radius: var(--r-lg); box-shadow: var(--tx-shadow); padding: var(--sp-4);
+}
+.texa__tpane--out { background: var(--tx-sel); }
+.texa__tinput {
+  flex: 1; border: none; background: none; color: var(--tx-text); font: inherit; font-size: 19px; line-height: 1.5;
+  resize: none; padding: 0; min-height: 150px; width: 100%;
+}
+.texa__tinput:focus { outline: none; }
+.texa__tout { flex: 1; font-size: 19px; line-height: 1.5; color: var(--tx-text); white-space: pre-wrap; overflow-wrap: anywhere; }
+.texa__tout--vacio { color: var(--tx-text2); }
+.texa__tout--error { color: var(--tx-warn); font-size: 15px; }
+.texa__tfoot { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); margin-top: var(--sp-3); padding-top: var(--sp-3); border-top: 1px solid var(--tx-border); min-height: 34px; }
+.texa__ticon {
+  flex: none; width: 34px; height: 34px; display: grid; place-items: center;
+  border: none; background: none; color: var(--tx-text2); border-radius: 50%; cursor: pointer;
+  transition: background var(--t-fast) var(--ease-out), color var(--t-fast) var(--ease-out);
+}
+.texa__ticon:hover:not(:disabled) { background: var(--tx-sel); color: var(--tx-accent); }
+.texa__ticon:disabled { opacity: .38; cursor: default; }
+.texa__ticon svg { width: 19px; height: 19px; }
+.texa__tstatus { font-size: 13px; color: var(--tx-accent); font-weight: 600; }
+.texa__tcount { font-size: 12px; color: var(--tx-text2); }
+.texa__tnote { text-align: center; font-size: 13px; margin: 0; }
 
 /* Aprender */
 .texa__progreso {
@@ -1459,8 +1484,7 @@ button.texa__lesson:hover { transform: translateY(-1px); border-color: var(--tx-
   .texa__hero { padding-left: var(--sp-4); padding-right: var(--sp-4); }
   .texa__view { padding: var(--sp-4); }
   .texa__hstats { grid-template-columns: 1fr; }
-  .texa__actions, .texa__grid, .texa__cols, .texa__toolbar, .texa__ejemplos { grid-template-columns: 1fr; }
-  .texa__feedwrap { position: static; }
+  .texa__actions, .texa__grid, .texa__tgrid, .texa__toolbar, .texa__ejemplos { grid-template-columns: 1fr; }
   /* El grupo izquierdo deja de ser absoluto para no chocar con las pestañas */
   .texa__herotop { flex-wrap: wrap; gap: var(--sp-2); justify-content: flex-start; }
   .texa__heroleft { position: static; transform: none; }
