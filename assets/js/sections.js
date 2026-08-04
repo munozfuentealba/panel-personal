@@ -6,7 +6,7 @@
  */
 
 import { el, icon, clp, num, compact, pct, fecha, relativo, hoyISO, toast } from './utils.js';
-import { datos, guardar, uid, exportar, reiniciar, importar, origen, exportarParaRepo } from './store.js';
+import { datos, guardar, uid, exportar, reiniciar, importar, origen, exportarParaRepo, sync, syncConfig, configurarSync } from './store.js';
 import * as R from './backup.js';
 import { wmoIcono, wmoTexto, CIUDADES } from './weather.js';
 import {
@@ -1337,9 +1337,42 @@ function tarjetaRespaldo(ctx) {
 const REPO = 'munozfuentealba/panel-personal';
 
 /** Publicar en el repositorio: leer es automático, subir es manual (y por qué). */
+function tarjetaSync() {
+  const cfg = syncConfig();
+  const inUrl = el('input', { class: 'input', type: 'url', placeholder: 'https://panel-sync.tucuenta.workers.dev', value: cfg.url, autocomplete: 'off', spellcheck: false });
+  const inToken = el('input', { class: 'input', type: 'password', placeholder: 'Token secreto', value: cfg.token, autocomplete: 'off' });
+  const estado = { off: ['Sin conectar', 'var(--text-3)'], on: ['Conectado', 'var(--c-finanzas)'], ok: ['Sincronizado', 'var(--c-finanzas)'], error: ['Sin conexión con el servicio', '#ef4444'] }[sync.estado] || ['—', 'var(--text-3)'];
+  const conectar = () => {
+    const u = inUrl.value.trim();
+    configurarSync(u, inToken.value.trim());
+    toast(u ? 'Sincronización conectada.' : 'Sincronización desconectada.');
+    location.reload();
+  };
+  return card('Sincronización entre dispositivos', [
+    el('p', { style: { fontSize: '13.5px', color: 'var(--text-2)', margin: '0 0 4px' } },
+      'Mantén tus datos iguales en el computador y el teléfono, automáticamente. Pega la URL y el token de tu servicio (Cloudflare). Quedan guardados solo en este dispositivo, nunca en el repositorio.'),
+    el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px', margin: '4px 0 10px' } }, [
+      el('span', { class: 'dot', style: { background: estado[1] } }),
+      el('span', { style: { fontSize: '13px', fontWeight: '600', color: 'var(--text-2)' } }, estado[0]),
+      sync.ultimo ? el('span', { style: { fontSize: '12px', color: 'var(--text-3)' } },
+        `· última subida ${new Date(sync.ultimo).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}`) : null,
+    ]),
+    el('div', { class: 'form-grid' }, [
+      el('div', { class: 'field' }, [el('label', {}, 'URL del servicio'), inUrl]),
+      el('div', { class: 'field' }, [el('label', {}, 'Token'), inToken]),
+    ]),
+    el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '10px' } }, [
+      el('button', { class: 'btn btn--primary', onclick: conectar }, cfg.url ? 'Guardar y reconectar' : 'Conectar'),
+      cfg.url ? el('button', { class: 'btn', onclick: () => { configurarSync('', ''); toast('Desconectado.'); location.reload(); } }, 'Desconectar') : null,
+      el('a', { class: 'btn', href: 'https://github.com/munozfuentealba/panel-personal/blob/main/sync-proxy/README.md', target: '_blank', rel: 'noopener', style: { textDecoration: 'none' } }, '¿Cómo configurar?'),
+    ]),
+  ]);
+}
+
 function tarjetaRepositorio() {
   const o = origen;
   const desde = {
+    sync: ['tag--ok', 'Sincronizado entre dispositivos'],
     repo: ['tag--ok', 'Cargado desde el repositorio'],
     local: ['tag--info', 'Usando lo de este navegador'],
     ejemplo: ['tag--warn', 'Datos de ejemplo'],
@@ -1401,6 +1434,8 @@ export function ajustes(ctx) {
 
   return [
     encabezado('i-resumen', 'Ajustes', 'Dónde se guardan tus datos y cómo respaldarlos.'),
+
+    tarjetaSync(),
 
     tarjetaRepositorio(),
 

@@ -299,6 +299,7 @@ export function guardar() {
   for (const fn of oyentes) {
     try { fn(datos); } catch (e) { console.warn('Fallo un oyente de guardado', e); }
   }
+  empujarSync(); // replica al servicio de sincronización (si está configurado)
 }
 
 /* ─── Datos publicados en el repositorio ──────────────────────────── */
@@ -313,14 +314,68 @@ export function guardar() {
  */
 export const origen = { de: 'ejemplo', fecha: null, hayRepo: false, error: null };
 
-/** Nunca pisar datos reales con el ejemplo; si no, gana el más reciente. */
-function elegir(local, remoto) {
-  if (!local) return { datos: remoto ?? structuredClone(SEED), de: remoto ? 'repo' : 'ejemplo' };
-  if (!remoto) return { datos: local, de: 'local' };
-  if (remoto.esEjemplo && !local.esEjemplo) return { datos: local, de: 'local' };
-  const a = local.actualizado ?? '';
-  const b = remoto.actualizado ?? '';
-  return b > a ? { datos: remoto, de: 'repo' } : { datos: local, de: 'local' };
+/* ─── Sincronización automática entre dispositivos (opcional) ─────────
+ * Un pequeño servicio propio (Cloudflare Worker + KV) guarda el estado; la URL
+ * y un token secreto se configuran en Ajustes (viven solo en este navegador,
+ * NUNCA en el repo público). Al abrir se trae lo último; al guardar se sube.
+ */
+const SYNC_URL_KEY = 'panel.sync.url';
+const SYNC_TOKEN_KEY = 'panel.sync.token';
+const syncUrl = () => { try { return localStorage.getItem(SYNC_URL_KEY) || ''; } catch { return ''; } };
+const syncToken = () => { try { return localStorage.getItem(SYNC_TOKEN_KEY) || ''; } catch { return ''; } };
+
+export const sync = { estado: syncUrl() ? 'on' : 'off', ultimo: null, error: null };
+export const syncConfig = () => ({ url: syncUrl(), token: syncToken() });
+export function configurarSync(url, token) {
+  try {
+    url = (url || '').trim();
+    token = (token || '').trim();
+    if (url) localStorage.setItem(SYNC_URL_KEY, url); else localStorage.removeItem(SYNC_URL_KEY);
+    if (token) localStorage.setItem(SYNC_TOKEN_KEY, token); else localStorage.removeItem(SYNC_TOKEN_KEY);
+    sync.estado = url ? 'on' : 'off';
+  } catch { /* sin storage */ }
+}
+
+/** Trae el estado guardado en el servicio (o null si no hay/está vacío). */
+async function traerRemotoSync() {
+  const url = syncUrl();
+  if (!url) return null;
+  const r = await fetch(url, { headers: { Authorization: `Bearer ${syncToken()}` }, cache: 'no-store' });
+  if (r.status === 204) return null; // aún no hay nada guardado
+  if (!r.ok) throw new Error(`sync ${r.status}`);
+  const txt = await r.text();
+  return txt ? fusionar(JSON.parse(txt)) : null;
+}
+
+/** Sube el estado actual al servicio (con debounce, para no spamear). */
+let pushTimer = null;
+function empujarSync() {
+  const url = syncUrl();
+  if (!url) return;
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(async () => {
+    try {
+      const r = await fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${syncToken()}` },
+        body: JSON.stringify(datos),
+      });
+      if (!r.ok) throw new Error(`sync ${r.status}`);
+      sync.estado = 'ok'; sync.ultimo = new Date().toISOString(); sync.error = null;
+    } catch (e) {
+      sync.estado = 'error'; sync.error = e.message;
+    }
+  }, 1500);
+}
+
+/** El más reciente entre varios candidatos; prefiere datos reales al ejemplo. */
+function masReciente(cands) {
+  const val = cands.filter((c) => c && c.datos);
+  if (!val.length) return { datos: structuredClone(SEED), de: 'ejemplo' };
+  const reales = val.filter((c) => !c.datos.esEjemplo);
+  const pool = reales.length ? reales : val;
+  pool.sort((a, b) => (b.datos.actualizado || '').localeCompare(a.datos.actualizado || ''));
+  return pool[0];
 }
 
 /**
@@ -329,29 +384,44 @@ function elegir(local, remoto) {
  */
 export async function inicializar() {
   const local = leerLocal();
-  let remoto = null;
+  let repo = null;
   try {
     // no-store: si no, el navegador sirve el JSON viejo tras publicar uno nuevo.
     const r = await fetch(`datos.json?t=${Date.now()}`, { cache: 'no-store' });
     if (r.ok) {
-      remoto = fusionar(await r.json());
+      repo = fusionar(await r.json());
       origen.hayRepo = true;
     }
   } catch (e) {
     origen.error = e.message; // sin conexión, o aún no se ha publicado datos.json
   }
 
-  const { datos: elegido, de } = elegir(local, remoto);
+  // Sincronización: lo último del servicio propio (si está configurado).
+  let remotoSync = null;
+  try {
+    remotoSync = await traerRemotoSync();
+    if (syncUrl()) sync.estado = 'ok';
+  } catch (e) {
+    if (syncUrl()) { sync.estado = 'error'; sync.error = e.message; }
+  }
+
+  const { datos: elegido, de } = masReciente([
+    { datos: local, de: 'local' },
+    { datos: repo, de: 'repo' },
+    { datos: remotoSync, de: 'sync' },
+  ]);
   origen.de = de;
   origen.fecha = elegido.actualizado ?? null;
 
   for (const k of Object.keys(datos)) delete datos[k];
   Object.assign(datos, elegido);
 
-  // Si lo del repositorio es más nuevo, que también quede en este navegador.
-  if (de === 'repo') {
+  // Deja lo elegido en este dispositivo…
+  if (de !== 'local') {
     try { localStorage.setItem(KEY, JSON.stringify(datos)); } catch {}
   }
+  // …y si lo más nuevo no vino del servicio, súbelo para que el resto se entere.
+  if (syncUrl() && de !== 'sync') empujarSync();
 }
 
 /** Descarga el archivo con el nombre exacto que espera el repositorio. */
