@@ -1244,85 +1244,101 @@ const PROY_TIPOS = ['Instagram', 'YouTube', 'TikTok', 'Podcast', 'Web', 'Otro'];
 const PROY_COLOR = { Instagram: '#ec4899', YouTube: '#ef4444', TikTok: '#0ea5e9', Podcast: '#8b5cf6', Web: '#0d9488', Otro: '#64748b' };
 const PROY_ESTADOS = ['Idea', 'En progreso', 'Activo', 'Pausado'];
 const TONO_PROY = { Idea: 'tag--info', 'En progreso': 'tag--warn', Activo: 'tag--ok', Pausado: '' };
-let proyEditId = null;
+export const PROY_COLOR_MAP = PROY_COLOR;
 
-export function proyectos(ctx) {
-  const p = datos.proyectos;
-  const items = p.items;
+/** Página propia de un proyecto (una entrada de menú por proyecto). */
+export function proyectoDetalle(ctx, id) {
+  const it = (datos.proyectos?.items || []).find((x) => x.id === id);
+  if (!it) {
+    return [
+      encabezado('i-proyectos', 'Proyecto', 'No encontrado'),
+      card('', [el('p', { style: { color: 'var(--text-2)' } }, 'Este proyecto ya no existe.')]),
+    ];
+  }
+  const color = PROY_COLOR[it.tipo] || 'var(--c-proyectos)';
 
-  const filaEditor = (it) => {
-    const inNombre = el('input', { class: 'input', value: it.nombre, 'aria-label': 'Nombre', autocomplete: 'off', spellcheck: false });
-    const inTipo = el('select', { class: 'input', 'aria-label': 'Plataforma' }, PROY_TIPOS.map((o) => el('option', { value: o, selected: o === it.tipo }, o)));
-    const inEstado = el('select', { class: 'input', 'aria-label': 'Estado' }, PROY_ESTADOS.map((o) => el('option', { value: o, selected: o === it.estado }, o)));
-    const inDesc = el('textarea', { class: 'input', value: it.descripcion || '', placeholder: 'Descripción', 'aria-label': 'Descripción', rows: 2, autocomplete: 'off' });
-    const inNota = el('input', { class: 'input', value: it.nota || '', placeholder: 'Nota', 'aria-label': 'Nota', autocomplete: 'off', spellcheck: false });
-    const guardarEd = () => {
-      const n = inNombre.value.trim();
-      if (!n) { inNombre.focus(); return; }
-      Object.assign(it, { nombre: n, tipo: inTipo.value, estado: inEstado.value, descripcion: inDesc.value.trim(), nota: inNota.value.trim() });
-      proyEditId = null; guardar(); toast('Proyecto actualizado.'); ctx.recargar();
-    };
-    const cancelar = () => { proyEditId = null; ctx.recargar(); };
-    inNombre.addEventListener('keydown', (e) => { if (e.key === 'Enter') guardarEd(); else if (e.key === 'Escape') cancelar(); });
-    requestAnimationFrame(() => { inNombre.focus(); inNombre.select(); });
-    return el('div', { class: 'proj-card proj-card--edit' }, [
-      el('div', { class: 'proj-edit' }, [inNombre, el('div', { class: 'proj-edit-row' }, [inTipo, inEstado]), inDesc, inNota]),
-      el('div', { class: 'proj-acc' }, [
-        el('button', { class: 'btn btn--primary btn--sm', onclick: guardarEd }, [icon('i-check'), 'Guardar']),
-        el('button', { class: 'btn btn--ghost btn--sm', title: 'Cancelar', 'aria-label': 'Cancelar', onclick: cancelar }, [icon('i-cerrar')]),
-      ]),
-    ]);
+  const inNombre = el('input', { class: 'input', value: it.nombre, 'aria-label': 'Nombre', autocomplete: 'off', spellcheck: false });
+  const inTipo = el('select', { class: 'input', 'aria-label': 'Plataforma' }, PROY_TIPOS.map((o) => el('option', { value: o, selected: o === it.tipo }, o)));
+  const inEstado = el('select', { class: 'input', 'aria-label': 'Estado' }, PROY_ESTADOS.map((o) => el('option', { value: o, selected: o === it.estado }, o)));
+  const inDesc = el('textarea', { class: 'input', value: it.descripcion || '', placeholder: '¿De qué trata el proyecto?', 'aria-label': 'Descripción', rows: 3, autocomplete: 'off' });
+  const inNota = el('input', { class: 'input', value: it.nota || '', placeholder: 'Detalles, enlaces…', 'aria-label': 'Nota', autocomplete: 'off', spellcheck: false });
+
+  const guardarCambios = () => {
+    const n = inNombre.value.trim();
+    if (!n) { inNombre.focus(); return; }
+    Object.assign(it, { nombre: n, tipo: inTipo.value, estado: inEstado.value, descripcion: inDesc.value.trim(), nota: inNota.value.trim() });
+    guardar();
+    // Recargamos para que el menú (nombre/color de la entrada) quede al día.
+    location.reload();
   };
-
-  const tarjeta = (it) => {
-    if (it.id === proyEditId) return filaEditor(it);
-    const color = PROY_COLOR[it.tipo] || 'var(--text-3)';
-    return el('div', { class: 'proj-card', style: { borderTopColor: color } }, [
-      el('div', { class: 'proj-top' }, [
-        el('span', { class: 'proj-plat', style: { color } }, it.tipo),
-        el('span', { class: `tag ${TONO_PROY[it.estado] || ''}` }, it.estado),
-      ]),
-      el('div', { class: 'proj-name' }, it.nombre),
-      it.descripcion ? el('p', { class: 'proj-desc' }, it.descripcion) : null,
-      it.nota ? el('div', { class: 'proj-nota' }, it.nota) : null,
-      el('div', { class: 'proj-acc' }, [
-        botonIcono('i-editar', 'Editar proyecto', () => { proyEditId = it.id; ctx.recargar(); }),
-        botonIcono('i-basura', 'Eliminar proyecto', () => {
-          p.items = p.items.filter((y) => y.id !== it.id);
-          if (proyEditId === it.id) proyEditId = null;
-          guardar(); ctx.recargar();
-        }),
-      ]),
-    ]);
+  const eliminar = () => {
+    if (!confirm(`¿Eliminar el proyecto "${it.nombre}"? Esto no se puede deshacer.`)) return;
+    datos.proyectos.items = datos.proyectos.items.filter((x) => x.id !== id);
+    guardar();
+    location.hash = '#/resumen';
+    location.reload();
   };
-
-  const activos = items.filter((x) => x.estado === 'Activo').length;
-  const ideas = items.filter((x) => x.estado === 'Idea').length;
 
   return [
-    encabezado('i-proyectos', 'Proyectos', 'Tus ideas y proyectos, guardados en un solo lugar.'),
+    encabezado('i-proyectos', it.nombre, `${it.tipo} · ${it.estado}`),
 
-    el('div', { class: 'grid' }, [
-      card('Proyectos', [metrica(items.length, 'en total')]),
-      card('Ideas', [metrica(ideas, 'por explorar')]),
-      card('Activos', [metrica(activos, 'en marcha')]),
-    ]),
-
-    el('div', { class: 'grid grid--wide' }, [
-      card('Mis proyectos', [
-        items.length ? el('div', { class: 'proj-grid' }, items.map(tarjeta))
-          : listaVacia('Aún no hay proyectos. Agregá uno al lado.'),
+    el('div', { class: 'grid grid--2' }, [
+      card('Resumen', [
+        el('div', { class: 'proj-top', style: { marginBottom: '10px' } }, [
+          el('span', { class: 'proj-plat', style: { color } }, it.tipo),
+          el('span', { class: `tag ${TONO_PROY[it.estado] || ''}` }, it.estado),
+        ]),
+        el('p', { class: 'proj-desc', style: { margin: '0 0 8px' } }, it.descripcion || 'Sin descripción todavía.'),
+        it.nota ? el('div', { class: 'proj-nota' }, it.nota) : null,
       ]),
-      card('Nuevo proyecto', [
-        formSimple(ctx, [
-          { name: 'nombre', label: 'Nombre', placeholder: 'Onda', required: true },
-          { name: 'tipo', label: 'Plataforma', tipo: 'select', opciones: PROY_TIPOS, value: 'Instagram' },
-          { name: 'estado', label: 'Estado', tipo: 'select', opciones: PROY_ESTADOS, value: 'Idea' },
-          { name: 'descripcion', label: 'Descripción (opcional)', tipo: 'textarea', placeholder: '¿De qué trata el proyecto?' },
-          { name: 'nota', label: 'Nota (opcional)', placeholder: 'Detalles, enlaces…' },
-        ], (d) => {
-          p.items.push({ id: uid(), nombre: d.nombre, tipo: d.tipo, estado: d.estado, descripcion: d.descripcion || '', nota: d.nota || '' });
-        }),
+      card('Editar', [
+        el('div', { class: 'form-grid' }, [
+          el('div', { class: 'field' }, [el('label', {}, 'Nombre'), inNombre]),
+          el('div', { class: 'field' }, [el('label', {}, 'Plataforma'), inTipo]),
+          el('div', { class: 'field' }, [el('label', {}, 'Estado'), inEstado]),
+          el('div', { class: 'field', style: { gridColumn: '1 / -1' } }, [el('label', {}, 'Descripción'), inDesc]),
+          el('div', { class: 'field', style: { gridColumn: '1 / -1' } }, [el('label', {}, 'Nota'), inNota]),
+        ]),
+        el('div', { style: { display: 'flex', gap: '8px', marginTop: '12px', flexWrap: 'wrap' } }, [
+          el('button', { class: 'btn btn--primary', onclick: guardarCambios }, [icon('i-check'), 'Guardar cambios']),
+          el('button', { class: 'btn', onclick: eliminar }, [icon('i-basura'), 'Eliminar proyecto']),
+        ]),
+      ]),
+    ]),
+  ];
+}
+
+/** Página para agregar un proyecto nuevo (aparece luego como su propia entrada). */
+export function proyectoNuevo() {
+  const inNombre = el('input', { class: 'input', placeholder: 'Onda', 'aria-label': 'Nombre', autocomplete: 'off', spellcheck: false });
+  const inTipo = el('select', { class: 'input', 'aria-label': 'Plataforma' }, PROY_TIPOS.map((o) => el('option', { value: o, selected: o === 'Instagram' }, o)));
+  const inEstado = el('select', { class: 'input', 'aria-label': 'Estado' }, PROY_ESTADOS.map((o) => el('option', { value: o, selected: o === 'Idea' }, o)));
+  const inDesc = el('textarea', { class: 'input', placeholder: '¿De qué trata el proyecto?', 'aria-label': 'Descripción', rows: 3, autocomplete: 'off' });
+  const inNota = el('input', { class: 'input', placeholder: 'Detalles, enlaces…', 'aria-label': 'Nota', autocomplete: 'off', spellcheck: false });
+
+  const agregar = () => {
+    const n = inNombre.value.trim();
+    if (!n) { inNombre.focus(); return; }
+    const nid = `proy-${uid()}`;
+    (datos.proyectos.items ||= []).push({ id: nid, nombre: n, tipo: inTipo.value, estado: inEstado.value, descripcion: inDesc.value.trim(), nota: inNota.value.trim() });
+    guardar();
+    location.hash = `#/proyecto:${nid}`;
+    location.reload();
+  };
+  inNombre.addEventListener('keydown', (e) => { if (e.key === 'Enter') agregar(); });
+
+  return [
+    encabezado('i-proyectos', 'Nuevo proyecto', 'Agregá un proyecto; aparecerá como su propia sección en el menú.'),
+    card('Datos del proyecto', [
+      el('div', { class: 'form-grid' }, [
+        el('div', { class: 'field' }, [el('label', {}, 'Nombre'), inNombre]),
+        el('div', { class: 'field' }, [el('label', {}, 'Plataforma'), inTipo]),
+        el('div', { class: 'field' }, [el('label', {}, 'Estado'), inEstado]),
+        el('div', { class: 'field', style: { gridColumn: '1 / -1' } }, [el('label', {}, 'Descripción (opcional)'), inDesc]),
+        el('div', { class: 'field', style: { gridColumn: '1 / -1' } }, [el('label', {}, 'Nota (opcional)'), inNota]),
+      ]),
+      el('div', { style: { marginTop: '12px' } }, [
+        el('button', { class: 'btn btn--primary', onclick: agregar }, [icon('i-mas'), 'Crear proyecto']),
       ]),
     ]),
   ];

@@ -3,13 +3,14 @@
 import { el, icon, escalonar } from './utils.js';
 import { obtenerClima, wmoIcono } from './weather.js';
 import { iniciarRespaldo } from './backup.js';
-import { inicializar } from './store.js';
+import { inicializar, datos } from './store.js';
 import { texa } from './texa.js';
 import * as S from './sections.js';
 
 /* ─── Mapa de secciones ───────────────────────────────────────────── */
 
-const SECCIONES = [
+// Secciones fijas (antes de los proyectos, que son dinámicos).
+const SEC_FIJAS = [
   { id: 'resumen',    nombre: 'Resumen',            icono: 'i-resumen',   grupo: 'Panel',   sub: 'Todo lo importante de un vistazo',            render: S.resumen,    color: 'var(--accent)' },
   { id: 'clima',      nombre: 'Clima',              icono: 'i-sol-nube',  grupo: 'Panel',   sub: 'Osorno y Puerto Montt · pronóstico a 7 días',  render: S.seccionClima, color: '#0ea5e9' },
 
@@ -19,12 +20,28 @@ const SECCIONES = [
   { id: 'musica',     nombre: 'Producción Musical',  icono: 'i-musica',    grupo: 'Áreas',  sub: 'Proyectos, horas de estudio e ideas',         render: S.musica,     color: 'var(--c-musica)' },
   { id: 'empresa',    nombre: 'Empresa',             icono: 'i-empresa',   grupo: 'Áreas',  sub: 'Facturación, pipeline y proyectos',           render: S.empresa,    color: 'var(--c-empresa)' },
   { id: 'inventario', nombre: 'Inventario',          icono: 'i-inventario', grupo: 'Áreas', sub: 'Tu equipo y cosas, con buscador por categoría', render: S.inventario, color: 'var(--c-inventario)' },
-
-  { id: 'proyectos',  nombre: 'Proyectos',           icono: 'i-proyectos', grupo: 'Proyectos', sub: 'Tus ideas y proyectos guardados',              render: S.proyectos,  color: 'var(--c-proyectos)' },
-  { id: 'texa',       nombre: 'Texa',                icono: 'i-texa',      grupo: 'Proyectos', sub: 'Tu app de inglés · Inicio, vocabulario, traducir, aprender y chat', render: texa, color: 'var(--c-texa)', pantallaCompleta: true },
-
-  { id: 'ajustes',    nombre: 'Ajustes',             icono: 'i-resumen',   grupo: 'Sistema', sub: 'Copia de seguridad y restablecer',           render: S.ajustes,    color: 'var(--text-3)' },
 ];
+const SEC_TEXA = { id: 'texa', nombre: 'Texa', icono: 'i-texa', grupo: 'Proyectos', sub: 'Tu app de inglés · Inicio, vocabulario, traducir, aprender y chat', render: texa, color: 'var(--c-texa)', pantallaCompleta: true };
+const SEC_AJUSTES = { id: 'ajustes', nombre: 'Ajustes', icono: 'i-resumen', grupo: 'Sistema', sub: 'Copia de seguridad y restablecer', render: S.ajustes, color: 'var(--text-3)' };
+
+const proyColor = (tipo) => ({ Instagram: '#ec4899', YouTube: '#ef4444', TikTok: '#0ea5e9', Podcast: '#8b5cf6', Web: '#0d9488', Otro: '#64748b' }[tipo] || 'var(--c-proyectos)');
+
+// Cada proyecto de datos.proyectos es su propia entrada de menú; al final, "Nuevo proyecto".
+function seccionesProyecto() {
+  const items = datos.proyectos?.items || [];
+  const paginas = items.map((it) => ({
+    id: `proyecto:${it.id}`, nombre: it.nombre, icono: 'i-proyectos', grupo: 'Proyectos',
+    sub: `${it.tipo} · ${it.estado}`, render: (c) => S.proyectoDetalle(c, it.id), color: proyColor(it.tipo),
+  }));
+  paginas.push({ id: 'proyecto-nuevo', nombre: 'Nuevo proyecto', icono: 'i-mas', grupo: 'Proyectos', sub: 'Agregar un proyecto', render: (c) => S.proyectoNuevo(c), color: 'var(--c-proyectos)' });
+  return paginas;
+}
+
+// SECCIONES se reconstruye tras cargar los datos (para reflejar los proyectos).
+let SECCIONES = [...SEC_FIJAS, SEC_TEXA, SEC_AJUSTES];
+function reconstruirSecciones() {
+  SECCIONES = [...SEC_FIJAS, ...seccionesProyecto(), SEC_TEXA, SEC_AJUSTES];
+}
 
 const porId = (id) => SECCIONES.find((s) => s.id === id) ?? SECCIONES[0];
 
@@ -255,7 +272,6 @@ function avisoMensual() {
 
 async function init() {
   initTema();
-  construirNav();
 
   // Trae los datos publicados en el repositorio antes de pintar nada: al
   // borrar el historial o cambiar de equipo, vuelven solos.
@@ -264,6 +280,10 @@ async function init() {
   } catch (e) {
     console.warn('No se pudieron cargar los datos del repositorio:', e);
   }
+
+  // Con los datos ya cargados, cada proyecto se vuelve su propia entrada de menú.
+  reconstruirSecciones();
+  construirNav();
 
   // Reanuda el respaldo en archivo si el permiso sigue vigente.
   iniciarRespaldo(await import('./store.js'));
