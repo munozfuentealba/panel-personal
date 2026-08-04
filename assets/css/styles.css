@@ -38,6 +38,7 @@
   --c-trabajo: #64748b;
   --c-texa: #3452d9;
   --c-inventario: #0d9488;
+  --c-proyectos: #f97316;
 }
 
 /* Tema oscuro (por defecto) */
@@ -768,6 +769,24 @@ textarea.input { resize: vertical; min-height: 76px; }
    Se apila (tareas primero) en pantallas angostas. */
 .todo-main { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-5); align-items: start; margin-bottom: var(--sp-5); }
 @media (max-width: 1100px) { .todo-main { grid-template-columns: 1fr; } }
+
+/* Proyectos: tarjetas */
+.proj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: var(--sp-3); }
+.proj-card {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: var(--sp-4); background: var(--surface-2); border: 1px solid var(--border);
+  border-top: 3px solid var(--border-strong); border-radius: var(--r-md);
+}
+.proj-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.proj-plat { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.proj-name { font-size: 16px; font-weight: 700; color: var(--text); }
+.proj-desc { margin: 0; font-size: 13px; color: var(--text-2); line-height: 1.5; }
+.proj-nota { font-size: 12px; color: var(--text-3); }
+.proj-acc { display: flex; gap: 6px; margin-top: 4px; }
+.proj-card--edit { border-top-color: var(--accent); }
+.proj-edit { display: flex; flex-direction: column; gap: var(--sp-2); }
+.proj-edit-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-2); }
+.proj-edit .input { font-size: 13px; padding: 7px var(--sp-2); }
 
 /* Inventario: lista inteligente con chips de categoría */
 .inv-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: var(--sp-3); }

@@ -1237,6 +1237,98 @@ export function inventario(ctx) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
+   Proyectos
+   ══════════════════════════════════════════════════════════════════ */
+
+const PROY_TIPOS = ['Instagram', 'YouTube', 'TikTok', 'Podcast', 'Web', 'Otro'];
+const PROY_COLOR = { Instagram: '#ec4899', YouTube: '#ef4444', TikTok: '#0ea5e9', Podcast: '#8b5cf6', Web: '#0d9488', Otro: '#64748b' };
+const PROY_ESTADOS = ['Idea', 'En progreso', 'Activo', 'Pausado'];
+const TONO_PROY = { Idea: 'tag--info', 'En progreso': 'tag--warn', Activo: 'tag--ok', Pausado: '' };
+let proyEditId = null;
+
+export function proyectos(ctx) {
+  const p = datos.proyectos;
+  const items = p.items;
+
+  const filaEditor = (it) => {
+    const inNombre = el('input', { class: 'input', value: it.nombre, 'aria-label': 'Nombre', autocomplete: 'off', spellcheck: false });
+    const inTipo = el('select', { class: 'input', 'aria-label': 'Plataforma' }, PROY_TIPOS.map((o) => el('option', { value: o, selected: o === it.tipo }, o)));
+    const inEstado = el('select', { class: 'input', 'aria-label': 'Estado' }, PROY_ESTADOS.map((o) => el('option', { value: o, selected: o === it.estado }, o)));
+    const inDesc = el('textarea', { class: 'input', value: it.descripcion || '', placeholder: 'Descripción', 'aria-label': 'Descripción', rows: 2, autocomplete: 'off' });
+    const inNota = el('input', { class: 'input', value: it.nota || '', placeholder: 'Nota', 'aria-label': 'Nota', autocomplete: 'off', spellcheck: false });
+    const guardarEd = () => {
+      const n = inNombre.value.trim();
+      if (!n) { inNombre.focus(); return; }
+      Object.assign(it, { nombre: n, tipo: inTipo.value, estado: inEstado.value, descripcion: inDesc.value.trim(), nota: inNota.value.trim() });
+      proyEditId = null; guardar(); toast('Proyecto actualizado.'); ctx.recargar();
+    };
+    const cancelar = () => { proyEditId = null; ctx.recargar(); };
+    inNombre.addEventListener('keydown', (e) => { if (e.key === 'Enter') guardarEd(); else if (e.key === 'Escape') cancelar(); });
+    requestAnimationFrame(() => { inNombre.focus(); inNombre.select(); });
+    return el('div', { class: 'proj-card proj-card--edit' }, [
+      el('div', { class: 'proj-edit' }, [inNombre, el('div', { class: 'proj-edit-row' }, [inTipo, inEstado]), inDesc, inNota]),
+      el('div', { class: 'proj-acc' }, [
+        el('button', { class: 'btn btn--primary btn--sm', onclick: guardarEd }, [icon('i-check'), 'Guardar']),
+        el('button', { class: 'btn btn--ghost btn--sm', title: 'Cancelar', 'aria-label': 'Cancelar', onclick: cancelar }, [icon('i-cerrar')]),
+      ]),
+    ]);
+  };
+
+  const tarjeta = (it) => {
+    if (it.id === proyEditId) return filaEditor(it);
+    const color = PROY_COLOR[it.tipo] || 'var(--text-3)';
+    return el('div', { class: 'proj-card', style: { borderTopColor: color } }, [
+      el('div', { class: 'proj-top' }, [
+        el('span', { class: 'proj-plat', style: { color } }, it.tipo),
+        el('span', { class: `tag ${TONO_PROY[it.estado] || ''}` }, it.estado),
+      ]),
+      el('div', { class: 'proj-name' }, it.nombre),
+      it.descripcion ? el('p', { class: 'proj-desc' }, it.descripcion) : null,
+      it.nota ? el('div', { class: 'proj-nota' }, it.nota) : null,
+      el('div', { class: 'proj-acc' }, [
+        botonIcono('i-editar', 'Editar proyecto', () => { proyEditId = it.id; ctx.recargar(); }),
+        botonIcono('i-basura', 'Eliminar proyecto', () => {
+          p.items = p.items.filter((y) => y.id !== it.id);
+          if (proyEditId === it.id) proyEditId = null;
+          guardar(); ctx.recargar();
+        }),
+      ]),
+    ]);
+  };
+
+  const activos = items.filter((x) => x.estado === 'Activo').length;
+  const ideas = items.filter((x) => x.estado === 'Idea').length;
+
+  return [
+    encabezado('i-proyectos', 'Proyectos', 'Tus ideas y proyectos, guardados en un solo lugar.'),
+
+    el('div', { class: 'grid' }, [
+      card('Proyectos', [metrica(items.length, 'en total')]),
+      card('Ideas', [metrica(ideas, 'por explorar')]),
+      card('Activos', [metrica(activos, 'en marcha')]),
+    ]),
+
+    el('div', { class: 'grid grid--wide' }, [
+      card('Mis proyectos', [
+        items.length ? el('div', { class: 'proj-grid' }, items.map(tarjeta))
+          : listaVacia('Aún no hay proyectos. Agregá uno al lado.'),
+      ]),
+      card('Nuevo proyecto', [
+        formSimple(ctx, [
+          { name: 'nombre', label: 'Nombre', placeholder: 'Onda', required: true },
+          { name: 'tipo', label: 'Plataforma', tipo: 'select', opciones: PROY_TIPOS, value: 'Instagram' },
+          { name: 'estado', label: 'Estado', tipo: 'select', opciones: PROY_ESTADOS, value: 'Idea' },
+          { name: 'descripcion', label: 'Descripción (opcional)', tipo: 'textarea', placeholder: '¿De qué trata el proyecto?' },
+          { name: 'nota', label: 'Nota (opcional)', placeholder: 'Detalles, enlaces…' },
+        ], (d) => {
+          p.items.push({ id: uid(), nombre: d.nombre, tipo: d.tipo, estado: d.estado, descripcion: d.descripcion || '', nota: d.nota || '' });
+        }),
+      ]),
+    ]),
+  ];
+}
+
+/* ══════════════════════════════════════════════════════════════════
    Ajustes
    ══════════════════════════════════════════════════════════════════ */
 

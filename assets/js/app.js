@@ -20,6 +20,7 @@ const SECCIONES = [
   { id: 'empresa',    nombre: 'Empresa',             icono: 'i-empresa',   grupo: 'Áreas',  sub: 'Facturación, pipeline y proyectos',           render: S.empresa,    color: 'var(--c-empresa)' },
   { id: 'inventario', nombre: 'Inventario',          icono: 'i-inventario', grupo: 'Áreas', sub: 'Tu equipo y cosas, con buscador por categoría', render: S.inventario, color: 'var(--c-inventario)' },
 
+  { id: 'proyectos',  nombre: 'Proyectos',           icono: 'i-proyectos', grupo: 'Proyectos', sub: 'Tus ideas y proyectos guardados',              render: S.proyectos,  color: 'var(--c-proyectos)' },
   { id: 'texa',       nombre: 'Texa',                icono: 'i-texa',      grupo: 'Proyectos', sub: 'Tu app de inglés · Inicio, vocabulario, traducir, aprender y chat', render: texa, color: 'var(--c-texa)', pantallaCompleta: true },
 
   { id: 'ajustes',    nombre: 'Ajustes',             icono: 'i-resumen',   grupo: 'Sistema', sub: 'Copia de seguridad y restablecer',           render: S.ajustes,    color: 'var(--text-3)' },

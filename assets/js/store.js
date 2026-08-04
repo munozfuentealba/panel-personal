@@ -255,6 +255,13 @@ const SEED = {
       { id: 'inv9', nombre: 'Teclado MIDI M-Audio', categoria: 'Estudio', cantidad: 1, estado: 'Usado', descripcion: 'Controlador MIDI para producción musical.', nota: '49 teclas' },
     ],
   },
+
+  proyectos: {
+    items: [
+      { id: 'proy1', nombre: 'Onda', tipo: 'Instagram', estado: 'Idea', descripcion: 'Página de Instagram con consejos de producción musical.', nota: '' },
+      { id: 'proy2', nombre: 'Monigote Produce', tipo: 'YouTube', estado: 'Idea', descripcion: 'Canal de YouTube con monigotes que enseñan producción musical de forma divertida.', nota: 'Nombre provisional — buscando el definitivo.' },
+    ],
+  },
 };
 
 /* ─── Persistencia ────────────────────────────────────────────────── */
