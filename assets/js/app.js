@@ -26,15 +26,12 @@ const SEC_AJUSTES = { id: 'ajustes', nombre: 'Ajustes', icono: 'i-resumen', grup
 
 const proyColor = (tipo) => ({ Instagram: '#ec4899', YouTube: '#ef4444', TikTok: '#0ea5e9', Podcast: '#8b5cf6', Web: '#0d9488', Otro: '#64748b' }[tipo] || 'var(--c-proyectos)');
 
-// Cada proyecto de datos.proyectos es su propia entrada de menú; al final, "Nuevo proyecto".
+// Cada proyecto de datos.proyectos es su propia entrada de menú.
 function seccionesProyecto() {
-  const items = datos.proyectos?.items || [];
-  const paginas = items.map((it) => ({
+  return (datos.proyectos?.items || []).map((it) => ({
     id: `proyecto:${it.id}`, nombre: it.nombre, icono: 'i-proyectos', grupo: 'Proyectos',
     sub: `${it.tipo} · ${it.estado}`, render: (c) => S.proyectoDetalle(c, it.id), color: proyColor(it.tipo),
   }));
-  paginas.push({ id: 'proyecto-nuevo', nombre: 'Nuevo proyecto', icono: 'i-mas', grupo: 'Proyectos', sub: 'Agregar un proyecto', render: (c) => S.proyectoNuevo(c), color: 'var(--c-proyectos)' });
-  return paginas;
 }
 
 // SECCIONES se reconstruye tras cargar los datos (para reflejar los proyectos).

@@ -1308,42 +1308,6 @@ export function proyectoDetalle(ctx, id) {
   ];
 }
 
-/** Página para agregar un proyecto nuevo (aparece luego como su propia entrada). */
-export function proyectoNuevo() {
-  const inNombre = el('input', { class: 'input', placeholder: 'Onda', 'aria-label': 'Nombre', autocomplete: 'off', spellcheck: false });
-  const inTipo = el('select', { class: 'input', 'aria-label': 'Plataforma' }, PROY_TIPOS.map((o) => el('option', { value: o, selected: o === 'Instagram' }, o)));
-  const inEstado = el('select', { class: 'input', 'aria-label': 'Estado' }, PROY_ESTADOS.map((o) => el('option', { value: o, selected: o === 'Idea' }, o)));
-  const inDesc = el('textarea', { class: 'input', placeholder: '¿De qué trata el proyecto?', 'aria-label': 'Descripción', rows: 3, autocomplete: 'off' });
-  const inNota = el('input', { class: 'input', placeholder: 'Detalles, enlaces…', 'aria-label': 'Nota', autocomplete: 'off', spellcheck: false });
-
-  const agregar = () => {
-    const n = inNombre.value.trim();
-    if (!n) { inNombre.focus(); return; }
-    const nid = `proy-${uid()}`;
-    (datos.proyectos.items ||= []).push({ id: nid, nombre: n, tipo: inTipo.value, estado: inEstado.value, descripcion: inDesc.value.trim(), nota: inNota.value.trim() });
-    guardar();
-    location.hash = `#/proyecto:${nid}`;
-    location.reload();
-  };
-  inNombre.addEventListener('keydown', (e) => { if (e.key === 'Enter') agregar(); });
-
-  return [
-    encabezado('i-proyectos', 'Nuevo proyecto', 'Agregá un proyecto; aparecerá como su propia sección en el menú.'),
-    card('Datos del proyecto', [
-      el('div', { class: 'form-grid' }, [
-        el('div', { class: 'field' }, [el('label', {}, 'Nombre'), inNombre]),
-        el('div', { class: 'field' }, [el('label', {}, 'Plataforma'), inTipo]),
-        el('div', { class: 'field' }, [el('label', {}, 'Estado'), inEstado]),
-        el('div', { class: 'field', style: { gridColumn: '1 / -1' } }, [el('label', {}, 'Descripción (opcional)'), inDesc]),
-        el('div', { class: 'field', style: { gridColumn: '1 / -1' } }, [el('label', {}, 'Nota (opcional)'), inNota]),
-      ]),
-      el('div', { style: { marginTop: '12px' } }, [
-        el('button', { class: 'btn btn--primary', onclick: agregar }, [icon('i-mas'), 'Crear proyecto']),
-      ]),
-    ]),
-  ];
-}
-
 /* ══════════════════════════════════════════════════════════════════
    Ajustes
    ══════════════════════════════════════════════════════════════════ */
