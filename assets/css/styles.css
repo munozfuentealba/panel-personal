@@ -764,9 +764,10 @@ textarea.input { resize: vertical; min-height: 76px; }
 .cal__ev-h { font-weight: 700; margin-right: 4px; }
 .cal__more { font-size: 10px; color: var(--text-3); padding-left: 4px; }
 
-/* Columna derecha de To Do: apila las tarjetas y las ajusta a su contenido
-   (así "Resumen del mes" no se estira dejando espacio vacío). */
-.todo-col { display: flex; flex-direction: column; gap: var(--sp-4); align-self: start; }
+/* To Do: fila principal — tareas a la izquierda, calendario al lado.
+   Se apila (tareas primero) en pantallas angostas. */
+.todo-main { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); align-items: start; }
+@media (max-width: 1100px) { .todo-main { grid-template-columns: 1fr; } }
 
 /* Inventario: lista inteligente con chips de categoría */
 .inv-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: var(--sp-3); }

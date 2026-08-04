@@ -1057,33 +1057,8 @@ export function trabajo(ctx) {
   return [
     encabezado('i-trabajo', 'To Do', 'Tareas, prioridades y calendario del mes.'),
 
-    el('div', { class: 'grid grid--wide' }, [
-      card('Calendario', [calendario()]),
-      el('div', { class: 'todo-col' }, [
-        card('Resumen del mes', [
-          el('div', { class: 'todo-stats' }, [
-            miniStat(pend.length, 'Pendientes', `${pend.filter((x) => x.prio === 'alta').length} de prioridad alta`),
-            miniStat(vencidas.length, 'Atrasadas', vencidas.length ? 'Requieren atención' : 'Todo al día'),
-            miniStat(hechas.length, 'Completadas', `${t.tareas.length ? Math.round((hechas.length / t.tareas.length) * 100) : 0} % del total`),
-            miniStat(`${horas.toString().replace('.', ',')} h`, 'Horas de foco', 'Esta semana'),
-          ]),
-        ]),
-        card('Nueva tarea', [
-          formSimple(ctx, [
-            { name: 'texto', label: 'Tarea', placeholder: 'Enviar la factura del mes', required: true },
-            { name: 'para', label: 'Para', tipo: 'select', opciones: DESTINATARIOS, value: 'Personal' },
-            { name: 'prio', label: 'Prioridad', tipo: 'select', opciones: ['alta', 'media', 'baja'], value: 'media' },
-            { name: 'vence', label: 'Vence', type: 'date', value: hoyISO() },
-            { name: 'hora', label: 'Hora (opcional)', type: 'time' },
-            { name: 'sinFecha', label: 'Sin fecha (tarea indefinida)', tipo: 'check', deshabilita: ['vence', 'hora'] },
-          ], (d) => {
-            t.tareas.push({ id: uid(), texto: d.texto, para: d.para, prio: d.prio, vence: d.vence || '', hora: d.hora || '', hecha: false });
-          }),
-        ]),
-      ]),
-    ]),
-
-    el('div', { class: 'grid grid--wide' }, [
+    // Lo primero que se ve: tareas a la izquierda, calendario al lado.
+    el('div', { class: 'todo-main' }, [
       card('Tareas', [
         pend.length ? el('div', { class: 'list' }, pend.slice().sort(ordenar).map(fila))
           : listaVacia('Sin pendientes. Buen trabajo.'),
@@ -1095,6 +1070,30 @@ export function trabajo(ctx) {
               el('div', { class: 'list' }, hechas.map(fila)),
             ])
           : null,
+      ]),
+      card('Calendario', [calendario()]),
+    ]),
+
+    el('div', { class: 'grid' }, [
+      card('Resumen del mes', [
+        el('div', { class: 'todo-stats' }, [
+          miniStat(pend.length, 'Pendientes', `${pend.filter((x) => x.prio === 'alta').length} de prioridad alta`),
+          miniStat(vencidas.length, 'Atrasadas', vencidas.length ? 'Requieren atención' : 'Todo al día'),
+          miniStat(hechas.length, 'Completadas', `${t.tareas.length ? Math.round((hechas.length / t.tareas.length) * 100) : 0} % del total`),
+          miniStat(`${horas.toString().replace('.', ',')} h`, 'Horas de foco', 'Esta semana'),
+        ]),
+      ]),
+      card('Nueva tarea', [
+        formSimple(ctx, [
+          { name: 'texto', label: 'Tarea', placeholder: 'Enviar la factura del mes', required: true },
+          { name: 'para', label: 'Para', tipo: 'select', opciones: DESTINATARIOS, value: 'Personal' },
+          { name: 'prio', label: 'Prioridad', tipo: 'select', opciones: ['alta', 'media', 'baja'], value: 'media' },
+          { name: 'vence', label: 'Vence', type: 'date', value: hoyISO() },
+          { name: 'hora', label: 'Hora (opcional)', type: 'time' },
+          { name: 'sinFecha', label: 'Sin fecha (tarea indefinida)', tipo: 'check', deshabilita: ['vence', 'hora'] },
+        ], (d) => {
+          t.tareas.push({ id: uid(), texto: d.texto, para: d.para, prio: d.prio, vence: d.vence || '', hora: d.hora || '', hecha: false });
+        }),
       ]),
       card('Horas de foco por día', [
         grafico(t.foco.map((d) => ({ label: d.d, a: d.h })), { formato: (h) => `${h} h`, alto: 120 }),
