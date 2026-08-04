@@ -1,12 +1,16 @@
 /**
  * Service worker del Panel Personal.
  *
- * Estrategia network-first: si hay internet, siempre servimos lo más nuevo (así
- * las actualizaciones se ven de inmediato, sin quedar pegado en una versión
- * vieja); si no hay red, usamos lo último que quedó en caché. Esto permite que
- * la app instalada en el teléfono abra y funcione sin conexión.
+ * Estrategia: red primero, SIN usar la caché del navegador (`cache: 'no-store'`),
+ * así con internet SIEMPRE se ve la última versión (nada de quedar pegado en una
+ * vieja). Sin conexión, se sirve lo último que quedó guardado. Solo intercepta
+ * archivos del propio sitio; las APIs externas (sincronización, traductor, chat)
+ * pasan directo sin cachearse.
+ *
+ * Al subir la versión de CACHE, `activate` borra las viejas y toma el control de
+ * inmediato (skipWaiting + clients.claim).
  */
-const CACHE = 'panel-v1';
+const CACHE = 'panel-v2';
 const NUCLEO = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', (e) => {
@@ -25,14 +29,17 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
-  e.respondWith(
-    fetch(req)
-      .then((res) => {
-        // Guardamos una copia para poder servirla sin conexión más tarde.
-        const copia = res.clone();
-        caches.open(CACHE).then((c) => c.put(req, copia)).catch(() => {});
-        return res;
-      })
-      .catch(() => caches.match(req).then((r) => r || (req.mode === 'navigate' ? caches.match('./index.html') : undefined))),
-  );
+  // Solo archivos del propio sitio; deja pasar las APIs externas sin tocar.
+  if (new URL(req.url).origin !== self.location.origin) return;
+
+  e.respondWith((async () => {
+    try {
+      const fresco = await fetch(req, { cache: 'no-store' }); // siempre lo más nuevo
+      caches.open(CACHE).then((c) => c.put(req, fresco.clone())).catch(() => {});
+      return fresco;
+    } catch {
+      const guardado = await caches.match(req);
+      return guardado || (req.mode === 'navigate' ? caches.match('./index.html') : Response.error());
+    }
+  })());
 });
