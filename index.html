@@ -7,6 +7,13 @@
 <meta name="description" content="Dashboard personal: finanzas, marca personal, empresa, redes, música y trabajo.">
 <meta name="theme-color" content="#0d0f14">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%236366f1'/><path d='M28 68V32h13l9 22 9-22h13v36h-9V47l-9 21h-8l-9-21v21z' fill='white'/></svg>">
+<!-- Instalable como app (PWA) -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Panel">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -99,5 +106,11 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script type="module" src="assets/js/app.js"></script>
+<script>
+  // Registra el service worker para que funcione offline y sea instalable.
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  }
+</script>
 </body>
 </html>
