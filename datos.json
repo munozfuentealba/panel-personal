@@ -2698,15 +2698,15 @@
     "usuario": "munoz.fuentealba",
     "nombre": "Diego Muñoz",
     "bio": "There is no try",
-    "seguidores": 1324,
-    "siguiendo": 758,
-    "publicaciones": 73,
+    "seguidores": 1323,
+    "siguiendo": 764,
+    "publicaciones": 72,
     "visitasPerfil": 110,
     "periodo": "Últimos 30 días",
-    "actualizado": "2026-07-18",
+    "actualizado": "2026-08-04",
     "visualizaciones": {
-      "total": 3280,
-      "cuentasAlcanzadas": 800,
+      "total": 2847,
+      "cuentasAlcanzadas": 607,
       "pctSeguidores": 74.3,
       "porContenido": [
         {
@@ -2728,8 +2728,8 @@
       ]
     },
     "interacciones": {
-      "total": 66,
-      "cuentas": 36,
+      "total": 58,
+      "cuentas": 55,
       "pctSeguidores": 92.4,
       "porContenido": [
         {
@@ -2818,6 +2818,10 @@
       {
         "fecha": "2026-07-18",
         "seguidores": 1324
+      },
+      {
+        "fecha": "2026-08-04",
+        "seguidores": 1323
       }
     ]
   },
@@ -2905,8 +2909,22 @@
   },
   "proyectos": {
     "items": [
-      { "id": "proy1", "nombre": "Onda", "tipo": "Instagram", "estado": "Idea", "descripcion": "Página de Instagram con consejos de producción musical.", "nota": "" },
-      { "id": "proy2", "nombre": "Monigote Produce", "tipo": "YouTube", "estado": "Idea", "descripcion": "Canal de YouTube con monigotes que enseñan producción musical de forma divertida.", "nota": "Nombre provisional — buscando el definitivo." }
+      {
+        "id": "proy1",
+        "nombre": "Onda",
+        "tipo": "Instagram",
+        "estado": "Idea",
+        "descripcion": "Página de Instagram con consejos de producción musical.",
+        "nota": ""
+      },
+      {
+        "id": "proy2",
+        "nombre": "Monigote Produce",
+        "tipo": "YouTube",
+        "estado": "Idea",
+        "descripcion": "Canal de YouTube con monigotes que enseñan producción musical de forma divertida.",
+        "nota": "Nombre provisional — buscando el definitivo."
+      }
     ]
   },
   "actualizado": "2026-07-18T12:00:00.000Z"
