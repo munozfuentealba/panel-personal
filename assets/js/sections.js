@@ -1109,6 +1109,7 @@ export function trabajo(ctx) {
 const INV_CATS = ['Personal', 'Audio Visual', 'Estudio'];
 const INV_COLOR = { Personal: '#0d9488', 'Audio Visual': '#8b5cf6', Estudio: '#f59e0b' };
 const INV_ESTADOS = ['Nuevo', 'Bueno', 'Usado', 'A reparar'];
+const INV_UBICACIONES = ['Estudio Casa', 'Estudio Puerto Montt', 'Casa de Gabriel', 'Container Gabriel'];
 const TONO_ESTADO = { Nuevo: 'tag--ok', Bueno: 'tag--info', Usado: '', 'A reparar': 'tag--warn' };
 // Normaliza para buscar sin distinguir mayúsculas ni acentos (micro = micró…).
 const sinAcentos = (s) => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -1128,7 +1129,7 @@ export function inventario(ctx) {
 
   const filtra = () => items.filter((it) =>
     (invFiltro === 'Todas' || it.categoria === invFiltro)
-    && (!query || sinAcentos(it.nombre).includes(query) || sinAcentos(it.descripcion || '').includes(query) || sinAcentos(it.nota || '').includes(query)));
+    && (!query || sinAcentos(it.nombre).includes(query) || sinAcentos(it.descripcion || '').includes(query) || sinAcentos(it.nota || '').includes(query) || sinAcentos(it.ubicacion || '').includes(query)));
 
   // Editor en línea de un artículo.
   const filaEditor = (it) => {
@@ -1136,19 +1137,21 @@ export function inventario(ctx) {
     const inCat = el('select', { class: 'input', 'aria-label': 'Categoría' }, INV_CATS.map((o) => el('option', { value: o, selected: o === it.categoria }, o)));
     const inCant = el('input', { class: 'input', type: 'number', min: '1', value: it.cantidad, 'aria-label': 'Cantidad' });
     const inEstado = el('select', { class: 'input', 'aria-label': 'Estado' }, INV_ESTADOS.map((o) => el('option', { value: o, selected: o === it.estado }, o)));
+    const inUbic = el('select', { class: 'input', 'aria-label': 'Ubicación' }, INV_UBICACIONES.map((o) => el('option', { value: o, selected: o === it.ubicacion }, o)));
     const inNota = el('input', { class: 'input', value: it.nota || '', placeholder: 'Nota', 'aria-label': 'Nota', autocomplete: 'off', spellcheck: false });
     const inDesc = el('textarea', { class: 'input inv-editor__desc', value: it.descripcion || '', placeholder: 'Descripción', 'aria-label': 'Descripción', rows: 2, autocomplete: 'off' });
     const guardarEd = () => {
       const n = inNombre.value.trim();
       if (!n) { inNombre.focus(); return; }
-      Object.assign(it, { nombre: n, categoria: inCat.value, cantidad: Math.max(1, Number(inCant.value) || 1), estado: inEstado.value, descripcion: inDesc.value.trim(), nota: inNota.value.trim() });
+      Object.assign(it, { nombre: n, categoria: inCat.value, cantidad: Math.max(1, Number(inCant.value) || 1), estado: inEstado.value, ubicacion: inUbic.value, descripcion: inDesc.value.trim(), nota: inNota.value.trim() });
       invEditId = null; guardar(); toast('Artículo actualizado.'); ctx.recargar();
     };
     const cancelar = () => { invEditId = null; ctx.recargar(); };
     inNombre.addEventListener('keydown', (e) => { if (e.key === 'Enter') guardarEd(); else if (e.key === 'Escape') cancelar(); });
     requestAnimationFrame(() => { inNombre.focus(); inNombre.select(); });
     return el('div', { class: 'inv-item inv-editor' }, [
-      el('div', { class: 'inv-editor__campos' }, [inNombre, inCat, inCant, inEstado, inNota]),
+      el('div', { class: 'inv-editor__campos' }, [inNombre, inCat, inCant, inEstado, inUbic]),
+      inNota,
       inDesc,
       el('div', { class: 'inv-editor__acc' }, [
         el('button', { class: 'btn btn--primary btn--sm', onclick: guardarEd }, [icon('i-check'), 'Guardar']),
@@ -1167,6 +1170,7 @@ export function inventario(ctx) {
         it.descripcion ? el('div', { class: 'inv-desc' }, it.descripcion) : null,
         el('div', { class: 'inv-meta' }, [
           el('span', { class: 'inv-cat', style: { color } }, it.categoria),
+          it.ubicacion ? el('span', { class: 'inv-ubic' }, it.ubicacion) : null,
           it.nota ? el('span', {}, `· ${it.nota}`) : null,
         ]),
       ]),
@@ -1226,10 +1230,11 @@ export function inventario(ctx) {
           { name: 'categoria', label: 'Categoría', tipo: 'select', opciones: INV_CATS, value: 'Personal' },
           { name: 'cantidad', label: 'Cantidad', type: 'number', value: 1 },
           { name: 'estado', label: 'Estado', tipo: 'select', opciones: INV_ESTADOS, value: 'Bueno' },
+          { name: 'ubicacion', label: 'Ubicación', tipo: 'select', opciones: INV_UBICACIONES, value: 'Estudio Casa' },
           { name: 'descripcion', label: 'Descripción (opcional)', tipo: 'textarea', placeholder: 'Qué es, características, para qué lo usás…' },
           { name: 'nota', label: 'Nota (opcional)', placeholder: 'N° de serie, accesorios…' },
         ], (d) => {
-          inv.items.push({ id: uid(), nombre: d.nombre, categoria: d.categoria, cantidad: Math.max(1, Number(d.cantidad) || 1), estado: d.estado, descripcion: d.descripcion || '', nota: d.nota || '' });
+          inv.items.push({ id: uid(), nombre: d.nombre, categoria: d.categoria, cantidad: Math.max(1, Number(d.cantidad) || 1), estado: d.estado, ubicacion: d.ubicacion, descripcion: d.descripcion || '', nota: d.nota || '' });
         }),
       ]),
     ]),
