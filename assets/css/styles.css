@@ -814,6 +814,7 @@ textarea.input { resize: vertical; min-height: 76px; }
 .inv-cat { font-weight: 600; }
 .inv-ubic { color: var(--text-2); font-weight: 500; }
 .inv-ubic::before { content: "· "; color: var(--text-3); font-weight: 400; }
+.inv-ubic--vacia { color: var(--text-3); font-weight: 400; font-style: italic; }
 .inv-qty { font-size: 13px; font-weight: 700; color: var(--text-2); background: var(--surface-hover); padding: 2px 8px; border-radius: var(--r-sm); flex: none; }
 .inv-editor { flex-direction: column; align-items: stretch; gap: var(--sp-2); }
 .inv-editor__campos { display: grid; grid-template-columns: 1.7fr 1.1fr .7fr 1.1fr 1.4fr; gap: var(--sp-2); }

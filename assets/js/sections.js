@@ -1170,7 +1170,7 @@ export function inventario(ctx) {
         it.descripcion ? el('div', { class: 'inv-desc' }, it.descripcion) : null,
         el('div', { class: 'inv-meta' }, [
           el('span', { class: 'inv-cat', style: { color } }, it.categoria),
-          it.ubicacion ? el('span', { class: 'inv-ubic' }, it.ubicacion) : null,
+          el('span', { class: `inv-ubic${it.ubicacion ? '' : ' inv-ubic--vacia'}` }, it.ubicacion || 'Sin ubicación'),
           it.nota ? el('span', {}, `· ${it.nota}`) : null,
         ]),
       ]),
