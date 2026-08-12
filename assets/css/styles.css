@@ -184,14 +184,12 @@ h1, h2, h3, h4 { font-weight: 600; line-height: 1.25; letter-spacing: -.015em; }
   width: 38px; height: 38px;
   border-radius: var(--r-md);
   display: grid; place-items: center;
-  background: linear-gradient(140deg, var(--accent), #ec4899);
+  background: linear-gradient(140deg, #6366f1, #a855f7 55%, #ec4899);
   color: #fff;
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: .02em;
   box-shadow: var(--shadow-sm);
   flex: none;
 }
+.brand__wave { width: 23px; height: 23px; display: block; }
 
 .brand__text { display: flex; flex-direction: column; line-height: 1.3; min-width: 0; }
 .brand__text strong { font-size: 14px; font-weight: 600; letter-spacing: -.01em; }
