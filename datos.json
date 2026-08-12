@@ -2905,7 +2905,28 @@
     ]
   },
   "inventario": {
-    "items": []
+    "items": [
+      {
+        "id": "inv-mem-sandisk",
+        "nombre": "Memoria San Disk 128 GB",
+        "categoria": "Audio Visual",
+        "cantidad": 3,
+        "estado": "Bueno",
+        "ubicacion": "",
+        "descripcion": "Extreme Pro - 200 MB/s - V30",
+        "nota": ""
+      },
+      {
+        "id": "inv-tripode-zomei",
+        "nombre": "Trípode Cámara Zomei",
+        "categoria": "Audio Visual",
+        "cantidad": 1,
+        "estado": "Bueno",
+        "ubicacion": "",
+        "descripcion": "Incluye bolso",
+        "nota": ""
+      }
+    ]
   },
   "proyectos": {
     "items": [
