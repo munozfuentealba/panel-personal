@@ -41,7 +41,7 @@ export function barra(etiqueta, valor, tope, detalle = null) {
   return el('div', { class: 'bar-row' }, [
     el('div', { class: 'bar-row__top' }, [
       el('span', {}, etiqueta),
-      el('span', {}, detalle ?? `${Math.round((valor / tope) * 100)} %`),
+      el('span', {}, detalle ?? (tope > 0 ? `${Math.round((valor / tope) * 100)} %` : '—')),
     ]),
     el('div', { class: 'bar' }, [
       el('div', { class: `bar__fill${excedido ? ' bar__fill--over' : ''}`, style: { width: `${p}%` } }),

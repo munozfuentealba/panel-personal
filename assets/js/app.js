@@ -103,6 +103,7 @@ function construirNav() {
     dom.nav.append(el('a', {
       class: 'nav__item',
       href: `#/${s.id}`,
+      title: s.nombre,
       dataset: { sec: s.id },
       style: { '--sec': s.color },
     }, [icon(s.icono), el('span', {}, s.nombre)]));

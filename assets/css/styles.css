@@ -65,18 +65,18 @@
   /* Elevación suave en reposo de las tarjetas (+ un hilo de luz arriba) */
   --shadow-card: 0 1px 2px rgba(0,0,0,.35), 0 6px 20px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.035);
   /* Superficies de vidrio */
-  --glass-bg: rgba(21, 25, 35, .58);
-  --glass-bg-strong: rgba(24, 28, 39, .74);
-  --glass-border: rgba(255, 255, 255, .11);
-  --glass-border-strong: rgba(255, 255, 255, .18);
-  --glass-hi: inset 0 1px 0 rgba(255, 255, 255, .07);
-  --glass-shadow: 0 1px 2px rgba(0,0,0,.3), 0 14px 40px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.07);
-  --glass-shadow-hover: 0 2px 4px rgba(0,0,0,.34), 0 24px 60px rgba(0,0,0,.52), inset 0 1px 0 rgba(255,255,255,.1);
+  --glass-bg: rgba(21, 25, 35, .5);
+  --glass-bg-strong: rgba(24, 28, 39, .7);
+  --glass-border: rgba(255, 255, 255, .12);
+  --glass-border-strong: rgba(255, 255, 255, .2);
+  --glass-hi: inset 0 1px 0 rgba(255, 255, 255, .08);
+  --glass-shadow: 0 1px 2px rgba(0,0,0,.3), 0 14px 40px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.08);
+  --glass-shadow-hover: 0 2px 4px rgba(0,0,0,.34), 0 24px 60px rgba(0,0,0,.52), inset 0 1px 0 rgba(255,255,255,.12);
   /* Aurora de fondo: manchas de color detrás del vidrio */
-  --glow: radial-gradient(880px 620px at 84% -10%, rgba(129,140,248,.26), transparent 62%),
-          radial-gradient(760px 580px at 2% 6%, rgba(236,72,153,.15), transparent 58%),
-          radial-gradient(820px 620px at 48% 114%, rgba(20,184,166,.15), transparent 60%),
-          radial-gradient(720px 560px at 108% 64%, rgba(139,92,246,.17), transparent 60%);
+  --glow: radial-gradient(1200px 900px at 82% -8%, rgba(129,140,248,.42), transparent 60%),
+          radial-gradient(1050px 820px at -4% 10%, rgba(236,72,153,.28), transparent 58%),
+          radial-gradient(1100px 880px at 46% 120%, rgba(20,184,166,.26), transparent 60%),
+          radial-gradient(1000px 820px at 112% 56%, rgba(139,92,246,.34), transparent 60%);
   color-scheme: dark;
 }
 
@@ -101,18 +101,19 @@
   /* Elevación suave en reposo de las tarjetas */
   --shadow-card: 0 1px 2px rgba(16,24,40,.04), 0 8px 24px rgba(16,24,40,.07);
   /* Superficies de vidrio */
-  --glass-bg: rgba(255, 255, 255, .55);
-  --glass-bg-strong: rgba(255, 255, 255, .72);
-  --glass-border: rgba(255, 255, 255, .7);
-  --glass-border-strong: rgba(255, 255, 255, .9);
-  --glass-hi: inset 0 1px 0 rgba(255, 255, 255, .85);
-  --glass-shadow: 0 1px 2px rgba(16,24,40,.05), 0 14px 38px rgba(16,24,40,.12), inset 0 1px 0 rgba(255,255,255,.85);
-  --glass-shadow-hover: 0 2px 4px rgba(16,24,40,.06), 0 24px 56px rgba(16,24,40,.16), inset 0 1px 0 rgba(255,255,255,.95);
-  /* Aurora de fondo: manchas de color detrás del vidrio */
-  --glow: radial-gradient(880px 620px at 84% -10%, rgba(91,95,240,.2), transparent 62%),
-          radial-gradient(760px 580px at 2% 6%, rgba(236,72,153,.13), transparent 58%),
-          radial-gradient(820px 620px at 48% 114%, rgba(20,184,166,.13), transparent 60%),
-          radial-gradient(720px 560px at 108% 64%, rgba(139,92,246,.14), transparent 60%);
+  --glass-bg: rgba(255, 255, 255, .48);
+  --glass-bg-strong: rgba(255, 255, 255, .66);
+  --glass-border: rgba(255, 255, 255, .75);
+  --glass-border-strong: rgba(255, 255, 255, .95);
+  --glass-hi: inset 0 1px 0 rgba(255, 255, 255, .9);
+  --glass-shadow: 0 1px 2px rgba(16,24,40,.05), 0 16px 40px rgba(16,24,40,.13), inset 0 1px 0 rgba(255,255,255,.9);
+  --glass-shadow-hover: 0 2px 4px rgba(16,24,40,.06), 0 26px 58px rgba(16,24,40,.18), inset 0 1px 0 rgba(255,255,255,1);
+  /* Aurora de fondo: manchas de color detrás del vidrio (más intensa para que
+     el vidrio se note sobre el fondo claro) */
+  --glow: radial-gradient(1200px 900px at 82% -8%, rgba(99,102,241,.4), transparent 60%),
+          radial-gradient(1050px 820px at -4% 10%, rgba(236,72,153,.3), transparent 58%),
+          radial-gradient(1100px 880px at 46% 120%, rgba(16,185,129,.26), transparent 60%),
+          radial-gradient(1000px 820px at 112% 56%, rgba(139,92,246,.32), transparent 60%);
   color-scheme: light;
 }
 
@@ -540,6 +541,122 @@ h1, h2, h3, h4 { font-weight: 600; line-height: 1.25; letter-spacing: -.015em; }
 .grid--2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
 .grid--wide { grid-template-columns: 1.6fr 1fr; }
 @media (max-width: 1100px) { .grid--wide { grid-template-columns: 1fr; } }
+
+/* ─── Mosaico bento + Portada "Hoy" ──────────────────────────────── */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--sp-5);
+  align-items: stretch;
+  margin-bottom: var(--sp-5);
+}
+.bento > * { grid-column: span 1; min-width: 0; }
+.bento .b2 { grid-column: span 2; }
+.bento .b3 { grid-column: span 3; }
+.bento .b4 { grid-column: span 4; }
+.bento .br2 { grid-row: span 2; }
+@media (max-width: 1100px) {
+  .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bento .b3, .bento .b4 { grid-column: span 2; }
+}
+@media (max-width: 620px) {
+  .bento { grid-template-columns: 1fr; gap: var(--sp-4); }
+  .bento > * { grid-column: span 1 !important; }
+  .bento .br2 { grid-row: auto; }
+}
+
+/* Entrada escalonada de los mosaicos (en vez de animar el contenedor entero) */
+.view.is-entering > .bento { animation: none; }
+.view.is-entering .bento > * {
+  animation: card-in 540ms var(--ease-out) backwards;
+}
+.view.is-entering .bento > *:nth-child(1)  { animation-delay: 30ms; }
+.view.is-entering .bento > *:nth-child(2)  { animation-delay: 80ms; }
+.view.is-entering .bento > *:nth-child(3)  { animation-delay: 120ms; }
+.view.is-entering .bento > *:nth-child(4)  { animation-delay: 160ms; }
+.view.is-entering .bento > *:nth-child(5)  { animation-delay: 200ms; }
+.view.is-entering .bento > *:nth-child(6)  { animation-delay: 240ms; }
+.view.is-entering .bento > *:nth-child(7)  { animation-delay: 280ms; }
+.view.is-entering .bento > *:nth-child(8)  { animation-delay: 320ms; }
+.view.is-entering .bento > *:nth-child(9)  { animation-delay: 360ms; }
+
+/* Portada: saludo grande tipo editorial, con su propia luz de color */
+.portada {
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-6);
+  padding: var(--sp-8);
+  min-height: 190px;
+}
+.portada::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(620px 320px at 92% -30%, color-mix(in srgb, var(--accent) 34%, transparent), transparent 70%),
+              radial-gradient(520px 340px at 6% 130%, rgba(236,72,153,.2), transparent 72%);
+  pointer-events: none;
+  z-index: 0;
+}
+.portada > * { position: relative; z-index: 1; }
+.portada__intro { min-width: 0; }
+.portada__fecha {
+  font-size: 12.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  color: var(--accent-text);
+}
+.portada__saludo {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(32px, 4.6vw, 54px);
+  line-height: 1.04;
+  letter-spacing: 0;
+  margin: 8px 0 12px;
+}
+.portada__resumen { color: var(--text-2); font-size: 15.5px; line-height: 1.5; max-width: 48ch; }
+.portada__resumen b { color: var(--text); font-weight: 600; }
+.portada__stats { display: flex; gap: var(--sp-8); flex-wrap: wrap; }
+.portada__stat { display: flex; flex-direction: column; gap: 3px; }
+.portada__stat b {
+  font-size: 26px; font-weight: 700; letter-spacing: -.03em;
+  font-variant-numeric: tabular-nums; line-height: 1;
+}
+.portada__stat span { font-size: 12px; color: var(--text-3); }
+@media (max-width: 620px) {
+  .portada { padding: var(--sp-6); min-height: 0; }
+  .portada__stats { gap: var(--sp-6); }
+  .portada__stat b { font-size: 22px; }
+}
+
+/* ─── Riel de íconos flotante (solo escritorio) ──────────────────── */
+@media (min-width: 901px) {
+  :root { --sidebar-w: 96px; }
+  .sidebar {
+    margin: var(--sp-4);
+    height: calc(100vh - var(--sp-8));
+    top: var(--sp-4);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--r-xl);
+    box-shadow: var(--glass-shadow);
+    overflow: hidden;
+  }
+  .brand { justify-content: center; padding: var(--sp-5) 0 var(--sp-3); min-height: 0; }
+  .brand__text { display: none; }
+  .nav { padding: var(--sp-3) var(--sp-3) var(--sp-4); align-items: stretch; overflow-y: auto; }
+  .nav__group { display: none; }
+  .nav__item { justify-content: center; padding: 12px 0; }
+  .nav__item > span { display: none; }
+  .nav__item .icon { width: 22px; height: 22px; }
+  .sidebar__foot { padding: var(--sp-3); display: flex; justify-content: center; }
+  .theme-toggle { width: auto; padding: var(--sp-2); }
+  .theme-toggle__label { display: none; }
+  /* El contenido ya no necesita tanto margen izquierdo: el riel flota aparte */
+  .topbar { padding-left: var(--sp-6); }
+}
 
 .section-head {
   display: flex;

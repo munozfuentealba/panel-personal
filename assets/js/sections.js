@@ -116,6 +116,7 @@ export function resumen(ctx) {
   const t = totalesMes(f.movimientos);
   const prev = f.historial.at(-2);
   const tareasPend = datos.trabajo.tareas.filter((x) => !x.hecha);
+  const altaPrio = tareasPend.filter((x) => x.prio === 'alta').length;
   const ig = datos.instagram;
   const igPrev = ig.historial.at(-2)?.seguidores ?? ig.seguidores;
 
@@ -124,49 +125,97 @@ export function resumen(ctx) {
     ...datos.marca.hitos.map((e) => ({ ...e, titulo: e.texto, origen: 'Marca', sec: 'marca' })),
   ];
 
-  return [
-    // Métricas de un vistazo
-    el('div', { class: 'grid' }, [
-      card('Balance del mes', [
-        metrica(clp(t.balance), `${clp(t.ingresos)} en ingresos`,
-          delta(variacion(t.ingresos - t.gastos, prev ? prev.ingresos - prev.gastos : 0))),
-      ]),
-      card('Seguidores en Instagram', [
-        metrica(compact(ig.seguidores), `@${ig.usuario}`, delta(variacion(ig.seguidores, igPrev))),
-      ]),
-      card('Facturación empresa', [
-        metrica(clp(datos.empresa.kpis.facturacionMes), 'Mes en curso',
-          delta(variacion(datos.empresa.kpis.facturacionMes, datos.empresa.kpis.facturacionPrev))),
-      ]),
-      card('Tareas pendientes', [
-        metrica(tareasPend.length, `${tareasPend.filter((x) => x.prio === 'alta').length} de prioridad alta`),
-      ]),
+  /* ── Portada "Hoy": saludo según la hora, fecha larga y resumen del día ── */
+  const hora = new Date().getHours();
+  const saludo = hora < 12 ? 'Buenos días' : hora < 20 ? 'Buenas tardes' : 'Buenas noches';
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  const fechaLarga = cap(new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' }));
+  const climaHoy = ctx.clima?.datos?.[0];
+
+  const resumenKids = [];
+  if (tareasPend.length) {
+    resumenKids.push('Tienes ');
+    resumenKids.push(el('b', {}, `${tareasPend.length} ${tareasPend.length === 1 ? 'tarea' : 'tareas'}`));
+    resumenKids.push(tareasPend.length === 1 ? ' pendiente' : ' pendientes');
+    if (altaPrio) { resumenKids.push(', '); resumenKids.push(el('b', {}, `${altaPrio} urgente${altaPrio === 1 ? '' : 's'}`)); }
+    resumenKids.push('. ');
+  } else {
+    resumenKids.push('Sin tareas pendientes, día despejado. ');
+  }
+  if (climaHoy) {
+    resumenKids.push(`En ${climaHoy.ciudad}, `);
+    resumenKids.push(el('b', {}, `${climaHoy.ahora.temp}°`));
+    resumenKids.push(` y ${wmoTexto(climaHoy.ahora.code).toLowerCase()}.`);
+  }
+
+  const stat = (v, l) => el('div', { class: 'portada__stat' }, [el('b', {}, v), el('span', {}, l)]);
+
+  const portada = el('section', { class: 'card portada b4' }, [
+    el('div', { class: 'portada__intro' }, [
+      el('div', { class: 'portada__fecha' }, fechaLarga),
+      el('h2', { class: 'portada__saludo' }, `${saludo}, Diego`),
+      el('p', { class: 'portada__resumen' }, resumenKids),
     ]),
+    el('div', { class: 'portada__stats' }, [
+      stat(clp(t.balance), 'Balance del mes'),
+      stat(String(tareasPend.length), 'Pendientes'),
+      stat(compact(ig.seguidores), 'Seguidores'),
+    ]),
+  ]);
 
-    // Clima
-    el('div', { class: 'grid grid--2' }, climaCards(ctx)),
+  /* ── Mosaico bento: cada tarjeta recibe su tamaño con una clase (b2 = doble ancho). ── */
+  const span = (node, cls) => { if (node) node.classList.add(...cls.split(' ')); return node; };
 
-    // Agenda + ahorro
-    el('div', { class: 'grid grid--wide' }, [
-      card('Próximos días', [
-        proximos(agenda, 6).length
-          ? el('div', { class: 'list' }, proximos(agenda, 6).map((e) => el('div', { class: 'list__item' }, [
-              el('span', { class: 'dot', style: { background: `var(--c-${e.sec})` } }),
-              el('div', { class: 'list__main' }, [
-                el('div', { class: 'list__title' }, e.titulo),
-                el('div', { class: 'list__meta' }, `${e.origen} · ${fecha(e.fecha)}${e.hora ? ` · ${e.hora}` : ''}`),
-              ]),
-              el('span', { class: 'tag' }, relativo(e.fecha)),
-            ])))
-          : listaVacia('Sin eventos próximos.'),
-      ]),
-      card(f.ahorro.nombre, [
+  const mBalance = card('Balance del mes', [
+    metrica(clp(t.balance), `${clp(t.ingresos)} en ingresos`,
+      delta(variacion(t.ingresos - t.gastos, prev ? prev.ingresos - prev.gastos : 0))),
+  ]);
+  const mSeguidores = card('Seguidores en Instagram', [
+    metrica(compact(ig.seguidores), `@${ig.usuario}`, delta(variacion(ig.seguidores, igPrev))),
+  ]);
+  const mFacturacion = card('Facturación empresa', [
+    metrica(clp(datos.empresa.kpis.facturacionMes), 'Mes en curso',
+      delta(variacion(datos.empresa.kpis.facturacionMes, datos.empresa.kpis.facturacionPrev))),
+  ]);
+  const mTareas = card('Tareas pendientes', [
+    metrica(tareasPend.length, `${altaPrio} de prioridad alta`),
+  ]);
+
+  const [climaA, climaB] = climaCards(ctx);
+
+  const cProximos = card('Próximos días', [
+    proximos(agenda, 6).length
+      ? el('div', { class: 'list' }, proximos(agenda, 6).map((e) => el('div', { class: 'list__item' }, [
+          el('span', { class: 'dot', style: { background: `var(--c-${e.sec})` } }),
+          el('div', { class: 'list__main' }, [
+            el('div', { class: 'list__title' }, e.titulo),
+            el('div', { class: 'list__meta' }, `${e.origen} · ${fecha(e.fecha)}${e.hora ? ` · ${e.hora}` : ''}`),
+          ]),
+          el('span', { class: 'tag' }, relativo(e.fecha)),
+        ])))
+      : listaVacia('Sin eventos próximos.'),
+  ]);
+
+  const cAhorro = card(f.ahorro.nombre, f.ahorro.meta > 0
+    ? [
         metrica(clp(f.ahorro.actual), `Meta: ${clp(f.ahorro.meta)}`),
         barra('Avance', f.ahorro.actual, f.ahorro.meta),
         el('div', { class: 'list__meta' }, `Faltan ${clp(Math.max(f.ahorro.meta - f.ahorro.actual, 0))}`),
-      ]),
-    ]),
+      ]
+    : [
+        metrica(clp(f.ahorro.actual), 'Ahorrado hasta hoy'),
+        el('div', { class: 'list__meta' }, 'Define una meta de ahorro en Finanzas Personales para ver tu avance.'),
+      ]);
 
+  const bento = el('div', { class: 'bento' }, [
+    portada,
+    mBalance, mSeguidores, mFacturacion, mTareas,
+    span(climaA, 'b2'), span(climaB, 'b2'),
+    span(cProximos, 'b2'), span(cAhorro, 'b2'),
+  ]);
+
+  return [
+    bento,
     datos.esEjemplo
       ? aviso([el('div', {}, [
           el('strong', {}, 'Estás viendo datos de ejemplo. '),
