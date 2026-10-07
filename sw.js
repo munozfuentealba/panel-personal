@@ -10,7 +10,7 @@
  * Al subir la versión de CACHE, `activate` borra las viejas y toma el control de
  * inmediato (skipWaiting + clients.claim).
  */
-const CACHE = 'panel-v4';
+const CACHE = 'panel-v5';
 const NUCLEO = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', (e) => {

@@ -148,7 +148,10 @@ export function resumen(ctx) {
     resumenKids.push(` y ${wmoTexto(climaHoy.ahora.code).toLowerCase()}.`);
   }
 
-  const stat = (v, l) => el('div', { class: 'portada__stat' }, [el('b', {}, v), el('span', {}, l)]);
+  const stat = (iconId, color, v, l) => el('div', { class: 'portada__stat', style: { '--sec': color } }, [
+    el('span', { class: 'portada__stat-ic' }, [icon(iconId)]),
+    el('div', { class: 'portada__stat-tx' }, [el('b', {}, v), el('span', {}, l)]),
+  ]);
 
   const portada = el('section', { class: 'card portada b4' }, [
     el('div', { class: 'portada__intro' }, [
@@ -157,9 +160,9 @@ export function resumen(ctx) {
       el('p', { class: 'portada__resumen' }, resumenKids),
     ]),
     el('div', { class: 'portada__stats' }, [
-      stat(clp(t.balance), 'Balance del mes'),
-      stat(String(tareasPend.length), 'Pendientes'),
-      stat(compact(ig.seguidores), 'Seguidores'),
+      stat('i-finanzas', 'var(--c-finanzas)', clp(t.balance), 'Balance del mes'),
+      stat('i-trabajo', 'var(--c-trabajo)', String(tareasPend.length), 'Pendientes'),
+      stat('i-instagram', 'var(--c-instagram)', compact(ig.seguidores), 'Seguidores'),
     ]),
   ]);
 

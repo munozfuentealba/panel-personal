@@ -619,17 +619,26 @@ h1, h2, h3, h4 { font-weight: 600; line-height: 1.25; letter-spacing: -.015em; }
 }
 .portada__resumen { color: var(--text-2); font-size: 15.5px; line-height: 1.5; max-width: 48ch; }
 .portada__resumen b { color: var(--text); font-weight: 600; }
-.portada__stats { display: flex; gap: var(--sp-8); flex-wrap: wrap; }
-.portada__stat { display: flex; flex-direction: column; gap: 3px; }
-.portada__stat b {
-  font-size: 26px; font-weight: 700; letter-spacing: -.03em;
-  font-variant-numeric: tabular-nums; line-height: 1;
+.portada__stats { display: flex; flex-direction: column; gap: var(--sp-4); }
+.portada__stat { display: flex; align-items: center; gap: var(--sp-3); }
+.portada__stat-ic {
+  width: 42px; height: 42px; flex: none;
+  border-radius: var(--r-md);
+  display: grid; place-items: center;
+  background: color-mix(in srgb, var(--sec) 16%, transparent);
+  color: var(--sec);
 }
-.portada__stat span { font-size: 12px; color: var(--text-3); }
+.portada__stat-ic .icon { width: 21px; height: 21px; }
+.portada__stat-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.portada__stat b {
+  font-size: 23px; font-weight: 700; letter-spacing: -.03em;
+  font-variant-numeric: tabular-nums; line-height: 1.08;
+}
+.portada__stat span { font-size: 12.5px; color: var(--text-3); }
 @media (max-width: 620px) {
   .portada { padding: var(--sp-6); min-height: 0; }
-  .portada__stats { gap: var(--sp-6); }
-  .portada__stat b { font-size: 22px; }
+  .portada__stats { gap: var(--sp-3); }
+  .portada__stat b { font-size: 21px; }
 }
 
 /* ─── Riel de íconos flotante (solo escritorio) ──────────────────── */
